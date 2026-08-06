@@ -370,6 +370,25 @@
   .puzzle-tile:hover{ border-color:var(--cyan); }
   .puzzle-tile.blank{ background:transparent; border-color:transparent; cursor:default; }
 
+  /* ---------- apple game ---------- */
+  .apple-board{
+    position:relative; display:grid; grid-template-columns:repeat(10, 1fr); gap:2px;
+    width:100%; max-width:400px; aspect-ratio:10/8; margin:0 auto;
+    user-select:none; touch-action:none;
+  }
+  .apple-cell{
+    background:var(--bg-deep); border:1px solid var(--border); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800;
+    color:var(--text); cursor:pointer; position:relative;
+  }
+  .apple-cell.removed{ visibility:hidden; }
+  .apple-cell.selected{ background:rgba(255,71,87,0.35); border-color:var(--red); box-shadow:0 0 6px var(--red); }
+  .apple-selection-box{
+    position:absolute; border:2px dashed var(--red); border-radius:4px;
+    background:rgba(255,71,87,0.08); box-shadow:0 0 10px rgba(255,71,87,0.4);
+    pointer-events:none; display:none;
+  }
+
   /* ---------- nickname modal ---------- */
   .nickname-modal{ position:fixed; inset:0; z-index:70; background:rgba(6,6,11,0.9); display:flex; align-items:center; justify-content:center; padding:20px; }
   .nickname-modal.hidden{ display:none; }
@@ -557,6 +576,42 @@
         <div class="cabinet-screen" style="font-size:40px;">🏓</div>
         <div class="cabinet-label pixel">PONG</div>
         <div class="cabinet-sub">랠리를 이어가보세요</div>
+      </button>
+
+      <button class="cabinet" data-game="apple" style="--accent:var(--red)">
+        <div class="cabinet-screen" style="font-size:40px;">🍎</div>
+        <div class="cabinet-label pixel">APPLE</div>
+        <div class="cabinet-sub">합이 10이 되게 드래그하세요</div>
+      </button>
+
+      <button class="cabinet" data-game="crossy" style="--accent:var(--green)">
+        <div class="cabinet-screen" style="font-size:40px;">🐔</div>
+        <div class="cabinet-label pixel">CROSSY</div>
+        <div class="cabinet-sub">차를 피해 계속 전진하세요</div>
+      </button>
+
+      <button class="cabinet" data-game="stack" style="--accent:var(--orange)">
+        <div class="cabinet-screen" style="font-size:40px;">🗼</div>
+        <div class="cabinet-label pixel">STACK</div>
+        <div class="cabinet-sub">정확한 타이밍으로 쌓으세요</div>
+      </button>
+
+      <button class="cabinet" data-game="flappy" style="--accent:var(--cyan)">
+        <div class="cabinet-screen" style="font-size:40px;">🐦</div>
+        <div class="cabinet-label pixel">FLAPPY</div>
+        <div class="cabinet-sub">파이프를 피해 날아보세요</div>
+      </button>
+
+      <button class="cabinet" data-game="dodge" style="--accent:var(--yellow)">
+        <div class="cabinet-screen" style="font-size:40px;">☄️</div>
+        <div class="cabinet-label pixel">DODGE</div>
+        <div class="cabinet-sub">떨어지는 장애물을 피하세요</div>
+      </button>
+
+      <button class="cabinet" data-game="fruitslice" style="--accent:var(--blue)">
+        <div class="cabinet-screen" style="font-size:40px;">🍉</div>
+        <div class="cabinet-label pixel">SLICE</div>
+        <div class="cabinet-sub">드래그해서 과일을 잘라보세요</div>
       </button>
     </div>
 
@@ -824,6 +879,133 @@
     </div>
   </section>
 
+  <!-- APPLE GAME -->
+  <section id="screen-apple" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>SCORE<b id="apple-score">0</b></span>
+        <span>TIME<b id="apple-time">120</b></span>
+        <span>BEST<b id="apple-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="apple-board" id="apple-board"></div>
+      <div class="overlay" id="apple-overlay">
+        <div class="overlay-title pixel">APPLE GAME</div>
+        <div class="overlay-msg">드래그해서 합이 10이 되는 사과를 없애세요</div>
+        <button class="start-btn" id="apple-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">드래그로 영역을 선택 · 사과 숫자 합이 정확히 10이면 사라져요</p>
+  </section>
+
+  <!-- CROSSY ROAD -->
+  <section id="screen-crossy" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>SCORE<b id="crossy-score">0</b></span>
+        <span>BEST<b id="crossy-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <canvas id="crossy-canvas" width="270" height="420"></canvas>
+      <div class="overlay" id="crossy-overlay">
+        <div class="overlay-title pixel">CROSSY ROAD</div>
+        <div class="overlay-msg">방향키로 차를 피해 계속 전진하세요</div>
+        <button class="start-btn" id="crossy-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">↑ 전진 · ←→ 좌우 이동</p>
+    <div class="touch-pad" id="crossy-touch">
+      <button data-dir="left">←</button>
+      <button data-dir="up">↑</button>
+      <button data-dir="right">→</button>
+    </div>
+  </section>
+
+  <!-- STACK TOWER -->
+  <section id="screen-stack" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>SCORE<b id="stack-score">0</b></span>
+        <span>BEST<b id="stack-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <canvas id="stack-canvas" width="280" height="420"></canvas>
+      <div class="overlay" id="stack-overlay">
+        <div class="overlay-title pixel">STACK TOWER</div>
+        <div class="overlay-msg">스페이스바를 눌러 블록을 정확히 쌓으세요</div>
+        <button class="start-btn" id="stack-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">Space 또는 클릭/탭으로 블록 내려놓기</p>
+  </section>
+
+  <!-- FLAPPY -->
+  <section id="screen-flappy" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>SCORE<b id="flappy-score">0</b></span>
+        <span>BEST<b id="flappy-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <canvas id="flappy-canvas" width="280" height="420"></canvas>
+      <div class="overlay" id="flappy-overlay">
+        <div class="overlay-title pixel">FLAPPY</div>
+        <div class="overlay-msg">스페이스바로 날갯짓해서 파이프를 피하세요</div>
+        <button class="start-btn" id="flappy-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">Space 또는 클릭/탭으로 날갯짓</p>
+  </section>
+
+  <!-- DODGE -->
+  <section id="screen-dodge" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>TIME<b id="dodge-score">0</b></span>
+        <span>BEST<b id="dodge-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <canvas id="dodge-canvas" width="280" height="420"></canvas>
+      <div class="overlay" id="dodge-overlay">
+        <div class="overlay-title pixel">DODGE</div>
+        <div class="overlay-msg">방향키로 움직여 떨어지는 장애물을 피하세요</div>
+        <button class="start-btn" id="dodge-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">←→ 좌우 이동 (또는 드래그)</p>
+  </section>
+
+  <!-- FRUIT SLICE -->
+  <section id="screen-fruitslice" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>SCORE<b id="fruitslice-score">0</b></span>
+        <span>LIFE<b id="fruitslice-lives">3</b></span>
+        <span>BEST<b id="fruitslice-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <canvas id="fruitslice-canvas" width="320" height="420"></canvas>
+      <div class="overlay" id="fruitslice-overlay">
+        <div class="overlay-title pixel">FRUIT SLICE</div>
+        <div class="overlay-msg">드래그해서 과일을 자르고, 폭탄은 피하세요</div>
+        <button class="start-btn" id="fruitslice-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">마우스/손가락으로 드래그해서 자르기</p>
+  </section>
+
 </div>
 
 <script>
@@ -881,7 +1063,13 @@
     { id:'mole', label:'MOLE', icon:'🔨', color:'var(--yellow)' },
     { id:'puzzle15', label:'PUZZLE', icon:'🧩', color:'var(--cyan)' },
     { id:'breakout', label:'BREAKOUT', icon:'🎾', color:'var(--pink)' },
-    { id:'pong', label:'PONG', icon:'🏓', color:'var(--green)' }
+    { id:'pong', label:'PONG', icon:'🏓', color:'var(--green)' },
+    { id:'apple', label:'APPLE', icon:'🍎', color:'var(--red)' },
+    { id:'crossy', label:'CROSSY', icon:'🐔', color:'var(--green)' },
+    { id:'stack', label:'STACK', icon:'🗼', color:'var(--orange)' },
+    { id:'flappy', label:'FLAPPY', icon:'🐦', color:'var(--cyan)' },
+    { id:'dodge', label:'DODGE', icon:'☄️', color:'var(--yellow)' },
+    { id:'fruitslice', label:'SLICE', icon:'🍉', color:'var(--blue)' }
   ];
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
@@ -1283,6 +1471,17 @@
     }
     if(currentScreen === 'breakout' && breakoutState){ stopBreakoutLoop(); }
     if(currentScreen === 'pong' && pongState){ stopPongLoop(); }
+    if(currentScreen === 'apple' && appleState){
+      stopAppleTimer();
+      if(!appleState.over && appleState.score > 0){
+        submitScore('apple', appleState.score);
+      }
+    }
+    if(currentScreen === 'crossy' && crossyState){ stopCrossyLoop(); }
+    if(currentScreen === 'stack' && stackState){ stopStackLoop(); }
+    if(currentScreen === 'flappy' && flappyState){ stopFlappyLoop(); }
+    if(currentScreen === 'dodge' && dodgeState){ stopDodgeLoop(); }
+    if(currentScreen === 'fruitslice' && fruitsliceState){ stopFruitSliceLoop(); }
     currentScreen = id;
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
@@ -1303,6 +1502,12 @@
     if(id === 'puzzle15') preparePuzzle15();
     if(id === 'breakout') prepareBreakout();
     if(id === 'pong') preparePong();
+    if(id === 'apple') prepareApple();
+    if(id === 'crossy') prepareCrossy();
+    if(id === 'stack') prepareStack();
+    if(id === 'flappy') prepareFlappy();
+    if(id === 'dodge') prepareDodge();
+    if(id === 'fruitslice') prepareFruitSlice();
   }
 
   document.querySelectorAll('.cabinet[data-game]').forEach(function(btn){
@@ -2979,6 +3184,850 @@
     else if(e.key==='ArrowDown') pongState.playerPaddle.moveDir = 1;
   }
 
+  /* ============================================================
+     APPLE GAME
+  ============================================================= */
+  const APPLE_ROWS = 8, APPLE_COLS = 10, APPLE_TIME = 120;
+  let appleState = null;
+
+  function prepareApple(){
+    const board = [];
+    for(let r=0;r<APPLE_ROWS;r++){
+      const row = [];
+      for(let c=0;c<APPLE_COLS;c++){ row.push(1+Math.floor(Math.random()*9)); }
+      board.push(row);
+    }
+    appleState = {
+      board:board, rows:APPLE_ROWS, cols:APPLE_COLS,
+      dragging:false, startR:0, startC:0, curR:0, curC:0,
+      score:0, timeLeft:APPLE_TIME, timerId:null, running:false, over:false
+    };
+    renderAppleBoard();
+    document.getElementById('apple-score').textContent = '0';
+    document.getElementById('apple-time').textContent = String(APPLE_TIME);
+    loadMyBest('apple');
+    const overlay = document.getElementById('apple-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'APPLE GAME';
+    overlay.querySelector('.overlay-msg').textContent = '드래그해서 합이 10이 되는 사과를 없애세요';
+  }
+
+  function renderAppleBoard(){
+    const el = document.getElementById('apple-board');
+    el.innerHTML = '';
+    const s = appleState;
+    for(let r=0;r<s.rows;r++){
+      for(let c=0;c<s.cols;c++){
+        const v = s.board[r][c];
+        const div = document.createElement('div');
+        div.className = 'apple-cell' + (v===0 ? ' removed' : '');
+        div.dataset.r = r; div.dataset.c = c;
+        if(v) div.textContent = v;
+        el.appendChild(div);
+      }
+    }
+    const box = document.createElement('div');
+    box.id = 'apple-selection-box';
+    box.className = 'apple-selection-box';
+    el.appendChild(box);
+  }
+
+  function appleSelectionRect(){
+    const s = appleState;
+    return {
+      r1: Math.min(s.startR, s.curR), r2: Math.max(s.startR, s.curR),
+      c1: Math.min(s.startC, s.curC), c2: Math.max(s.startC, s.curC)
+    };
+  }
+
+  function updateAppleSelectionVisual(){
+    const rect = appleSelectionRect();
+    const s = appleState;
+    document.querySelectorAll('#apple-board .apple-cell').forEach(function(cell){
+      const r = Number(cell.dataset.r), c = Number(cell.dataset.c);
+      if(r>=rect.r1 && r<=rect.r2 && c>=rect.c1 && c<=rect.c2) cell.classList.add('selected');
+      else cell.classList.remove('selected');
+    });
+    const box = document.getElementById('apple-selection-box');
+    if(box){
+      box.style.left = (rect.c1/s.cols*100) + '%';
+      box.style.top = (rect.r1/s.rows*100) + '%';
+      box.style.width = ((rect.c2-rect.c1+1)/s.cols*100) + '%';
+      box.style.height = ((rect.r2-rect.r1+1)/s.rows*100) + '%';
+      box.style.display = 'block';
+    }
+  }
+
+  function appleCellFromPoint(clientX, clientY){
+    const rectEl = document.getElementById('apple-board').getBoundingClientRect();
+    const s = appleState;
+    const cellW = rectEl.width / s.cols, cellH = rectEl.height / s.rows;
+    let c = Math.floor((clientX-rectEl.left)/cellW);
+    let r = Math.floor((clientY-rectEl.top)/cellH);
+    c = Math.max(0, Math.min(s.cols-1, c));
+    r = Math.max(0, Math.min(s.rows-1, r));
+    return { r:r, c:c };
+  }
+
+  function commitAppleSelection(){
+    const s = appleState;
+    const rect = appleSelectionRect();
+    let sum = 0, count = 0;
+    for(let r=rect.r1;r<=rect.r2;r++){
+      for(let c=rect.c1;c<=rect.c2;c++){
+        if(s.board[r][c]){ sum += s.board[r][c]; count++; }
+      }
+    }
+    if(sum === 10 && count > 0){
+      for(let r=rect.r1;r<=rect.r2;r++){
+        for(let c=rect.c1;c<=rect.c2;c++){
+          if(s.board[r][c]){ s.score++; s.board[r][c] = 0; }
+        }
+      }
+      document.getElementById('apple-score').textContent = s.score;
+    }
+    renderAppleBoard();
+  }
+
+  document.getElementById('apple-board').addEventListener('pointerdown', function(e){
+    if(!appleState || !appleState.running) return;
+    const cell = appleCellFromPoint(e.clientX, e.clientY);
+    appleState.dragging = true;
+    appleState.startR = cell.r; appleState.startC = cell.c;
+    appleState.curR = cell.r; appleState.curC = cell.c;
+    updateAppleSelectionVisual();
+    e.preventDefault();
+  });
+  document.getElementById('apple-board').addEventListener('pointermove', function(e){
+    if(!appleState || !appleState.dragging) return;
+    const cell = appleCellFromPoint(e.clientX, e.clientY);
+    appleState.curR = cell.r; appleState.curC = cell.c;
+    updateAppleSelectionVisual();
+  });
+  window.addEventListener('pointerup', function(){
+    if(!appleState || !appleState.dragging) return;
+    appleState.dragging = false;
+    commitAppleSelection();
+  });
+
+  function appleTick(){
+    const s = appleState;
+    s.timeLeft--;
+    document.getElementById('apple-time').textContent = String(Math.max(0,s.timeLeft));
+    if(s.timeLeft<=0) finishApple();
+  }
+  function stopAppleTimer(){
+    if(appleState && appleState.timerId){ clearInterval(appleState.timerId); appleState.timerId=null; }
+  }
+  function startApple(){
+    if(!appleState || appleState.running) return;
+    appleState.running = true; appleState.over=false;
+    document.getElementById('apple-overlay').classList.add('hidden');
+    appleState.timerId = setInterval(appleTick, 1000);
+  }
+  function finishApple(){
+    const s = appleState;
+    s.running=false; s.over=true;
+    stopAppleTimer();
+    const overlay = document.getElementById('apple-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'TIME UP!';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' · 다시 시작하려면 버튼을 누르세요';
+    finalizeScore('apple', s.score, overlay);
+  }
+  document.getElementById('apple-start').addEventListener('click', function(){
+    if(appleState.over) prepareApple();
+    startApple();
+  });
+
+  /* ============================================================
+     CROSSY ROAD
+  ============================================================= */
+  const CROSSY_COLS = 9, CROSSY_CELL = 30, CROSSY_W = 270, CROSSY_H = 420;
+  let crossyCtx, crossyState;
+
+  function generateCrossyLanes(fromRow, toRow){
+    const s = crossyState;
+    for(let r=fromRow; r<=toRow; r++){
+      if(s.lanes[r]) continue;
+      if(Math.random() < 0.4){
+        s.lanes[r] = { type:'safe' };
+      }else{
+        const dir = Math.random()<0.5 ? 1 : -1;
+        const speed = 0.9 + Math.random()*1.1 + Math.min(1.2, r/30);
+        const gap = 110 + Math.random()*70;
+        s.lanes[r] = { type:'road', dir:dir, speed:speed, gap:gap, offset:Math.random()*gap, carW:24 };
+      }
+    }
+  }
+
+  function prepareCrossy(){
+    crossyState = {
+      playerRow:0, playerCol:Math.floor(CROSSY_COLS/2), lanes:{}, maxRow:0,
+      score:0, running:false, over:false, rafId:null, lastTime:0
+    };
+    crossyState.lanes[0] = { type:'safe' };
+    generateCrossyLanes(1, 20);
+    document.getElementById('crossy-score').textContent = '0';
+    loadMyBest('crossy');
+    drawCrossy();
+    const overlay = document.getElementById('crossy-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'CROSSY ROAD';
+    overlay.querySelector('.overlay-msg').textContent = '방향키로 차를 피해 계속 전진하세요';
+  }
+
+  function carPositionsForLane(lane){
+    const positions = [];
+    const count = Math.ceil(CROSSY_W/lane.gap)+2;
+    for(let k=-1;k<count;k++) positions.push(lane.offset + k*lane.gap);
+    return positions;
+  }
+
+  function tryMoveCrossy(dr, dc){
+    const s = crossyState;
+    if(!s.running) return;
+    const newRow = s.playerRow + dr;
+    const newCol = s.playerCol + dc;
+    if(newCol < 0 || newCol >= CROSSY_COLS) return;
+    if(newRow < 0) return;
+    s.playerRow = newRow;
+    s.playerCol = newCol;
+    if(newRow > s.maxRow){
+      s.maxRow = newRow;
+      s.score = newRow;
+      document.getElementById('crossy-score').textContent = s.score;
+    }
+    generateCrossyLanes(s.playerRow+1, s.playerRow+20);
+    drawCrossy();
+  }
+
+  function updateCrossy(step){
+    const s = crossyState;
+    Object.keys(s.lanes).forEach(function(rk){
+      const lane = s.lanes[rk];
+      if(lane.type==='road'){
+        lane.offset += lane.dir*lane.speed*step;
+        lane.offset = ((lane.offset % lane.gap) + lane.gap) % lane.gap;
+      }
+    });
+    const lane = s.lanes[s.playerRow];
+    if(lane && lane.type==='road'){
+      const carXs = carPositionsForLane(lane);
+      const playerX = s.playerCol*CROSSY_CELL + CROSSY_CELL/2;
+      for(let i=0;i<carXs.length;i++){
+        if(Math.abs(carXs[i]-playerX) < (lane.carW/2 + CROSSY_CELL*0.35)){
+          endCrossy();
+          return;
+        }
+      }
+    }
+  }
+
+  function drawCrossy(){
+    const ctx = crossyCtx, s = crossyState;
+    ctx.fillStyle = '#06060B';
+    ctx.fillRect(0,0,CROSSY_W,CROSSY_H);
+    const bottomRow = Math.max(0, s.playerRow - 3);
+    const rowsVisible = Math.ceil(CROSSY_H/CROSSY_CELL)+1;
+    for(let i=0;i<rowsVisible;i++){
+      const row = bottomRow + i;
+      const lane = s.lanes[row];
+      if(!lane) continue;
+      const y = CROSSY_H - (i+1)*CROSSY_CELL;
+      ctx.fillStyle = lane.type==='safe' ? '#16241a' : '#1c1c26';
+      ctx.fillRect(0, y, CROSSY_W, CROSSY_CELL-2);
+      if(lane.type==='road'){
+        carPositionsForLane(lane).forEach(function(cx){
+          ctx.fillStyle = '#FF4757';
+          ctx.shadowColor='#FF4757'; ctx.shadowBlur=4;
+          ctx.fillRect(cx-lane.carW/2, y+5, lane.carW, CROSSY_CELL-12);
+          ctx.shadowBlur=0;
+        });
+      }
+    }
+    const playerScreenRow = s.playerRow - bottomRow;
+    const playerY = CROSSY_H - (playerScreenRow+1)*CROSSY_CELL;
+    ctx.font = (CROSSY_CELL-8)+'px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🐔', s.playerCol*CROSSY_CELL+CROSSY_CELL/2, playerY+CROSSY_CELL-8);
+    ctx.textAlign = 'left';
+  }
+
+  function startCrossy(){
+    if(!crossyState || crossyState.running) return;
+    crossyState.running = true; crossyState.over=false;
+    document.getElementById('crossy-overlay').classList.add('hidden');
+    crossyState.lastTime = performance.now();
+    crossyState.rafId = requestAnimationFrame(crossyLoop);
+  }
+  function stopCrossyLoop(){
+    if(crossyState){ crossyState.running=false; if(crossyState.rafId) cancelAnimationFrame(crossyState.rafId); }
+  }
+  function crossyLoop(t){
+    const s = crossyState;
+    if(!s || !s.running) return;
+    const dt = Math.min(32, t-s.lastTime); s.lastTime=t;
+    updateCrossy(dt/16.67);
+    drawCrossy();
+    if(s.running) s.rafId = requestAnimationFrame(crossyLoop);
+  }
+  function endCrossy(){
+    const s = crossyState;
+    s.running=false; s.over=true;
+    if(s.rafId) cancelAnimationFrame(s.rafId);
+    const overlay = document.getElementById('crossy-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'GAME OVER';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' · 스페이스바로 재시작';
+    finalizeScore('crossy', s.score, overlay);
+  }
+  document.getElementById('crossy-start').addEventListener('click', function(){
+    if(crossyState.over) prepareCrossy();
+    startCrossy();
+  });
+  document.getElementById('crossy-touch').addEventListener('click', function(e){
+    const b = e.target.closest('button'); if(!b) return;
+    if(!crossyState) return;
+    if(!crossyState.running){ if(crossyState.over) prepareCrossy(); startCrossy(); return; }
+    const dir = b.dataset.dir;
+    if(dir==='up') tryMoveCrossy(1,0);
+    else if(dir==='left') tryMoveCrossy(0,-1);
+    else if(dir==='right') tryMoveCrossy(0,1);
+  });
+  function handleCrossyKey(e){
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
+    if(!crossyState) return;
+    if(!crossyState.running){
+      if(e.key===' '){ if(crossyState.over) prepareCrossy(); startCrossy(); }
+      return;
+    }
+    if(e.key==='ArrowUp') tryMoveCrossy(1,0);
+    else if(e.key==='ArrowDown') tryMoveCrossy(-1,0);
+    else if(e.key==='ArrowLeft') tryMoveCrossy(0,-1);
+    else if(e.key==='ArrowRight') tryMoveCrossy(0,1);
+  }
+
+  /* ============================================================
+     STACK TOWER
+  ============================================================= */
+  const STACK_W = 280, STACK_H = 420, STACK_BLOCK_H = 22;
+  const STACK_PALETTE = ['#00E5FF','#FF2E7E','#FFD23F','#3DFF7A','#FF9F43','#4D7CFF'];
+  let stackCtx, stackState;
+
+  function stackBlockAbsY(level){ return STACK_H - STACK_BLOCK_H - level*STACK_BLOCK_H; }
+
+  function prepareStack(){
+    const baseWidth = 140;
+    stackState = {
+      blocks: [{ x:(STACK_W-baseWidth)/2, width:baseWidth, color:'#00E5FF' }],
+      current: { x:0, width:baseWidth, dir:1, speed:2.4, color:STACK_PALETTE[1] },
+      score:0, running:false, over:false, rafId:null, lastTime:0
+    };
+    document.getElementById('stack-score').textContent = '0';
+    loadMyBest('stack');
+    drawStack();
+    const overlay = document.getElementById('stack-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'STACK TOWER';
+    overlay.querySelector('.overlay-msg').textContent = '스페이스바를 눌러 블록을 정확히 쌓으세요';
+  }
+
+  function updateStack(step){
+    const s = stackState, c = s.current;
+    c.x += c.dir*c.speed*step;
+    if(c.x <= 0){ c.x = 0; c.dir = 1; }
+    if(c.x + c.width >= STACK_W){ c.x = STACK_W-c.width; c.dir = -1; }
+  }
+
+  function dropStackBlock(){
+    const s = stackState;
+    if(!s.running) return;
+    const top = s.blocks[s.blocks.length-1];
+    const c = s.current;
+    const left = Math.max(top.x, c.x);
+    const right = Math.min(top.x+top.width, c.x+c.width);
+    const overlap = right-left;
+    if(overlap <= 4){ endStack(); return; }
+    s.blocks.push({ x:left, width:overlap, color:c.color });
+    s.score++;
+    document.getElementById('stack-score').textContent = s.score;
+    s.current = {
+      x:0, width:overlap, dir:1,
+      speed: Math.min(6.5, 2.4 + s.blocks.length*0.15),
+      color: STACK_PALETTE[s.blocks.length % STACK_PALETTE.length]
+    };
+    drawStack();
+  }
+
+  function drawStack(){
+    const ctx = stackCtx, s = stackState;
+    ctx.fillStyle = '#06060B';
+    ctx.fillRect(0,0,STACK_W,STACK_H);
+    const level = s.blocks.length;
+    const currentAbsY = stackBlockAbsY(level);
+    let cameraOffset = 90 - currentAbsY;
+    if(cameraOffset > 0) cameraOffset = 0;
+    s.blocks.forEach(function(b, i){
+      const y = stackBlockAbsY(i) + cameraOffset;
+      if(y < -STACK_BLOCK_H || y > STACK_H) return;
+      ctx.fillStyle = b.color;
+      ctx.shadowColor = b.color; ctx.shadowBlur = 4;
+      ctx.fillRect(b.x, y, b.width, STACK_BLOCK_H-2);
+      ctx.shadowBlur = 0;
+    });
+    if(!s.over){
+      const y = currentAbsY + cameraOffset;
+      ctx.fillStyle = s.current.color;
+      ctx.shadowColor = s.current.color; ctx.shadowBlur = 8;
+      ctx.fillRect(s.current.x, y, s.current.width, STACK_BLOCK_H-2);
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  function startStack(){
+    if(!stackState || stackState.running) return;
+    stackState.running = true; stackState.over=false;
+    document.getElementById('stack-overlay').classList.add('hidden');
+    stackState.lastTime = performance.now();
+    stackState.rafId = requestAnimationFrame(stackLoop);
+  }
+  function stopStackLoop(){
+    if(stackState){ stackState.running=false; if(stackState.rafId) cancelAnimationFrame(stackState.rafId); }
+  }
+  function stackLoop(t){
+    const s = stackState;
+    if(!s || !s.running) return;
+    const dt = Math.min(32, t-s.lastTime); s.lastTime=t;
+    updateStack(dt/16.67);
+    drawStack();
+    if(s.running) s.rafId = requestAnimationFrame(stackLoop);
+  }
+  function endStack(){
+    const s = stackState;
+    s.running=false; s.over=true;
+    if(s.rafId) cancelAnimationFrame(s.rafId);
+    const overlay = document.getElementById('stack-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'GAME OVER';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' · 스페이스바로 재시작';
+    finalizeScore('stack', s.score, overlay);
+  }
+  document.getElementById('stack-start').addEventListener('click', function(){
+    if(stackState.over) prepareStack();
+    startStack();
+  });
+  document.getElementById('stack-canvas').addEventListener('pointerdown', function(){
+    if(!stackState) return;
+    if(!stackState.running){ if(stackState.over) prepareStack(); startStack(); return; }
+    dropStackBlock();
+  });
+  function handleStackKey(e){
+    if(e.key===' '){
+      e.preventDefault();
+      if(!stackState) return;
+      if(!stackState.running){ if(stackState.over) prepareStack(); startStack(); return; }
+      dropStackBlock();
+    }
+  }
+
+  /* ============================================================
+     FLAPPY
+  ============================================================= */
+  const FLAPPY_W = 280, FLAPPY_H = 420, FLAPPY_PIPE_W = 40, FLAPPY_PIPE_GAP = 110;
+  let flappyCtx, flappyState;
+
+  function prepareFlappy(){
+    flappyState = {
+      bird:{ x:60, y:FLAPPY_H/2, r:10, vy:0 }, pipes:[],
+      gravity:0.35, flapPower:-6.5, spawnTimer:0, spawnInterval:90,
+      score:0, running:false, over:false, rafId:null, lastTime:0
+    };
+    document.getElementById('flappy-score').textContent = '0';
+    loadMyBest('flappy');
+    drawFlappy();
+    const overlay = document.getElementById('flappy-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'FLAPPY';
+    overlay.querySelector('.overlay-msg').textContent = '스페이스바로 날갯짓해서 파이프를 피하세요';
+  }
+
+  function spawnFlappyPipe(){
+    const gapY = 60 + Math.random()*(FLAPPY_H-120-FLAPPY_PIPE_GAP);
+    flappyState.pipes.push({ x:FLAPPY_W, gapY:gapY, passed:false });
+  }
+
+  function updateFlappy(step){
+    const s = flappyState, b = s.bird;
+    b.vy += s.gravity*step;
+    b.y += b.vy*step;
+    if(b.y-b.r<0){ b.y=b.r; b.vy=0; }
+    if(b.y+b.r>FLAPPY_H){ endFlappy(); return; }
+
+    s.spawnTimer += step;
+    if(s.spawnTimer >= s.spawnInterval){ s.spawnTimer=0; spawnFlappyPipe(); }
+
+    s.pipes.forEach(function(p){ p.x -= 2.4*step; });
+    s.pipes = s.pipes.filter(function(p){ return p.x+FLAPPY_PIPE_W > -10; });
+
+    for(let i=0;i<s.pipes.length;i++){
+      const p = s.pipes[i];
+      if(!p.passed && p.x+FLAPPY_PIPE_W < b.x){
+        p.passed = true;
+        s.score++;
+        document.getElementById('flappy-score').textContent = s.score;
+      }
+      if(b.x+b.r > p.x && b.x-b.r < p.x+FLAPPY_PIPE_W){
+        if(b.y-b.r < p.gapY || b.y+b.r > p.gapY+FLAPPY_PIPE_GAP){ endFlappy(); return; }
+      }
+    }
+  }
+
+  function drawFlappy(){
+    const ctx = flappyCtx, s = flappyState;
+    ctx.fillStyle = '#06060B';
+    ctx.fillRect(0,0,FLAPPY_W,FLAPPY_H);
+    s.pipes.forEach(function(p){
+      ctx.fillStyle = '#3DFF7A';
+      ctx.shadowColor='#3DFF7A'; ctx.shadowBlur=4;
+      ctx.fillRect(p.x, 0, FLAPPY_PIPE_W, p.gapY);
+      ctx.fillRect(p.x, p.gapY+FLAPPY_PIPE_GAP, FLAPPY_PIPE_W, FLAPPY_H-(p.gapY+FLAPPY_PIPE_GAP));
+      ctx.shadowBlur=0;
+    });
+    ctx.fillStyle = '#FFD23F';
+    ctx.shadowColor='#FFD23F'; ctx.shadowBlur=8;
+    ctx.beginPath(); ctx.arc(s.bird.x, s.bird.y, s.bird.r, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+  }
+
+  function flap(){
+    if(!flappyState || !flappyState.running) return;
+    flappyState.bird.vy = flappyState.flapPower;
+  }
+  function startFlappy(){
+    if(!flappyState || flappyState.running) return;
+    flappyState.running = true; flappyState.over=false;
+    document.getElementById('flappy-overlay').classList.add('hidden');
+    flappyState.lastTime = performance.now();
+    flappyState.rafId = requestAnimationFrame(flappyLoop);
+  }
+  function stopFlappyLoop(){
+    if(flappyState){ flappyState.running=false; if(flappyState.rafId) cancelAnimationFrame(flappyState.rafId); }
+  }
+  function flappyLoop(t){
+    const s = flappyState;
+    if(!s || !s.running) return;
+    const dt = Math.min(32, t-s.lastTime); s.lastTime=t;
+    updateFlappy(dt/16.67);
+    drawFlappy();
+    if(s.running) s.rafId = requestAnimationFrame(flappyLoop);
+  }
+  function endFlappy(){
+    const s = flappyState;
+    s.running=false; s.over=true;
+    if(s.rafId) cancelAnimationFrame(s.rafId);
+    const overlay = document.getElementById('flappy-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'GAME OVER';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' · 스페이스바로 재시작';
+    finalizeScore('flappy', s.score, overlay);
+  }
+  document.getElementById('flappy-start').addEventListener('click', function(){
+    if(flappyState.over) prepareFlappy();
+    startFlappy();
+  });
+  document.getElementById('flappy-canvas').addEventListener('pointerdown', function(){
+    if(!flappyState) return;
+    if(!flappyState.running){ if(flappyState.over) prepareFlappy(); startFlappy(); return; }
+    flap();
+  });
+  function handleFlappyKey(e){
+    if(e.key===' '){
+      e.preventDefault();
+      if(!flappyState) return;
+      if(!flappyState.running){ if(flappyState.over) prepareFlappy(); startFlappy(); return; }
+      flap();
+    }
+  }
+
+  /* ============================================================
+     DODGE
+  ============================================================= */
+  const DODGE_W = 280, DODGE_H = 420;
+  let dodgeCtx, dodgeState;
+
+  function prepareDodge(){
+    dodgeState = {
+      player:{ x:DODGE_W/2-14, y:DODGE_H-36, w:28, h:14, moveDir:0, speed:5 },
+      obstacles:[], spawnTimer:0, spawnInterval:46,
+      elapsed:0, score:0, running:false, over:false, rafId:null, lastTime:0
+    };
+    document.getElementById('dodge-score').textContent = '0';
+    loadMyBest('dodge');
+    drawDodge();
+    const overlay = document.getElementById('dodge-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'DODGE';
+    overlay.querySelector('.overlay-msg').textContent = '방향키로 움직여 떨어지는 장애물을 피하세요';
+  }
+
+  function spawnDodgeObstacle(){
+    const s = dodgeState;
+    const r = 8 + Math.random()*8;
+    const x = r + Math.random()*(DODGE_W-2*r);
+    const speed = 2.4 + Math.min(4.8, s.elapsed/5000);
+    s.obstacles.push({ x:x, y:-r, r:r, vy:speed });
+  }
+
+  function updateDodge(step, dtms){
+    const s = dodgeState, p = s.player;
+    p.x += p.moveDir*p.speed*step;
+    p.x = Math.max(0, Math.min(DODGE_W-p.w, p.x));
+
+    s.elapsed += dtms;
+    s.score = Math.floor(s.elapsed/100);
+    document.getElementById('dodge-score').textContent = s.score;
+
+    s.spawnTimer += step;
+    const interval = Math.max(16, s.spawnInterval - s.elapsed/1667);
+    if(s.spawnTimer >= interval){ s.spawnTimer=0; spawnDodgeObstacle(); }
+
+    s.obstacles.forEach(function(o){ o.y += o.vy*step; });
+    s.obstacles = s.obstacles.filter(function(o){ return o.y-o.r < DODGE_H+10; });
+
+    for(let i=0;i<s.obstacles.length;i++){
+      const o = s.obstacles[i];
+      const closestX = Math.max(p.x, Math.min(o.x, p.x+p.w));
+      const closestY = Math.max(p.y, Math.min(o.y, p.y+p.h));
+      const dx = o.x-closestX, dy = o.y-closestY;
+      if(dx*dx+dy*dy < o.r*o.r){ endDodge(); return; }
+    }
+  }
+
+  function drawDodge(){
+    const ctx = dodgeCtx, s = dodgeState;
+    ctx.fillStyle = '#06060B';
+    ctx.fillRect(0,0,DODGE_W,DODGE_H);
+    s.obstacles.forEach(function(o){
+      ctx.fillStyle = '#FF4757';
+      ctx.shadowColor='#FF4757'; ctx.shadowBlur=6;
+      ctx.beginPath(); ctx.arc(o.x,o.y,o.r,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0;
+    });
+    const p = s.player;
+    ctx.fillStyle = '#00E5FF';
+    ctx.shadowColor='#00E5FF'; ctx.shadowBlur=8;
+    roundRect(ctx, p.x, p.y, p.w, p.h, 4);
+    ctx.fill();
+    ctx.shadowBlur=0;
+  }
+
+  function startDodge(){
+    if(!dodgeState || dodgeState.running) return;
+    dodgeState.running = true; dodgeState.over=false;
+    document.getElementById('dodge-overlay').classList.add('hidden');
+    dodgeState.lastTime = performance.now();
+    dodgeState.rafId = requestAnimationFrame(dodgeLoop);
+  }
+  function stopDodgeLoop(){
+    if(dodgeState){ dodgeState.running=false; if(dodgeState.rafId) cancelAnimationFrame(dodgeState.rafId); }
+  }
+  function dodgeLoop(t){
+    const s = dodgeState;
+    if(!s || !s.running) return;
+    const dt = Math.min(32, t-s.lastTime); s.lastTime=t;
+    updateDodge(dt/16.67, dt);
+    drawDodge();
+    if(s.running) s.rafId = requestAnimationFrame(dodgeLoop);
+  }
+  function endDodge(){
+    const s = dodgeState;
+    s.running=false; s.over=true;
+    if(s.rafId) cancelAnimationFrame(s.rafId);
+    const overlay = document.getElementById('dodge-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'GAME OVER';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' · 스페이스바로 재시작';
+    finalizeScore('dodge', s.score, overlay);
+  }
+  document.getElementById('dodge-start').addEventListener('click', function(){
+    if(dodgeState.over) prepareDodge();
+    startDodge();
+  });
+  document.getElementById('dodge-canvas').addEventListener('pointerdown', function(){
+    if(!dodgeState) return;
+    if(!dodgeState.running){ if(dodgeState.over) prepareDodge(); startDodge(); }
+  });
+  document.getElementById('dodge-canvas').addEventListener('pointermove', function(e){
+    if(!dodgeState || !dodgeState.running) return;
+    if(e.buttons !== 1 && e.pointerType !== 'touch') return;
+    const rect = this.getBoundingClientRect();
+    const scaleX = DODGE_W / rect.width;
+    const x = (e.clientX - rect.left) * scaleX;
+    dodgeState.player.x = Math.max(0, Math.min(DODGE_W-dodgeState.player.w, x - dodgeState.player.w/2));
+  });
+  function handleDodgeKey(e){
+    if(['ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+    if(!dodgeState || !dodgeState.running) return;
+    if(e.key==='ArrowLeft') dodgeState.player.moveDir = -1;
+    else if(e.key==='ArrowRight') dodgeState.player.moveDir = 1;
+  }
+
+  /* ============================================================
+     FRUIT SLICE
+  ============================================================= */
+  const FS_W = 320, FS_H = 420;
+  const FS_ICONS = ['🍎','🍊','🍋','🍇','🍓','🍉','🍑'];
+  let fruitsliceCtx, fruitsliceState;
+
+  function prepareFruitSlice(){
+    fruitsliceState = {
+      items:[], spawnTimer:0, spawnInterval:42, trail:[],
+      score:0, lives:3, running:false, over:false, rafId:null, lastTime:0
+    };
+    document.getElementById('fruitslice-score').textContent = '0';
+    document.getElementById('fruitslice-lives').textContent = '3';
+    loadMyBest('fruitslice');
+    drawFruitSlice();
+    const overlay = document.getElementById('fruitslice-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'FRUIT SLICE';
+    overlay.querySelector('.overlay-msg').textContent = '드래그해서 과일을 자르고, 폭탄은 피하세요';
+  }
+
+  function spawnFruit(){
+    const s = fruitsliceState;
+    const isBomb = Math.random() < 0.15;
+    const x = 40 + Math.random()*(FS_W-80);
+    s.items.push({
+      x:x, y:FS_H+20, vx:(Math.random()-0.5)*3, vy:-11-Math.random()*3, r:18,
+      icon: isBomb ? '💣' : FS_ICONS[Math.floor(Math.random()*FS_ICONS.length)],
+      isBomb:isBomb, sliced:false, missed:false
+    });
+  }
+
+  function updateFruitSlice(step){
+    const s = fruitsliceState;
+    s.spawnTimer += step;
+    if(s.spawnTimer >= s.spawnInterval){ s.spawnTimer=0; spawnFruit(); }
+    s.items.forEach(function(it){
+      if(it.sliced) return;
+      it.vy += 0.22*step;
+      it.x += it.vx*step;
+      it.y += it.vy*step;
+      if(!it.missed && it.y-it.r > FS_H && !it.isBomb){
+        it.missed = true;
+        s.lives--;
+        document.getElementById('fruitslice-lives').textContent = String(Math.max(0,s.lives));
+        if(s.lives<=0){ endFruitSlice(); }
+      }
+    });
+    s.items = s.items.filter(function(it){ return !it.sliced && it.y-it.r < FS_H+40; });
+    const now = performance.now();
+    s.trail = s.trail.filter(function(p){ return now-p.t < 150; });
+  }
+
+  function fsPointFromEvent(e){
+    const rect = document.getElementById('fruitslice-canvas').getBoundingClientRect();
+    const scaleX = FS_W/rect.width, scaleY = FS_H/rect.height;
+    return { x:(e.clientX-rect.left)*scaleX, y:(e.clientY-rect.top)*scaleY, t:performance.now() };
+  }
+
+  function checkSliceAt(point){
+    const s = fruitsliceState;
+    if(!s.running) return;
+    s.items.forEach(function(it){
+      if(it.sliced) return;
+      const dx = it.x-point.x, dy = it.y-point.y;
+      if(dx*dx+dy*dy < (it.r+10)*(it.r+10)){
+        it.sliced = true;
+        if(it.isBomb){
+          s.lives = 0;
+          document.getElementById('fruitslice-lives').textContent = '0';
+          endFruitSlice();
+        }else{
+          s.score += 10;
+          document.getElementById('fruitslice-score').textContent = s.score;
+        }
+      }
+    });
+  }
+
+  document.getElementById('fruitslice-canvas').addEventListener('pointerdown', function(e){
+    if(!fruitsliceState) return;
+    if(!fruitsliceState.running){ if(fruitsliceState.over) prepareFruitSlice(); startFruitSlice(); return; }
+    const p = fsPointFromEvent(e);
+    fruitsliceState.trail.push(p);
+    checkSliceAt(p);
+  });
+  document.getElementById('fruitslice-canvas').addEventListener('pointermove', function(e){
+    if(!fruitsliceState || !fruitsliceState.running) return;
+    if(e.buttons !== 1 && e.pointerType !== 'touch') return;
+    const p = fsPointFromEvent(e);
+    fruitsliceState.trail.push(p);
+    checkSliceAt(p);
+  });
+
+  function drawFruitSlice(){
+    const ctx = fruitsliceCtx, s = fruitsliceState;
+    ctx.fillStyle='#06060B'; ctx.fillRect(0,0,FS_W,FS_H);
+    if(s.trail.length>1){
+      ctx.strokeStyle='rgba(0,229,255,0.5)';
+      ctx.lineWidth=3;
+      ctx.beginPath();
+      ctx.moveTo(s.trail[0].x, s.trail[0].y);
+      for(let i=1;i<s.trail.length;i++) ctx.lineTo(s.trail[i].x, s.trail[i].y);
+      ctx.stroke();
+    }
+    ctx.font='30px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    s.items.forEach(function(it){
+      if(it.sliced) return;
+      ctx.fillText(it.icon, it.x, it.y);
+    });
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+
+  function startFruitSlice(){
+    if(!fruitsliceState || fruitsliceState.running) return;
+    fruitsliceState.running=true; fruitsliceState.over=false;
+    document.getElementById('fruitslice-overlay').classList.add('hidden');
+    fruitsliceState.lastTime = performance.now();
+    fruitsliceState.rafId = requestAnimationFrame(fruitsliceLoop);
+  }
+  function stopFruitSliceLoop(){
+    if(fruitsliceState){ fruitsliceState.running=false; if(fruitsliceState.rafId) cancelAnimationFrame(fruitsliceState.rafId); }
+  }
+  function fruitsliceLoop(t){
+    const s = fruitsliceState;
+    if(!s || !s.running) return;
+    const dt = Math.min(32, t-s.lastTime); s.lastTime=t;
+    updateFruitSlice(dt/16.67);
+    drawFruitSlice();
+    if(s.running) s.rafId = requestAnimationFrame(fruitsliceLoop);
+  }
+  function endFruitSlice(){
+    const s = fruitsliceState;
+    s.running=false; s.over=true;
+    if(s.rafId) cancelAnimationFrame(s.rafId);
+    const overlay = document.getElementById('fruitslice-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent='GAME OVER';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' · 스페이스바로 재시작';
+    finalizeScore('fruitslice', s.score, overlay);
+  }
+  document.getElementById('fruitslice-start').addEventListener('click', function(){
+    if(fruitsliceState.over) prepareFruitSlice();
+    startFruitSlice();
+  });
+  function handleFruitSliceKey(e){
+    if(e.key===' '){
+      e.preventDefault();
+      if(!fruitsliceState) return;
+      if(!fruitsliceState.running){ if(fruitsliceState.over) prepareFruitSlice(); startFruitSlice(); }
+    }
+  }
+
   /* ============ global key listener ============ */
   window.addEventListener('keyup', function(e){
     if(currentScreen==='breakout' && breakoutState && (e.key==='ArrowLeft'||e.key==='ArrowRight')){
@@ -2986,6 +4035,9 @@
     }
     if(currentScreen==='pong' && pongState && (e.key==='ArrowUp'||e.key==='ArrowDown')){
       pongState.playerPaddle.moveDir = 0;
+    }
+    if(currentScreen==='dodge' && dodgeState && (e.key==='ArrowLeft'||e.key==='ArrowRight')){
+      dodgeState.player.moveDir = 0;
     }
   });
   window.addEventListener('keydown', function(e){
@@ -2996,6 +4048,11 @@
     else if(currentScreen==='puzzle15') handlePuzzleKey(e);
     else if(currentScreen==='breakout') handleBreakoutKey(e);
     else if(currentScreen==='pong') handlePongKey(e);
+    else if(currentScreen==='crossy') handleCrossyKey(e);
+    else if(currentScreen==='stack') handleStackKey(e);
+    else if(currentScreen==='flappy') handleFlappyKey(e);
+    else if(currentScreen==='dodge') handleDodgeKey(e);
+    else if(currentScreen==='fruitslice') handleFruitSliceKey(e);
   });
 
   /* ============ init ============ */
@@ -3005,6 +4062,11 @@
     nextCtx = document.getElementById('tetris-next').getContext('2d');
     breakoutCtx = document.getElementById('breakout-canvas').getContext('2d');
     pongCtx = document.getElementById('pong-canvas').getContext('2d');
+    crossyCtx = document.getElementById('crossy-canvas').getContext('2d');
+    stackCtx = document.getElementById('stack-canvas').getContext('2d');
+    flappyCtx = document.getElementById('flappy-canvas').getContext('2d');
+    dodgeCtx = document.getElementById('dodge-canvas').getContext('2d');
+    fruitsliceCtx = document.getElementById('fruitslice-canvas').getContext('2d');
     await runStorageHealthCheck();
     await initPlayer();
     renderRankTabs();
