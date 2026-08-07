@@ -3567,7 +3567,7 @@
     const level = s.blocks.length;
     const currentAbsY = stackBlockAbsY(level);
     let cameraOffset = 90 - currentAbsY;
-    if(cameraOffset > 0) cameraOffset = 0;
+    if(cameraOffset < 0) cameraOffset = 0;
     s.blocks.forEach(function(b, i){
       const y = stackBlockAbsY(i) + cameraOffset;
       if(y < -STACK_BLOCK_H || y > STACK_H) return;
