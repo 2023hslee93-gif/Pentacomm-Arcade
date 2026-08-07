@@ -4620,14 +4620,29 @@
   const BUBBLE_COLORS = ['#FF4757','#00E5FF','#FFD23F','#3DFF7A','#FF9F43','#B466FF'];
   const BUBBLE_ROWS = 10, BUBBLE_COLS = 8, BUBBLE_FILLED_ROWS = 5;
   const BUBBLE_W = 280, BUBBLE_H = 420, BUBBLE_CELL = BUBBLE_W/BUBBLE_COLS;
+  const BUBBLE_ROW_H = BUBBLE_CELL*0.866;
   let bubbleCtx, bubbleState;
+
+  function bubbleRowCols(r){ return (r % 2 === 0) ? BUBBLE_COLS : BUBBLE_COLS-1; }
+  function bubbleCellX(r,c){
+    const offset = (r % 2 === 1) ? BUBBLE_CELL/2 : 0;
+    return offset + c*BUBBLE_CELL + BUBBLE_CELL/2;
+  }
+  function bubbleCellY(r,c){ return r*BUBBLE_ROW_H + BUBBLE_CELL/2; }
+  function bubbleNeighbors(r,c){
+    const n = [[r,c-1],[r,c+1]];
+    if(r % 2 === 0){ n.push([r-1,c-1],[r-1,c],[r+1,c-1],[r+1,c]); }
+    else{ n.push([r-1,c],[r-1,c+1],[r+1,c],[r+1,c+1]); }
+    return n;
+  }
 
   function prepareBubble(){
     const grid = [];
     for(let r=0;r<BUBBLE_ROWS;r++){
       const row = [];
+      const cols = bubbleRowCols(r);
       for(let c=0;c<BUBBLE_COLS;c++){
-        row.push(r < BUBBLE_FILLED_ROWS ? BUBBLE_COLORS[Math.floor(Math.random()*BUBBLE_COLORS.length)] : null);
+        row.push((c < cols && r < BUBBLE_FILLED_ROWS) ? BUBBLE_COLORS[Math.floor(Math.random()*BUBBLE_COLORS.length)] : null);
       }
       grid.push(row);
     }
@@ -4668,14 +4683,52 @@
       const key = cr+'_'+cc;
       if(visited.has(key)) continue;
       visited.add(key);
-      if(cr<0||cr>=s.rows||cc<0||cc>=s.cols) continue;
+      if(cr<0||cr>=s.rows||cc<0||cc>=bubbleRowCols(cr)) continue;
       if(s.grid[cr][cc] !== color) continue;
       group.push([cr,cc]);
-      stack.push([cr-1,cc],[cr+1,cc],[cr,cc-1],[cr,cc+1]);
+      bubbleNeighbors(cr,cc).forEach(function(n){ stack.push(n); });
     }
     if(group.length >= 3){
       group.forEach(function(pos){ s.grid[pos[0]][pos[1]] = null; });
       s.score += group.length*10;
+      document.getElementById('bubble-score').textContent = s.score;
+      return group.length;
+    }
+    return 0;
+  }
+
+  function findBubblesConnectedToTop(){
+    const s = bubbleState;
+    const visited = Array.from({length:s.rows}, function(){ return Array(s.cols).fill(false); });
+    const stack = [];
+    for(let c=0;c<bubbleRowCols(0);c++){
+      if(s.grid[0][c]){ visited[0][c] = true; stack.push([0,c]); }
+    }
+    while(stack.length){
+      const cell = stack.pop();
+      const r=cell[0], c=cell[1];
+      bubbleNeighbors(r,c).forEach(function(n){
+        const nr=n[0], nc=n[1];
+        if(nr<0||nr>=s.rows||nc<0||nc>=bubbleRowCols(nr)) return;
+        if(visited[nr][nc] || !s.grid[nr][nc]) return;
+        visited[nr][nc] = true;
+        stack.push([nr,nc]);
+      });
+    }
+    return visited;
+  }
+
+  function dropFloatingBubbles(){
+    const s = bubbleState;
+    const connected = findBubblesConnectedToTop();
+    let dropped = 0;
+    for(let r=0;r<s.rows;r++){
+      for(let c=0;c<bubbleRowCols(r);c++){
+        if(s.grid[r][c] && !connected[r][c]){ s.grid[r][c] = null; dropped++; }
+      }
+    }
+    if(dropped > 0){
+      s.score += dropped*15;
       document.getElementById('bubble-score').textContent = s.score;
     }
   }
@@ -4690,16 +4743,17 @@
     const s = bubbleState;
     let bestR=0, bestC=0, bestDist=Infinity;
     for(let r=0;r<s.rows;r++){
-      for(let c=0;c<s.cols;c++){
+      for(let c=0;c<bubbleRowCols(r);c++){
         if(s.grid[r][c]) continue;
-        const cx = c*BUBBLE_CELL+BUBBLE_CELL/2, cy = r*BUBBLE_CELL+BUBBLE_CELL/2;
+        const cx = bubbleCellX(r,c), cy = bubbleCellY(r,c);
         const dx = f.x-cx, dy = f.y-cy;
         const d = dx*dx+dy*dy;
         if(d<bestDist){ bestDist=d; bestR=r; bestC=c; }
       }
     }
     s.grid[bestR][bestC] = f.color;
-    resolveBubbleMatch(bestR, bestC);
+    const cleared = resolveBubbleMatch(bestR, bestC);
+    if(cleared > 0) dropFloatingBubbles();
     s.currentColor = BUBBLE_COLORS[Math.floor(Math.random()*BUBBLE_COLORS.length)];
     checkBubbleWin();
   }
@@ -4716,9 +4770,9 @@
     else{
       outer:
       for(let r=0;r<s.rows;r++){
-        for(let c=0;c<s.cols;c++){
+        for(let c=0;c<bubbleRowCols(r);c++){
           if(!s.grid[r][c]) continue;
-          const cx = c*BUBBLE_CELL+BUBBLE_CELL/2, cy = r*BUBBLE_CELL+BUBBLE_CELL/2;
+          const cx = bubbleCellX(r,c), cy = bubbleCellY(r,c);
           const dx = f.x-cx, dy = f.y-cy;
           if(dx*dx+dy*dy < BUBBLE_CELL*BUBBLE_CELL*0.85){ collided=true; break outer; }
         }
@@ -4732,13 +4786,13 @@
     ctx.fillStyle = '#101020';
     ctx.fillRect(0,0,BUBBLE_W,BUBBLE_H);
     for(let r=0;r<s.rows;r++){
-      for(let c=0;c<s.cols;c++){
+      for(let c=0;c<bubbleRowCols(r);c++){
         const color = s.grid[r][c];
         if(!color) continue;
-        const cx = c*BUBBLE_CELL+BUBBLE_CELL/2, cy = r*BUBBLE_CELL+BUBBLE_CELL/2;
+        const cx = bubbleCellX(r,c), cy = bubbleCellY(r,c);
         ctx.fillStyle = color;
         ctx.shadowColor = color; ctx.shadowBlur = 4;
-        ctx.beginPath(); ctx.arc(cx,cy,BUBBLE_CELL*0.42,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(cx,cy,BUBBLE_CELL*0.44,0,Math.PI*2); ctx.fill();
         ctx.shadowBlur = 0;
       }
     }
@@ -4754,12 +4808,12 @@
     if(s.flying){
       ctx.fillStyle = s.flying.color;
       ctx.shadowColor = s.flying.color; ctx.shadowBlur = 6;
-      ctx.beginPath(); ctx.arc(s.flying.x, s.flying.y, BUBBLE_CELL*0.42, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(s.flying.x, s.flying.y, BUBBLE_CELL*0.44, 0, Math.PI*2); ctx.fill();
       ctx.shadowBlur = 0;
     }
     ctx.fillStyle = s.currentColor;
     ctx.shadowColor = s.currentColor; ctx.shadowBlur = 8;
-    ctx.beginPath(); ctx.arc(s.shooterX, s.shooterY, BUBBLE_CELL*0.42, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(s.shooterX, s.shooterY, BUBBLE_CELL*0.44, 0, Math.PI*2); ctx.fill();
     ctx.shadowBlur = 0;
   }
 
