@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
 <title>NEON ARCADE</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -34,6 +34,7 @@
     font-family:'Inter',system-ui,sans-serif;
     min-height:100vh;
     overflow-x:hidden;
+    overscroll-behavior-y:contain;
     -webkit-font-smoothing:antialiased;
   }
 
@@ -242,7 +243,7 @@
   .hud b{ color:var(--yellow); font-size:14px; margin-left:4px; }
 
   .game-stage{ position:relative; display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
-  canvas{ background:var(--bg-deep); border-radius:8px; border:1px solid var(--border); display:block; max-width:100%; }
+  canvas{ background:var(--bg-deep); border-radius:8px; border:1px solid var(--border); display:block; max-width:100%; touch-action:none; }
 
   .tetris-side{ display:flex; flex-direction:column; align-items:center; gap:6px; }
   .next-label{ font-family:'Press Start 2P',monospace; font-size:10px; color:var(--text-dim); }
@@ -267,8 +268,8 @@
 
   /* ---------- shisen-sho ---------- */
   .shisen-board{
-    display:grid; grid-template-columns:repeat(9, 1fr); gap:4px;
-    width:100%; max-width:480px; aspect-ratio:9/8; margin:0 auto;
+    display:grid; grid-template-columns:repeat(9, 1fr); grid-auto-rows:1fr; gap:4px;
+    width:100%; max-width:480px; aspect-ratio:9/8; margin:0 auto; touch-action:manipulation;
   }
   .shisen-tile{
     background:var(--bg-deep); border:1px solid var(--border); border-radius:6px;
@@ -293,7 +294,7 @@
 
   /* ---------- 2048 ---------- */
   .g2048-board{
-    display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;
+    display:grid; grid-template-columns:repeat(4, 1fr); grid-auto-rows:1fr; gap:8px;
     width:100%; max-width:340px; aspect-ratio:1/1; margin:0 auto;
     background:var(--bg-deep); border-radius:8px; padding:8px; border:1px solid var(--border);
   }
@@ -313,8 +314,8 @@
 
   /* ---------- minesweeper ---------- */
   .mines-board{
-    display:grid; grid-template-columns:repeat(12, 1fr); gap:2px;
-    width:100%; max-width:480px; aspect-ratio:12/10; margin:0 auto;
+    display:grid; grid-template-columns:repeat(12, 1fr); grid-auto-rows:1fr; gap:2px;
+    width:100%; max-width:480px; aspect-ratio:12/10; margin:0 auto; touch-action:manipulation;
   }
   .mine-cell{
     background:var(--bg-deep); border:1px solid var(--border); border-radius:3px;
@@ -333,8 +334,8 @@
 
   /* ---------- memory match ---------- */
   .memory-board{
-    display:grid; grid-template-columns:repeat(6, 1fr); gap:6px;
-    width:100%; max-width:400px; aspect-ratio:1/1; margin:0 auto;
+    display:grid; grid-template-columns:repeat(6, 1fr); grid-auto-rows:1fr; gap:6px;
+    width:100%; max-width:400px; aspect-ratio:1/1; margin:0 auto; touch-action:manipulation;
   }
   .memory-card{
     background:var(--bg-deep); border:1px solid var(--border); border-radius:6px;
@@ -346,8 +347,8 @@
 
   /* ---------- whack-a-mole ---------- */
   .mole-board{
-    display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;
-    width:100%; max-width:300px; aspect-ratio:1/1; margin:0 auto;
+    display:grid; grid-template-columns:repeat(3, 1fr); grid-auto-rows:1fr; gap:10px;
+    width:100%; max-width:300px; aspect-ratio:1/1; margin:0 auto; touch-action:manipulation;
   }
   .mole-hole{
     background:var(--bg-deep); border:1px solid var(--border); border-radius:50%;
@@ -359,8 +360,8 @@
 
   /* ---------- 15 puzzle ---------- */
   .puzzle-board{
-    display:grid; grid-template-columns:repeat(5, 1fr); gap:6px;
-    width:100%; max-width:340px; aspect-ratio:1/1; margin:0 auto;
+    display:grid; grid-template-columns:repeat(5, 1fr); grid-auto-rows:1fr; gap:6px;
+    width:100%; max-width:340px; aspect-ratio:1/1; margin:0 auto; touch-action:manipulation;
   }
   .puzzle-tile{
     background:var(--card); border:1px solid var(--border); border-radius:6px;
@@ -372,7 +373,7 @@
 
   /* ---------- apple game ---------- */
   .apple-board{
-    position:relative; display:grid; grid-template-columns:repeat(10, 1fr); gap:2px;
+    position:relative; display:grid; grid-template-columns:repeat(10, 1fr); grid-auto-rows:1fr; gap:2px;
     width:100%; max-width:400px; aspect-ratio:10/8; margin:0 auto;
     user-select:none; touch-action:none;
   }
@@ -391,8 +392,8 @@
 
   /* ---------- simon ---------- */
   .simon-board{
-    display:grid; grid-template-columns:repeat(2, 1fr); gap:10px;
-    width:100%; max-width:260px; aspect-ratio:1/1; margin:0 auto;
+    display:grid; grid-template-columns:repeat(2, 1fr); grid-auto-rows:1fr; gap:10px;
+    width:100%; max-width:260px; aspect-ratio:1/1; margin:0 auto; touch-action:manipulation;
   }
   .simon-pad{
     background:var(--pad-color); opacity:0.35; border:none; border-radius:16px;
@@ -400,6 +401,39 @@
   }
   .simon-pad.active{ opacity:1; box-shadow:0 0 20px var(--pad-color); }
   .simon-pad:focus-visible{ outline:2px solid #fff; }
+
+  /* ---------- wordle ---------- */
+  .wordle-wrap{
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+    width:100%; max-width:340px; margin:0 auto;
+  }
+  .wordle-grid{
+    display:grid; grid-template-rows:repeat(6, 1fr); gap:6px;
+    width:100%; max-width:260px;
+  }
+  .wordle-row{ display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; }
+  .wordle-tile{
+    aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
+    background:var(--bg-deep); border:2px solid var(--border); border-radius:6px;
+    font-family:'Press Start 2P',monospace; font-size:15px; font-weight:700; color:var(--text);
+    text-transform:uppercase;
+  }
+  .wordle-tile.filled{ border-color:var(--text-dim); }
+  .wordle-tile.correct{ background:var(--green); border-color:var(--green); color:#04140a; }
+  .wordle-tile.present{ background:var(--yellow); border-color:var(--yellow); color:#2a1e00; }
+  .wordle-tile.absent{ background:#2a2a3a; border-color:#2a2a3a; color:var(--text-dim); }
+
+  .wordle-keyboard{ display:flex; flex-direction:column; gap:5px; width:100%; }
+  .wordle-krow{ display:flex; justify-content:center; gap:4px; }
+  .wordle-key{
+    min-width:24px; height:40px; padding:0 5px; border-radius:5px; border:none;
+    background:var(--card); color:var(--text); font-size:11px; font-weight:700; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; touch-action:manipulation;
+  }
+  .wordle-key.wide{ min-width:44px; font-size:9px; }
+  .wordle-key.correct{ background:var(--green); color:#04140a; }
+  .wordle-key.present{ background:var(--yellow); color:#2a1e00; }
+  .wordle-key.absent{ background:#2a2a3a; color:var(--text-dim); }
 
   /* ---------- nickname modal ---------- */
   .nickname-modal{ position:fixed; inset:0; z-index:70; background:rgba(6,6,11,0.9); display:flex; align-items:center; justify-content:center; padding:20px; }
@@ -660,6 +694,18 @@
         <div class="cabinet-screen" style="font-size:40px;">🦘</div>
         <div class="cabinet-label pixel">JUMPER</div>
         <div class="cabinet-sub">발판을 밟으며 계속 올라가세요</div>
+      </button>
+
+      <button class="cabinet" data-game="wordle" style="--accent:var(--green)">
+        <div class="cabinet-screen" style="font-size:40px;">🔤</div>
+        <div class="cabinet-label pixel">WORDLE</div>
+        <div class="cabinet-sub">6번 안에 단어를 맞춰보세요</div>
+      </button>
+
+      <button class="cabinet" data-game="gomoku" style="--accent:var(--orange)">
+        <div class="cabinet-screen" style="font-size:40px;">⚫</div>
+        <div class="cabinet-label pixel">GOMOKU</div>
+        <div class="cabinet-sub">AI를 상대로 오목 5줄을 만드세요</div>
       </button>
     </div>
 
@@ -1107,7 +1153,7 @@
       <canvas id="maze-canvas" width="286" height="286"></canvas>
       <div class="overlay" id="maze-overlay">
         <div class="overlay-title pixel">MAZE</div>
-        <div class="overlay-msg">방향키로 이동해서 초록색 출구를 찾으세요</div>
+        <div class="overlay-msg">오늘의 미로 · 방향키로 이동해서 초록색 출구를 찾으세요</div>
         <button class="start-btn" id="maze-start">시작하기</button>
       </div>
     </div>
@@ -1126,6 +1172,7 @@
       <button class="back-btn" data-back>← 오락실로</button>
       <div class="hud pixel">
         <span>SCORE<b id="bubble-score">0</b></span>
+        <span>TIME<b id="bubble-time">00:00</b></span>
         <span>BEST<b id="bubble-best">0</b></span>
       </div>
     </div>
@@ -1133,7 +1180,7 @@
       <canvas id="bubble-canvas" width="280" height="420"></canvas>
       <div class="overlay" id="bubble-overlay">
         <div class="overlay-title pixel">BUBBLE SHOOTER</div>
-        <div class="overlay-msg">조준해서 같은 색 구슬 3개 이상을 맞추세요</div>
+        <div class="overlay-msg">조준해서 같은 색 구슬 3개 이상을 맞추세요 · 빠르게 클리어할수록 보너스 점수!</div>
         <button class="start-btn" id="bubble-start">시작하기</button>
       </div>
     </div>
@@ -1179,6 +1226,49 @@
       </div>
     </div>
     <p class="controls-hint">←→ 이동 (또는 드래그) · 발판에 착지하면 자동으로 튕겨요</p>
+  </section>
+
+  <!-- WORDLE -->
+  <section id="screen-wordle" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>시도<b id="wordle-tries">0/6</b></span>
+        <span>BEST<b id="wordle-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="wordle-wrap">
+        <div class="wordle-grid" id="wordle-grid"></div>
+        <div class="wordle-keyboard" id="wordle-keyboard"></div>
+      </div>
+      <div class="overlay" id="wordle-overlay">
+        <div class="overlay-title pixel">WORDLE</div>
+        <div class="overlay-msg">6번 안에 5글자 영단어를 맞춰보세요</div>
+        <button class="start-btn" id="wordle-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">키보드 또는 화면 자판으로 입력 · Enter 제출 · Backspace 지우기</p>
+  </section>
+
+  <!-- GOMOKU -->
+  <section id="screen-gomoku" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>수<b id="gomoku-moves">0</b></span>
+        <span>BEST<b id="gomoku-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <canvas id="gomoku-canvas" width="325" height="325"></canvas>
+      <div class="overlay" id="gomoku-overlay">
+        <div class="overlay-title pixel">GOMOKU</div>
+        <div class="overlay-msg">AI를 상대로 먼저 5개를 연결하세요</div>
+        <button class="start-btn" id="gomoku-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">원하는 위치를 탭/클릭해서 돌을 놓으세요 (흑돌: 나 · 백돌: AI)</p>
   </section>
 
 </div>
@@ -1250,7 +1340,9 @@
     { id:'maze', label:'MAZE', icon:'🌀', color:'var(--green)' },
     { id:'bubble', label:'BUBBLE', icon:'🔵', color:'var(--cyan)' },
     { id:'darts', label:'DARTS', icon:'🎯', color:'var(--red)' },
-    { id:'jumper', label:'JUMPER', icon:'🦘', color:'var(--yellow)' }
+    { id:'jumper', label:'JUMPER', icon:'🦘', color:'var(--yellow)' },
+    { id:'wordle', label:'WORDLE', icon:'🔤', color:'var(--green)' },
+    { id:'gomoku', label:'GOMOKU', icon:'⚫', color:'var(--orange)' }
   ];
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
@@ -1680,6 +1772,17 @@
     }
     if(currentScreen === 'darts' && dartsState){ stopDartsLoop(); }
     if(currentScreen === 'jumper' && jumperState){ stopJumperLoop(); }
+    if(currentScreen === 'wordle' && wordleState){
+      if(!wordleState.over && wordleState.guesses.length > 0){
+        const partial = wordleBestQuality()*10;
+        if(partial > 0) submitScore('wordle', partial);
+      }
+    }
+    if(currentScreen === 'gomoku' && gomokuState){
+      if(!gomokuState.over && gomokuState.moves > 0){
+        submitScore('gomoku', gomokuState.moves*3);
+      }
+    }
     currentScreen = id;
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
@@ -1712,6 +1815,8 @@
     if(id === 'bubble') prepareBubble();
     if(id === 'darts') prepareDarts();
     if(id === 'jumper') prepareJumper();
+    if(id === 'wordle') prepareWordle();
+    if(id === 'gomoku') prepareGomoku();
   }
 
   document.querySelectorAll('.cabinet[data-game]').forEach(function(btn){
@@ -4477,12 +4582,26 @@
   const MAZE_N = 12, MAZE_CELL = 24;
   let mazeCtx, mazeState;
 
-  function generateMaze(n){
+  function mulberry32(seed){
+    return function(){
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function dailyMazeSeed(){
+    const d = new Date();
+    return d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate();
+  }
+
+  function generateMaze(n, rand){
+    rand = rand || Math.random;
     const visited = Array.from({length:n}, function(){ return Array(n).fill(false); });
     const wallsH = Array.from({length:n}, function(){ return Array(n-1).fill(true); });
     const wallsV = Array.from({length:n-1}, function(){ return Array(n).fill(true); });
     function shuffle(arr){
-      for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
+      for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rand()*(i+1)); const t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
       return arr;
     }
     function carve(r,c){
@@ -4504,7 +4623,7 @@
 
   function prepareMaze(){
     mazeState = {
-      maze: generateMaze(MAZE_N), playerR:0, playerC:0, moves:0,
+      maze: generateMaze(MAZE_N, mulberry32(dailyMazeSeed())), playerR:0, playerC:0, moves:0,
       elapsed:0, timerId:null, startTime:0, running:false, over:false
     };
     document.getElementById('maze-time').textContent = '00:00';
@@ -4513,7 +4632,7 @@
     const overlay = document.getElementById('maze-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = 'MAZE';
-    overlay.querySelector('.overlay-msg').textContent = '방향키로 이동해서 초록색 출구를 찾으세요';
+    overlay.querySelector('.overlay-msg').textContent = '오늘의 미로 · 방향키로 이동해서 초록색 출구를 찾으세요';
   }
 
   function drawMaze(){
@@ -4651,15 +4770,17 @@
       shooterX: BUBBLE_W/2, shooterY: BUBBLE_H-24,
       currentColor: BUBBLE_COLORS[Math.floor(Math.random()*BUBBLE_COLORS.length)],
       flying:null, aimX: BUBBLE_W/2, aimY: BUBBLE_H/2,
+      shotsFired:0, startTime:0, elapsed:0, timeDisplayId:null,
       score:0, running:false, over:false, rafId:null, lastTime:0
     };
     document.getElementById('bubble-score').textContent = '0';
+    document.getElementById('bubble-time').textContent = '00:00';
     loadMyBest('bubble');
     drawBubble();
     const overlay = document.getElementById('bubble-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = 'BUBBLE SHOOTER';
-    overlay.querySelector('.overlay-msg').textContent = '조준해서 같은 색 구슬 3개 이상을 맞추세요';
+    overlay.querySelector('.overlay-msg').textContent = '조준해서 같은 색 구슬 3개 이상을 맞추세요 · 빠르게 클리어할수록 보너스 점수!';
   }
 
   function fireBubble(){
@@ -4668,6 +4789,7 @@
     const dx = s.aimX-s.shooterX, dy = s.aimY-s.shooterY;
     const len = Math.hypot(dx,dy) || 1;
     const speed = 6;
+    s.shotsFired++;
     s.flying = { x:s.shooterX, y:s.shooterY, vx:dx/len*speed, vy:dy/len*speed, color:s.currentColor };
   }
 
@@ -4822,10 +4944,23 @@
     bubbleState.running = true; bubbleState.over=false;
     document.getElementById('bubble-overlay').classList.add('hidden');
     bubbleState.lastTime = performance.now();
+    bubbleState.startTime = performance.now() - bubbleState.elapsed*1000;
+    bubbleState.timeDisplayId = setInterval(bubbleTimeTick, 1000);
     bubbleState.rafId = requestAnimationFrame(bubbleLoop);
   }
+  function bubbleTimeTick(){
+    const s = bubbleState;
+    s.elapsed = Math.floor((performance.now()-s.startTime)/1000);
+    const mm = String(Math.floor(s.elapsed/60)).padStart(2,'0');
+    const ss = String(s.elapsed%60).padStart(2,'0');
+    document.getElementById('bubble-time').textContent = mm+':'+ss;
+  }
   function stopBubbleLoop(){
-    if(bubbleState){ bubbleState.running=false; if(bubbleState.rafId) cancelAnimationFrame(bubbleState.rafId); }
+    if(bubbleState){
+      bubbleState.running=false;
+      if(bubbleState.rafId) cancelAnimationFrame(bubbleState.rafId);
+      if(bubbleState.timeDisplayId){ clearInterval(bubbleState.timeDisplayId); bubbleState.timeDisplayId=null; }
+    }
   }
   function bubbleLoop(t){
     const s = bubbleState;
@@ -4839,10 +4974,18 @@
     const s = bubbleState;
     s.running=false; s.over=true;
     if(s.rafId) cancelAnimationFrame(s.rafId);
+    if(s.timeDisplayId){ clearInterval(s.timeDisplayId); s.timeDisplayId=null; }
+    s.elapsed = Math.floor((performance.now()-s.startTime)/1000);
+    let timeBonus;
+    if(s.elapsed <= 25) timeBonus = 800;
+    else if(s.elapsed >= 150) timeBonus = 0;
+    else timeBonus = Math.round(800*(1-(s.elapsed-25)/125));
+    s.score += timeBonus;
+    document.getElementById('bubble-score').textContent = s.score;
     const overlay = document.getElementById('bubble-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
-    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' · 다시 시작하려면 버튼을 누르세요';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' (스피드 보너스 +' + timeBonus + ') · 다시 시작하려면 버튼을 누르세요';
     finalizeScore('bubble', s.score, overlay);
   }
   document.getElementById('bubble-start').addEventListener('click', function(){
@@ -4884,6 +5027,8 @@
   function prepareDarts(){
     dartsState = {
       t:0, throwsLeft:9, score:0, lastResult:null,
+      radFreq: 0.05 + Math.random()*0.03, angFreq: 0.035 + Math.random()*0.025,
+      phase: Math.random()*Math.PI*2,
       running:false, over:false, rafId:null, lastTime:0
     };
     document.getElementById('darts-score').textContent = '0';
@@ -4893,21 +5038,30 @@
     const overlay = document.getElementById('darts-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = 'DARTS';
-    overlay.querySelector('.overlay-msg').textContent = '타이밍 맞춰 과녁 중앙을 노리세요 (9번의 기회)';
+    overlay.querySelector('.overlay-msg').textContent = '타이밍 맞춰 과녁 중앙을 노리세요 (9번의 기회, 던질수록 빨라져요)';
+  }
+
+  function dartsReticlePos(s){
+    const dist = 80 + 70*Math.sin(s.t*s.radFreq + s.phase);
+    const angle = s.t*s.angFreq;
+    return { x: dist*Math.cos(angle), y: dist*Math.sin(angle) };
   }
 
   function throwDart(){
     const s = dartsState;
     if(!s.running || s.throwsLeft<=0) return;
-    const dist = 80 + 70*Math.sin(s.t*0.06);
-    const angle = s.t*0.045;
-    const x = dist*Math.cos(angle), y = dist*Math.sin(angle);
+    const pos = dartsReticlePos(s);
+    const jitter = 20;
+    const x = pos.x + (Math.random()-0.5)*jitter;
+    const y = pos.y + (Math.random()-0.5)*jitter;
     const r = Math.hypot(x,y);
     let pts = 0;
     if(r<15) pts=50; else if(r<35) pts=25; else if(r<60) pts=15; else if(r<90) pts=10; else if(r<120) pts=5;
     s.score += pts;
     s.lastResult = { x:x, y:y };
     s.throwsLeft--;
+    s.radFreq += 0.004;
+    s.angFreq += 0.003;
     document.getElementById('darts-score').textContent = s.score;
     document.getElementById('darts-throws').textContent = String(s.throwsLeft);
     if(s.throwsLeft<=0) finishDarts();
@@ -4929,9 +5083,8 @@
       ctx.globalAlpha = 1;
     });
     if(s.running && s.throwsLeft>0){
-      const dist = 80+70*Math.sin(s.t*0.06);
-      const angle = s.t*0.045;
-      const x = DARTS_CX + dist*Math.cos(angle), y = DARTS_CY + dist*Math.sin(angle);
+      const pos = dartsReticlePos(s);
+      const x = DARTS_CX + pos.x, y = DARTS_CY + pos.y;
       ctx.strokeStyle = '#fff';
       ctx.lineWidth = 2;
       ctx.beginPath(); ctx.arc(x,y,10,0,Math.PI*2); ctx.stroke();
@@ -5128,6 +5281,449 @@
     else if(e.key==='ArrowRight') jumperState.player.vx = 4.5;
   }
 
+  /* ============================================================
+     WORDLE
+  ============================================================= */
+  const WORDLE_WORDS = ['ABOUT','ABOVE','ACTOR','ACUTE','ADMIT','ADOPT','ADULT','AFTER','AGAIN','AGENT',
+    'AGREE','ALARM','ALBUM','ALERT','ALIKE','ALIVE','ALLOW','ALONE','ALONG','ALTER',
+    'AMONG','ANGER','ANGLE','ANGRY','APART','APPLE','APPLY','ARENA','ARGUE','ARISE',
+    'ASIDE','ASSET','AVOID','AWAKE','AWARD','AWARE','BASIC','BEACH','BEGAN','BEGIN',
+    'BELOW','BENCH','BIRTH','BLACK','BLAME','BLANK','BLIND','BLOCK','BLOOD','BOARD',
+    'BOOST','BOUND','BRAIN','BRAND','BREAD','BREAK','BRIEF','BRING','BROAD','BROWN',
+    'BUILD','BUYER','CABLE','CARRY','CATCH','CAUSE','CHAIN','CHAIR','CHARM','CHART',
+    'CHASE','CHEAP','CHECK','CHEST','CHIEF','CHILD','CIVIL','CLAIM','CLASS','CLEAN',
+    'CLEAR','CLIMB','CLOCK','CLOSE','CLOUD','COACH','COAST','COULD','COUNT','COURT',
+    'COVER','CRAFT','CRASH','CRAZY','CREAM','CRIME','CROSS','CROWD','CROWN','CURVE',
+    'CYCLE','DAILY','DANCE','DEATH','DELAY','DEPTH','DOUBT','DOZEN','DRAFT','DRAMA',
+    'DREAM','DRESS','DRINK','DRIVE','EAGER','EARLY','EARTH','EIGHT','ELITE','EMPTY',
+    'ENEMY','ENJOY','ENTER','ENTRY','EQUAL','ERROR','EVENT','EVERY','EXACT','EXIST',
+    'EXTRA','FAITH','FALSE','FAULT','FIELD','FIFTH','FIFTY','FIGHT','FINAL','FIRST',
+    'FLASH','FLEET','FLOOR','FOCUS','FORCE','FORTH','FORTY','FOUND','FRAME','FRANK',
+    'FRESH','FRONT','FRUIT','FUNNY','GIANT','GIVEN','GLASS','GLOBE','GRACE','GRADE',
+    'GRAND','GRANT','GRASS','GREAT','GREEN','GROUP','GROWN','GUARD','GUESS','GUEST',
+    'GUIDE','HAPPY','HEART','HEAVY','HONEY','HOTEL','HOUSE','HUMAN','IMAGE','INDEX',
+    'INNER','INPUT','ISSUE','JOINT','JUDGE','JUICE','KNOWN','LABEL','LARGE','LASER',
+    'LATER','LAUGH','LAYER','LEARN','LEAST','LEAVE','LEGAL','LEVEL','LIGHT','LIMIT',
+    'LOCAL','LOGIC','LOOSE','LOWER','LOYAL','LUCKY','LUNCH','MAGIC','MAJOR','MARCH',
+    'MATCH','MEDAL','MEDIA','MERIT','METAL','MIGHT','MINOR','MODEL','MONEY','MONTH',
+    'MORAL','MOTOR','MOUNT','MOUSE','MOUTH','MOVIE','MUSIC','NAKED','NERVE','NEVER',
+    'NIGHT','NOBLE','NOISE','NORTH','NOVEL','NURSE','OCEAN','OFFER','OFTEN','ORDER',
+    'OTHER','OUTER','OWNER','PANEL','PAPER','PARTY','PATCH','PAUSE','PEACE','PHASE',
+    'PHONE','PHOTO','PIANO','PIECE','PILOT','PITCH','PLACE','PLAIN','PLANE','PLANT',
+    'PLATE','POINT','POUND','POWER','PRESS','PRICE','PRIDE','PRIME','PRINT','PRIOR',
+    'PRIZE','PROOF','PROUD','PROVE','QUEEN','QUICK','QUIET','QUITE','RADIO','RAISE',
+    'RANGE','RAPID','REACH','READY','REALM','REFER','RELAX','REPLY','RIGHT','RIVAL',
+    'RIVER','ROBOT','ROMAN','ROUGH','ROUND','ROUTE','ROYAL','RURAL','SALAD','SAUCE',
+    'SCALE','SCENE','SCOPE','SCORE','SENSE','SERVE','SEVEN','SHAPE','SHARE','SHARP',
+    'SHEET','SHELF','SHELL','SHIFT','SHINE','SHIRT','SHOCK','SHOOT','SHORT','SIGHT',
+    'SINCE','SIXTH','SIXTY','SKILL','SLEEP','SLIDE','SMALL','SMART','SMELL','SMILE',
+    'SMOKE','SOLID','SOLVE','SORRY','SOUND','SOUTH','SPACE','SPARE','SPEAK','SPEED',
+    'SPEND','SPLIT','SPOKE','SPORT','STAFF','STAGE','STAKE','STAND','START','STATE',
+    'STEAM','STEEL','STEEP','STICK','STILL','STOCK','STONE','STORE','STORM','STORY',
+    'STUDY','STUFF','STYLE','SUGAR','SUPER','SWEET','TABLE','TASTE','TEACH','THANK',
+    'THEME','THICK','THING','THINK','THIRD','THOSE','THREE','THROW','TIGHT','TITLE',
+    'TODAY','TOTAL','TOUCH','TOUGH','TOWER','TRACK','TRADE','TRAIN','TREAT','TREND',
+    'TRIAL','TRIBE','TRICK','TRUCK','TRULY','TRUST','TRUTH','TWICE','UNDER','UNION',
+    'UNITY','UNTIL','UPPER','UPSET','URBAN','USAGE','USUAL','VALID','VALUE','VIDEO',
+    'VIRUS','VISIT','VITAL','VOICE','WASTE','WATCH','WATER','WHEEL','WHERE','WHILE',
+    'WHITE','WHOLE','WHOSE','WOMAN','WORLD','WORRY','WORSE','WORTH','WOULD','WRITE',
+    'WRONG','WROTE','YOUNG','YOUTH'];
+  const WORDLE_LEN = 5, WORDLE_MAX = 6;
+  const WORDLE_ROWS = [
+    ['Q','W','E','R','T','Y','U','I','O','P'],
+    ['A','S','D','F','G','H','J','K','L'],
+    ['ENTER','Z','X','C','V','B','N','M','⌫']
+  ];
+  let wordleState;
+
+  function prepareWordle(){
+    const answer = WORDLE_WORDS[Math.floor(Math.random()*WORDLE_WORDS.length)];
+    wordleState = { answer:answer, guesses:[], current:'', keyStatus:{}, running:false, over:false };
+    renderWordleGrid();
+    renderWordleKeyboard();
+    document.getElementById('wordle-tries').textContent = '0/'+WORDLE_MAX;
+    loadMyBest('wordle');
+    const overlay = document.getElementById('wordle-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'WORDLE';
+    overlay.querySelector('.overlay-msg').textContent = '6번 안에 5글자 영단어를 맞춰보세요';
+  }
+
+  function renderWordleGrid(){
+    const el = document.getElementById('wordle-grid');
+    el.innerHTML = '';
+    const s = wordleState;
+    for(let r=0;r<WORDLE_MAX;r++){
+      const row = document.createElement('div');
+      row.className = 'wordle-row';
+      for(let c=0;c<WORDLE_LEN;c++){
+        const tile = document.createElement('div');
+        tile.className = 'wordle-tile';
+        let letter = '', status = '';
+        if(r < s.guesses.length){
+          letter = s.guesses[r].word[c];
+          status = s.guesses[r].result[c];
+        }else if(r === s.guesses.length && c < s.current.length){
+          letter = s.current[c];
+          status = 'filled';
+        }
+        if(letter) tile.textContent = letter;
+        if(status) tile.classList.add(status);
+        row.appendChild(tile);
+      }
+      el.appendChild(row);
+    }
+  }
+
+  function renderWordleKeyboard(){
+    const el = document.getElementById('wordle-keyboard');
+    el.innerHTML = '';
+    const s = wordleState;
+    WORDLE_ROWS.forEach(function(row){
+      const rowEl = document.createElement('div');
+      rowEl.className = 'wordle-krow';
+      row.forEach(function(key){
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'wordle-key';
+        if(key==='ENTER' || key==='⌫') btn.classList.add('wide');
+        btn.textContent = key;
+        btn.dataset.key = key;
+        const status = s.keyStatus[key];
+        if(status) btn.classList.add(status);
+        rowEl.appendChild(btn);
+      });
+      el.appendChild(rowEl);
+    });
+  }
+
+  function evaluateWordleGuess(guess, answer){
+    const result = new Array(WORDLE_LEN).fill('absent');
+    const answerArr = answer.split(''), guessArr = guess.split('');
+    const used = new Array(WORDLE_LEN).fill(false);
+    for(let i=0;i<WORDLE_LEN;i++){
+      if(guessArr[i] === answerArr[i]){ result[i]='correct'; used[i]=true; }
+    }
+    for(let i=0;i<WORDLE_LEN;i++){
+      if(result[i]==='correct') continue;
+      let found=-1;
+      for(let j=0;j<WORDLE_LEN;j++){
+        if(!used[j] && answerArr[j]===guessArr[i]){ found=j; break; }
+      }
+      if(found>=0){ result[i]='present'; used[found]=true; }
+    }
+    return result;
+  }
+
+  function updateWordleKeyStatus(word, result){
+    const s = wordleState;
+    const rank = { absent:0, present:1, correct:2 };
+    for(let i=0;i<word.length;i++){
+      const letter = word[i], status = result[i];
+      const cur = s.keyStatus[letter];
+      if(!cur || rank[status] > rank[cur]) s.keyStatus[letter] = status;
+    }
+  }
+
+  function wordleBestQuality(){
+    const s = wordleState;
+    let best = 0;
+    s.guesses.forEach(function(g){
+      let q = 0;
+      g.result.forEach(function(r){ if(r==='correct') q+=3; else if(r==='present') q+=1; });
+      if(q>best) best = q;
+    });
+    return best;
+  }
+
+  function submitWordleGuess(){
+    const s = wordleState;
+    if(!s.running) return;
+    if(s.current.length !== WORDLE_LEN) return;
+    const word = s.current;
+    const result = evaluateWordleGuess(word, s.answer);
+    s.guesses.push({ word:word, result:result });
+    updateWordleKeyStatus(word, result);
+    s.current = '';
+    document.getElementById('wordle-tries').textContent = s.guesses.length+'/'+WORDLE_MAX;
+    renderWordleGrid();
+    renderWordleKeyboard();
+    const won = result.every(function(r){ return r==='correct'; });
+    if(won) finishWordle(true);
+    else if(s.guesses.length >= WORDLE_MAX) finishWordle(false);
+  }
+
+  function wordleInputLetter(letter){
+    const s = wordleState;
+    if(!s.running) return;
+    if(s.current.length >= WORDLE_LEN) return;
+    s.current += letter;
+    renderWordleGrid();
+  }
+  function wordleBackspace(){
+    const s = wordleState;
+    if(!s.running) return;
+    s.current = s.current.slice(0,-1);
+    renderWordleGrid();
+  }
+
+  function startWordle(){
+    if(!wordleState || wordleState.running) return;
+    wordleState.running = true; wordleState.over=false;
+    document.getElementById('wordle-overlay').classList.add('hidden');
+  }
+
+  function finishWordle(won){
+    const s = wordleState;
+    s.running=false; s.over=true;
+    let score;
+    if(won){
+      score = Math.max(200, (WORDLE_MAX - s.guesses.length + 1) * 150);
+    }else{
+      score = wordleBestQuality()*10;
+    }
+    const overlay = document.getElementById('wordle-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = won ? 'CORRECT!' : 'GAME OVER';
+    overlay.querySelector('.overlay-msg').textContent = '정답 ' + s.answer + ' · 점수 ' + score + ' · 다시 시작하려면 버튼을 누르세요';
+    finalizeScore('wordle', score, overlay);
+  }
+
+  document.getElementById('wordle-start').addEventListener('click', function(){
+    if(wordleState.over) prepareWordle();
+    startWordle();
+  });
+  document.getElementById('wordle-keyboard').addEventListener('click', function(e){
+    const btn = e.target.closest('.wordle-key'); if(!btn) return;
+    const key = btn.dataset.key;
+    if(key==='ENTER') submitWordleGuess();
+    else if(key==='⌫') wordleBackspace();
+    else wordleInputLetter(key);
+  });
+  function handleWordleKey(e){
+    if(!wordleState) return;
+    if(!wordleState.running){
+      if(e.key===' '){ e.preventDefault(); if(wordleState.over) prepareWordle(); startWordle(); }
+      return;
+    }
+    if(e.key==='Enter'){ e.preventDefault(); submitWordleGuess(); }
+    else if(e.key==='Backspace'){ e.preventDefault(); wordleBackspace(); }
+    else if(/^[a-zA-Z]$/.test(e.key)){ wordleInputLetter(e.key.toUpperCase()); }
+  }
+
+  /* ============================================================
+     GOMOKU
+  ============================================================= */
+  const GOMOKU_SIZE = 13, GOMOKU_CANVAS_SIZE = 325, GOMOKU_CELL = GOMOKU_CANVAS_SIZE/GOMOKU_SIZE, GOMOKU_PAD = GOMOKU_CELL/2;
+  const GOMOKU_PLAYER = 1, GOMOKU_AI = 2;
+  const GOMOKU_SCORES = {'5':1000000,'4-2':100000,'4-1':10000,'4-0':100,'3-2':5000,'3-1':500,'3-0':10,'2-2':200,'2-1':50,'2-0':5,'1-2':10,'1-1':5,'1-0':1};
+  let gomokuCtx, gomokuState;
+
+  function prepareGomoku(){
+    gomokuState = {
+      board: Array.from({length:GOMOKU_SIZE}, function(){ return Array(GOMOKU_SIZE).fill(0); }),
+      moves:0, running:false, over:false, thinking:false
+    };
+    document.getElementById('gomoku-moves').textContent = '0';
+    loadMyBest('gomoku');
+    drawGomoku();
+    const overlay = document.getElementById('gomoku-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'GOMOKU';
+    overlay.querySelector('.overlay-msg').textContent = 'AI를 상대로 먼저 5개를 연결하세요';
+  }
+
+  function gomokuInBounds(r,c){ return r>=0&&r<GOMOKU_SIZE&&c>=0&&c<GOMOKU_SIZE; }
+
+  function checkGomokuWin(board, r, c, player){
+    const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+    for(let i=0;i<dirs.length;i++){
+      const dr=dirs[i][0], dc=dirs[i][1];
+      let count = 1;
+      let rr=r+dr, cc=c+dc;
+      while(gomokuInBounds(rr,cc) && board[rr][cc]===player){ count++; rr+=dr; cc+=dc; }
+      rr=r-dr; cc=c-dc;
+      while(gomokuInBounds(rr,cc) && board[rr][cc]===player){ count++; rr-=dr; cc-=dc; }
+      if(count>=5) return true;
+    }
+    return false;
+  }
+
+  function gomokuScorePattern(length, openEnds){
+    const L = Math.min(length,5);
+    if(L>=5) return GOMOKU_SCORES['5'];
+    return GOMOKU_SCORES[L+'-'+openEnds] || 0;
+  }
+  function gomokuEvalDir(board, r, c, dr, dc, player){
+    let length=1, openEnds=0;
+    let rr=r+dr, cc=c+dc;
+    while(gomokuInBounds(rr,cc) && board[rr][cc]===player){ length++; rr+=dr; cc+=dc; }
+    if(gomokuInBounds(rr,cc) && board[rr][cc]===0) openEnds++;
+    rr=r-dr; cc=c-dc;
+    while(gomokuInBounds(rr,cc) && board[rr][cc]===player){ length++; rr-=dr; cc-=dc; }
+    if(gomokuInBounds(rr,cc) && board[rr][cc]===0) openEnds++;
+    return { length:length, openEnds:openEnds };
+  }
+  function gomokuEvalMove(board, r, c, player){
+    const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+    let total = 0;
+    for(let i=0;i<dirs.length;i++){
+      const res = gomokuEvalDir(board, r, c, dirs[i][0], dirs[i][1], player);
+      total += gomokuScorePattern(res.length, res.openEnds);
+    }
+    return total;
+  }
+  function gomokuCandidates(board){
+    const stones = [];
+    for(let r=0;r<GOMOKU_SIZE;r++) for(let c=0;c<GOMOKU_SIZE;c++) if(board[r][c]) stones.push([r,c]);
+    if(stones.length===0) return [[Math.floor(GOMOKU_SIZE/2), Math.floor(GOMOKU_SIZE/2)]];
+    const set = new Set();
+    stones.forEach(function(s){
+      for(let dr=-2;dr<=2;dr++) for(let dc=-2;dc<=2;dc++){
+        const nr=s[0]+dr, nc=s[1]+dc;
+        if(gomokuInBounds(nr,nc) && board[nr][nc]===0) set.add(nr+'_'+nc);
+      }
+    });
+    return Array.from(set).map(function(k){ const p=k.split('_'); return [Number(p[0]),Number(p[1])]; });
+  }
+
+  function gomokuBestMove(board){
+    const candidates = gomokuCandidates(board);
+    if(candidates.length===0) return null;
+    const scored = candidates.map(function(cell){
+      const off = gomokuEvalMove(board, cell[0], cell[1], GOMOKU_AI);
+      const def = gomokuEvalMove(board, cell[0], cell[1], GOMOKU_PLAYER);
+      return { cell:cell, score: off + def*0.9, off:off, def:def };
+    });
+    scored.sort(function(a,b){ return b.score-a.score; });
+    if(scored[0].off >= 1000000) return scored[0].cell;
+    const mustBlock = scored.find(function(s){ return s.def >= 1000000; });
+    if(mustBlock && scored[0].off < 1000000) return mustBlock.cell;
+
+    const topN = scored.slice(0, Math.min(6, scored.length));
+    let bestMove = topN[0].cell, bestVal = -Infinity;
+    topN.forEach(function(cand){
+      const r=cand.cell[0], c=cand.cell[1];
+      board[r][c] = GOMOKU_AI;
+      const oppCandidates = gomokuCandidates(board);
+      let oppBest = 0;
+      oppCandidates.forEach(function(oc){
+        const oScore = gomokuEvalMove(board, oc[0], oc[1], GOMOKU_PLAYER) + gomokuEvalMove(board, oc[0], oc[1], GOMOKU_AI)*0.9;
+        if(oScore > oppBest) oppBest = oScore;
+      });
+      board[r][c] = 0;
+      const val = cand.score - oppBest*0.85;
+      if(val > bestVal){ bestVal = val; bestMove = cand.cell; }
+    });
+    return bestMove;
+  }
+
+  function drawGomoku(){
+    const ctx = gomokuCtx, s = gomokuState;
+    ctx.fillStyle = '#1a1428';
+    ctx.fillRect(0,0,GOMOKU_CANVAS_SIZE,GOMOKU_CANVAS_SIZE);
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = 1;
+    for(let i=0;i<GOMOKU_SIZE;i++){
+      const pos = GOMOKU_PAD + i*GOMOKU_CELL;
+      ctx.beginPath(); ctx.moveTo(GOMOKU_PAD, pos); ctx.lineTo(GOMOKU_CANVAS_SIZE-GOMOKU_PAD, pos); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pos, GOMOKU_PAD); ctx.lineTo(pos, GOMOKU_CANVAS_SIZE-GOMOKU_PAD); ctx.stroke();
+    }
+    for(let r=0;r<GOMOKU_SIZE;r++){
+      for(let c=0;c<GOMOKU_SIZE;c++){
+        const v = s.board[r][c];
+        if(!v) continue;
+        const x = GOMOKU_PAD+c*GOMOKU_CELL, y = GOMOKU_PAD+r*GOMOKU_CELL;
+        ctx.beginPath();
+        ctx.arc(x,y,GOMOKU_CELL*0.4,0,Math.PI*2);
+        ctx.fillStyle = v===GOMOKU_PLAYER ? '#00E5FF' : '#FF2E7E';
+        ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 6;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+  }
+
+  function gomokuCellFromPoint(clientX, clientY){
+    const rect = document.getElementById('gomoku-canvas').getBoundingClientRect();
+    const scaleX = GOMOKU_CANVAS_SIZE/rect.width, scaleY = GOMOKU_CANVAS_SIZE/rect.height;
+    const x = (clientX-rect.left)*scaleX, y = (clientY-rect.top)*scaleY;
+    return { r: Math.round((y-GOMOKU_PAD)/GOMOKU_CELL), c: Math.round((x-GOMOKU_PAD)/GOMOKU_CELL) };
+  }
+
+  function gomokuPlayerMove(r,c){
+    const s = gomokuState;
+    if(!s.running || s.thinking) return;
+    if(!gomokuInBounds(r,c) || s.board[r][c]) return;
+    s.board[r][c] = GOMOKU_PLAYER;
+    s.moves++;
+    document.getElementById('gomoku-moves').textContent = s.moves;
+    drawGomoku();
+    if(checkGomokuWin(s.board, r, c, GOMOKU_PLAYER)){ endGomoku('win'); return; }
+    if(s.moves >= GOMOKU_SIZE*GOMOKU_SIZE){ endGomoku('draw'); return; }
+    s.thinking = true;
+    setTimeout(function(){ gomokuAIMove(); }, 450);
+  }
+
+  function gomokuAIMove(){
+    const s = gomokuState;
+    if(!s.running) return;
+    const move = gomokuBestMove(s.board);
+    s.thinking = false;
+    if(!move){ endGomoku('draw'); return; }
+    s.board[move[0]][move[1]] = GOMOKU_AI;
+    drawGomoku();
+    if(checkGomokuWin(s.board, move[0], move[1], GOMOKU_AI)){ endGomoku('lose'); }
+  }
+
+  document.getElementById('gomoku-canvas').addEventListener('pointerdown', function(e){
+    const s = gomokuState;
+    if(!s) return;
+    if(!s.running){ if(s.over) prepareGomoku(); startGomoku(); return; }
+    const cell = gomokuCellFromPoint(e.clientX, e.clientY);
+    gomokuPlayerMove(cell.r, cell.c);
+  });
+
+  function startGomoku(){
+    if(!gomokuState || gomokuState.running) return;
+    gomokuState.running = true; gomokuState.over=false;
+    document.getElementById('gomoku-overlay').classList.add('hidden');
+  }
+
+  function endGomoku(result){
+    const s = gomokuState;
+    s.running=false; s.over=true;
+    let score, title;
+    if(result==='win'){
+      score = Math.max(200, 1200 - s.moves*20);
+      title = 'YOU WIN!';
+    }else if(result==='lose'){
+      score = s.moves*8;
+      title = 'AI WINS';
+    }else{
+      score = 400;
+      title = 'DRAW';
+    }
+    const overlay = document.getElementById('gomoku-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = title;
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + score + ' · 다시 시작하려면 버튼을 누르세요';
+    finalizeScore('gomoku', score, overlay);
+  }
+
+  document.getElementById('gomoku-start').addEventListener('click', function(){
+    if(gomokuState.over) prepareGomoku();
+    startGomoku();
+  });
+  function handleGomokuKey(e){
+    if(e.key===' '){
+      e.preventDefault();
+      const s = gomokuState;
+      if(!s) return;
+      if(!s.running){ if(s.over) prepareGomoku(); startGomoku(); }
+    }
+  }
+
   /* ============ global key listener ============ */
   window.addEventListener('keyup', function(e){
     if(currentScreen==='breakout' && breakoutState && (e.key==='ArrowLeft'||e.key==='ArrowRight')){
@@ -5161,6 +5757,8 @@
     else if(currentScreen==='bubble') handleBubbleKey(e);
     else if(currentScreen==='darts') handleDartsKey(e);
     else if(currentScreen==='jumper') handleJumperKey(e);
+    else if(currentScreen==='wordle') handleWordleKey(e);
+    else if(currentScreen==='gomoku') handleGomokuKey(e);
   });
 
   /* ============ init ============ */
@@ -5180,6 +5778,7 @@
     bubbleCtx = document.getElementById('bubble-canvas').getContext('2d');
     dartsCtx = document.getElementById('darts-canvas').getContext('2d');
     jumperCtx = document.getElementById('jumper-canvas').getContext('2d');
+    gomokuCtx = document.getElementById('gomoku-canvas').getContext('2d');
     await runStorageHealthCheck();
     await initPlayer();
     renderRankTabs();
