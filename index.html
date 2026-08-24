@@ -479,7 +479,7 @@
   .tenten-tray{ display:flex; justify-content:center; gap:10px; }
   .tenten-slot{
     width:78px; height:78px; background:var(--card); border:2px solid var(--border); border-radius:8px;
-    display:grid; padding:4px; gap:1px; cursor:grab; touch-action:none;
+    display:grid; justify-content:center; align-content:center; padding:4px; gap:1px; cursor:grab; touch-action:none;
   }
   .tenten-slot.dragging{ opacity:0.3; }
   .tenten-slot.empty{ visibility:hidden; }
@@ -6184,6 +6184,7 @@
   /* ============================================================
      1010!
   ============================================================= */
+  const TENTEN_PREVIEW_CELL = 12;
   const TENTEN_SHAPES = [
     { cells:[[0,0]], color:'#FF4757' },
     { cells:[[0,0],[0,1]], color:'#00E5FF' },
@@ -6293,8 +6294,8 @@
       if(piece){
         let maxR = 0, maxC = 0;
         piece.cells.forEach(function(p){ if(p[0]+1>maxR) maxR=p[0]+1; if(p[1]+1>maxC) maxC=p[1]+1; });
-        slot.style.gridTemplateColumns = 'repeat('+maxC+', 1fr)';
-        slot.style.gridTemplateRows = 'repeat('+maxR+', 1fr)';
+        slot.style.gridTemplateColumns = 'repeat('+maxC+', '+TENTEN_PREVIEW_CELL+'px)';
+        slot.style.gridTemplateRows = 'repeat('+maxR+', '+TENTEN_PREVIEW_CELL+'px)';
         for(let r=0;r<maxR;r++){
           for(let c=0;c<maxC;c++){
             const cell = document.createElement('div');
