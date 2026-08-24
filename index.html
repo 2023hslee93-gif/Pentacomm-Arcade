@@ -434,6 +434,60 @@
   .wordle-key.correct{ background:var(--green); color:#04140a; }
   .wordle-key.present{ background:var(--yellow); color:#2a1e00; }
   .wordle-key.absent{ background:#2a2a3a; color:var(--text-dim); }
+  .wordle-tile.ko{ font-family:'Inter',system-ui,sans-serif; font-size:22px; }
+
+  /* ---------- sudoku ---------- */
+  .sudoku-wrap{ display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; max-width:360px; margin:0 auto; }
+  .sudoku-board{
+    display:grid; grid-template-columns:repeat(9, 1fr); grid-auto-rows:1fr; gap:1px;
+    width:100%; max-width:360px; aspect-ratio:1/1; margin:0 auto;
+    background:var(--text-dim); border:2px solid var(--text-dim); touch-action:manipulation;
+  }
+  .sudoku-cell{
+    background:var(--bg-deep); display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:700; color:var(--cyan); cursor:pointer; position:relative;
+  }
+  .sudoku-cell.given{ color:var(--text); background:var(--card); cursor:default; }
+  .sudoku-cell.selected{ background:rgba(0,229,255,0.22); }
+  .sudoku-cell.boxRight{ border-right:2px solid var(--text-dim); }
+  .sudoku-cell.boxBottom{ border-bottom:2px solid var(--text-dim); }
+  .sudoku-memo-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr);
+    position:absolute; inset:1px;
+  }
+  .sudoku-memo-num{ display:flex; align-items:center; justify-content:center; font-size:8px; color:var(--text-dim); font-weight:400; line-height:1; }
+  .sudoku-toolbar{ display:flex; justify-content:center; }
+  #sudoku-memo-toggle.active{ border-color:var(--yellow); color:var(--yellow); }
+  .sudoku-numpad{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px; width:100%; max-width:360px; }
+  .sudoku-numpad button{
+    width:34px; height:34px; border-radius:6px; border:1px solid var(--border);
+    background:var(--card); color:var(--text); font-size:14px; font-weight:700; cursor:pointer; touch-action:manipulation;
+  }
+  .sudoku-numpad button.erase{ width:auto; padding:0 12px; font-size:12px; }
+  .sudoku-numpad button:hover, .sudoku-numpad button:focus-visible{ border-color:var(--cyan); color:var(--cyan); }
+
+  /* ---------- 1010! ---------- */
+  .tenten-wrap{ display:flex; flex-direction:column; align-items:center; gap:16px; width:100%; max-width:340px; margin:0 auto; }
+  .tenten-board{
+    display:grid; grid-template-columns:repeat(10, 1fr); grid-auto-rows:1fr; gap:2px;
+    width:100%; max-width:320px; aspect-ratio:1/1; margin:0 auto;
+    background:var(--bg-deep); padding:4px; border-radius:6px; border:1px solid var(--border); touch-action:none;
+  }
+  .tenten-cell{ background:rgba(255,255,255,0.04); border-radius:2px; transition:background .06s ease; }
+  .tenten-cell.preview-valid{ background:rgba(0,229,255,0.4); }
+  .tenten-cell.preview-invalid{ background:rgba(255,71,87,0.4); }
+  .tenten-tray{ display:flex; justify-content:center; gap:10px; }
+  .tenten-slot{
+    width:78px; height:78px; background:var(--card); border:2px solid var(--border); border-radius:8px;
+    display:grid; padding:4px; gap:1px; cursor:grab; touch-action:none;
+  }
+  .tenten-slot.dragging{ opacity:0.3; }
+  .tenten-slot.empty{ visibility:hidden; }
+  .tenten-piece-cell{ border-radius:2px; }
+  .tenten-ghost{
+    position:fixed; display:grid; gap:2px; pointer-events:none; z-index:200; opacity:0.9;
+  }
+  .tenten-ghost.invalid .tenten-piece-cell{ opacity:0.45; }
 
   /* ---------- nickname modal ---------- */
   .nickname-modal{ position:fixed; inset:0; z-index:70; background:rgba(6,6,11,0.9); display:flex; align-items:center; justify-content:center; padding:20px; }
@@ -706,6 +760,18 @@
         <div class="cabinet-screen" style="font-size:40px;">⚫</div>
         <div class="cabinet-label pixel">GOMOKU</div>
         <div class="cabinet-sub">AI를 상대로 오목 5줄을 만드세요</div>
+      </button>
+
+      <button class="cabinet" data-game="sudoku" style="--accent:var(--blue)">
+        <div class="cabinet-screen" style="font-size:40px;">🔢</div>
+        <div class="cabinet-label pixel">SUDOKU</div>
+        <div class="cabinet-sub">오늘의 스도쿠를 풀어보세요</div>
+      </button>
+
+      <button class="cabinet" data-game="tenten" style="--accent:var(--pink)">
+        <div class="cabinet-screen" style="font-size:40px;">🧊</div>
+        <div class="cabinet-label pixel">1010!</div>
+        <div class="cabinet-sub">블록을 놓아 줄을 채워 없애세요</div>
       </button>
     </div>
 
@@ -1244,11 +1310,12 @@
       </div>
       <div class="overlay" id="wordle-overlay">
         <div class="overlay-title pixel">WORDLE</div>
-        <div class="overlay-msg">6번 안에 5글자 영단어를 맞춰보세요</div>
-        <button class="start-btn" id="wordle-start">시작하기</button>
+        <div class="overlay-msg">언어를 선택해서 시작하세요</div>
+        <button class="start-btn" id="wordle-start-ko">🇰🇷 한글로 시작</button>
+        <button class="start-btn" id="wordle-start-en">🔤 영어로 시작</button>
       </div>
     </div>
-    <p class="controls-hint">키보드 또는 화면 자판으로 입력 · Enter 제출 · Backspace 지우기</p>
+    <p class="controls-hint">영어: 화면 자판/키보드 입력 · 한글: 자음/모음 화면 자판으로 입력 · 6번 안에 맞춰보세요</p>
   </section>
 
   <!-- GOMOKU -->
@@ -1269,6 +1336,58 @@
       </div>
     </div>
     <p class="controls-hint">원하는 위치를 탭/클릭해서 돌을 놓으세요 (흑돌: 나 · 백돌: AI)</p>
+  </section>
+
+  <!-- SUDOKU -->
+  <section id="screen-sudoku" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>TIME<b id="sudoku-time">00:00</b></span>
+        <span>실수<b id="sudoku-mistakes">0</b></span>
+        <span>BEST<b id="sudoku-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="sudoku-wrap">
+        <div class="sudoku-board" id="sudoku-board"></div>
+        <div class="sudoku-toolbar">
+          <button type="button" id="sudoku-memo-toggle" class="mini-btn">✏️ 메모: OFF</button>
+        </div>
+        <div class="sudoku-numpad" id="sudoku-numpad"></div>
+      </div>
+      <div class="overlay" id="sudoku-overlay">
+        <div class="overlay-title pixel">SUDOKU</div>
+        <div class="overlay-msg">난이도를 선택하세요 (모두 같은 문제로 겨뤄요)</div>
+        <button class="start-btn" id="sudoku-start-easy">쉬움</button>
+        <button class="start-btn" id="sudoku-start-medium">보통</button>
+        <button class="start-btn" id="sudoku-start-hard">어려움</button>
+      </div>
+    </div>
+    <p class="controls-hint">칸을 선택하고 숫자를 눌러 채우세요 · 메모 모드에서는 후보 숫자를 표시해요</p>
+  </section>
+
+  <!-- 1010! -->
+  <section id="screen-tenten" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>SCORE<b id="tenten-score">0</b></span>
+        <span>BEST<b id="tenten-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="tenten-wrap">
+        <div class="tenten-board" id="tenten-board"></div>
+        <div class="tenten-tray" id="tenten-tray"></div>
+      </div>
+      <div class="overlay" id="tenten-overlay">
+        <div class="overlay-title pixel">1010!</div>
+        <div class="overlay-msg">블록을 드래그해서 보드에 놓아 줄을 채워 없애세요</div>
+        <button class="start-btn" id="tenten-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">아래 블록을 드래그해서 보드에 놓으세요</p>
   </section>
 
 </div>
@@ -1342,7 +1461,9 @@
     { id:'darts', label:'DARTS', icon:'🎯', color:'var(--red)' },
     { id:'jumper', label:'JUMPER', icon:'🦘', color:'var(--yellow)' },
     { id:'wordle', label:'WORDLE', icon:'🔤', color:'var(--green)' },
-    { id:'gomoku', label:'GOMOKU', icon:'⚫', color:'var(--orange)' }
+    { id:'gomoku', label:'GOMOKU', icon:'⚫', color:'var(--orange)' },
+    { id:'sudoku', label:'SUDOKU', icon:'🔢', color:'var(--blue)' },
+    { id:'tenten', label:'1010!', icon:'🧊', color:'var(--pink)' }
   ];
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
@@ -1783,6 +1904,21 @@
         submitScore('gomoku', gomokuState.moves*3);
       }
     }
+    if(currentScreen === 'sudoku' && sudokuState){
+      stopSudokuTimer();
+      if(!sudokuState.over && sudokuState.given){
+        const progress = sudokuFilledCorrectCount();
+        if(progress.count > 0){
+          const partial = Math.round((progress.count/progress.total)*300);
+          if(partial > 0) submitScore('sudoku', partial);
+        }
+      }
+    }
+    if(currentScreen === 'tenten' && tentenState){
+      if(!tentenState.over && tentenState.score > 0){
+        submitScore('tenten', tentenState.score);
+      }
+    }
     currentScreen = id;
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
@@ -1817,6 +1953,8 @@
     if(id === 'jumper') prepareJumper();
     if(id === 'wordle') prepareWordle();
     if(id === 'gomoku') prepareGomoku();
+    if(id === 'sudoku') prepareSudoku();
+    if(id === 'tenten') prepareTenTen();
   }
 
   document.querySelectorAll('.cabinet[data-game]').forEach(function(btn){
@@ -5284,7 +5422,7 @@
   /* ============================================================
      WORDLE
   ============================================================= */
-  const WORDLE_WORDS = ['ABOUT','ABOVE','ACTOR','ACUTE','ADMIT','ADOPT','ADULT','AFTER','AGAIN','AGENT',
+  const WORDLE_WORDS_EN = ['ABOUT','ABOVE','ACTOR','ACUTE','ADMIT','ADOPT','ADULT','AFTER','AGAIN','AGENT',
     'AGREE','ALARM','ALBUM','ALERT','ALIKE','ALIVE','ALLOW','ALONE','ALONG','ALTER',
     'AMONG','ANGER','ANGLE','ANGRY','APART','APPLE','APPLY','ARENA','ARGUE','ARISE',
     'ASIDE','ASSET','AVOID','AWAKE','AWARD','AWARE','BASIC','BEACH','BEGAN','BEGIN',
@@ -5328,40 +5466,96 @@
     'VIRUS','VISIT','VITAL','VOICE','WASTE','WATCH','WATER','WHEEL','WHERE','WHILE',
     'WHITE','WHOLE','WHOSE','WOMAN','WORLD','WORRY','WORSE','WORTH','WOULD','WRITE',
     'WRONG','WROTE','YOUNG','YOUTH'];
-  const WORDLE_LEN = 5, WORDLE_MAX = 6;
-  const WORDLE_ROWS = [
+
+  const HANGUL_INITIALS = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+  const HANGUL_MEDIALS = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+  const HANGUL_FINALS = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+  function decomposeHangul(char){
+    const code = char.charCodeAt(0) - 0xAC00;
+    if(code < 0 || code > 11171) return null;
+    const initial = Math.floor(code / (21*28));
+    const medial = Math.floor((code % (21*28)) / 28);
+    const final = code % 28;
+    const jamo = [HANGUL_INITIALS[initial], HANGUL_MEDIALS[medial]];
+    if(HANGUL_FINALS[final]) jamo.push(HANGUL_FINALS[final]);
+    return jamo;
+  }
+  function wordToJamo(word){
+    let jamo = [];
+    for(const ch of word){
+      const d = decomposeHangul(ch);
+      if(!d) return null;
+      jamo = jamo.concat(d);
+    }
+    return jamo;
+  }
+
+  const WORDLE_WORDS_KO = ['사랑','친구','가족','학교','국가','여름','겨울','하늘','구름','시간',
+    '여행','라면','김치','편지','우산','지갑','거울','가방','항구','시장',
+    '마을','바람','향기','그림','기억','마음','표정','무릎','가슴','사업',
+    '수업','저녁','아침','새벽','오늘','내일','온도','습도','정치','경제',
+    '기술','정보','목표','순서','기준','조건','문제','해결','실패','노력',
+    '용기','자신','감사','용서','흥미','휴식','수면','식사','번호','이름',
+    '저축','대출','세금','비용','가격','판매','주문','배달','포장','제품',
+    '고객','사장','부장','이력','자격','수강','시험','점수','평가','발표',
+    '토론','야근','연차','지각','가량','고향','마당','바닥','부엌','창고',
+    '지붕','복도','거실','온수','전기','소음','속도','높이','습기','먼지',
+    '냄새','호텔','수영','축구','농구','골프','당구','탁구'];
+  const WORDLE_MAX = 6;
+  const WORDLE_KEYROWS_EN = [
     ['Q','W','E','R','T','Y','U','I','O','P'],
     ['A','S','D','F','G','H','J','K','L'],
     ['ENTER','Z','X','C','V','B','N','M','⌫']
   ];
+  const WORDLE_KEYROWS_KO = [
+    ['ㅂ','ㅈ','ㄷ','ㄱ','ㅅ','ㅛ','ㅕ','ㅑ','ㅐ','ㅔ'],
+    ['ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅓ','ㅏ','ㅣ'],
+    ['ENTER','ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ','⌫']
+  ];
   let wordleState;
 
   function prepareWordle(){
-    const answer = WORDLE_WORDS[Math.floor(Math.random()*WORDLE_WORDS.length)];
-    wordleState = { answer:answer, guesses:[], current:'', keyStatus:{}, running:false, over:false };
-    renderWordleGrid();
-    renderWordleKeyboard();
+    wordleState = { lang:null, running:false, over:false, guesses:[], current:[] };
+    document.getElementById('wordle-grid').innerHTML = '';
+    document.getElementById('wordle-keyboard').innerHTML = '';
     document.getElementById('wordle-tries').textContent = '0/'+WORDLE_MAX;
     loadMyBest('wordle');
     const overlay = document.getElementById('wordle-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = 'WORDLE';
-    overlay.querySelector('.overlay-msg').textContent = '6번 안에 5글자 영단어를 맞춰보세요';
+    overlay.querySelector('.overlay-msg').textContent = '언어를 선택해서 시작하세요';
+  }
+
+  function startWordleWithLang(lang){
+    const list = lang==='ko' ? WORDLE_WORDS_KO : WORDLE_WORDS_EN;
+    const answer = list[Math.floor(Math.random()*list.length)];
+    const answerArr = lang==='ko' ? wordToJamo(answer) : answer.split('');
+    wordleState = {
+      lang:lang, answer:answer, answerArr:answerArr, wordLen:answerArr.length,
+      guesses:[], current:[], keyStatus:{}, running:true, over:false
+    };
+    document.getElementById('wordle-overlay').classList.add('hidden');
+    document.getElementById('wordle-tries').textContent = '0/'+WORDLE_MAX;
+    renderWordleKeyboard();
+    renderWordleGrid();
   }
 
   function renderWordleGrid(){
     const el = document.getElementById('wordle-grid');
     el.innerHTML = '';
     const s = wordleState;
+    if(!s.lang) return;
+    const len = s.wordLen;
     for(let r=0;r<WORDLE_MAX;r++){
       const row = document.createElement('div');
       row.className = 'wordle-row';
-      for(let c=0;c<WORDLE_LEN;c++){
+      row.style.gridTemplateColumns = 'repeat('+len+', 1fr)';
+      for(let c=0;c<len;c++){
         const tile = document.createElement('div');
-        tile.className = 'wordle-tile';
+        tile.className = 'wordle-tile' + (s.lang==='ko' ? ' ko' : '');
         let letter = '', status = '';
         if(r < s.guesses.length){
-          letter = s.guesses[r].word[c];
+          letter = s.guesses[r].tokens[c];
           status = s.guesses[r].result[c];
         }else if(r === s.guesses.length && c < s.current.length){
           letter = s.current[c];
@@ -5379,7 +5573,8 @@
     const el = document.getElementById('wordle-keyboard');
     el.innerHTML = '';
     const s = wordleState;
-    WORDLE_ROWS.forEach(function(row){
+    const rows = s.lang==='ko' ? WORDLE_KEYROWS_KO : WORDLE_KEYROWS_EN;
+    rows.forEach(function(row){
       const rowEl = document.createElement('div');
       rowEl.className = 'wordle-krow';
       row.forEach(function(key){
@@ -5397,17 +5592,17 @@
     });
   }
 
-  function evaluateWordleGuess(guess, answer){
-    const result = new Array(WORDLE_LEN).fill('absent');
-    const answerArr = answer.split(''), guessArr = guess.split('');
-    const used = new Array(WORDLE_LEN).fill(false);
-    for(let i=0;i<WORDLE_LEN;i++){
+  function evaluateWordleGuess(guessArr, answerArr){
+    const len = answerArr.length;
+    const result = new Array(len).fill('absent');
+    const used = new Array(len).fill(false);
+    for(let i=0;i<len;i++){
       if(guessArr[i] === answerArr[i]){ result[i]='correct'; used[i]=true; }
     }
-    for(let i=0;i<WORDLE_LEN;i++){
+    for(let i=0;i<len;i++){
       if(result[i]==='correct') continue;
       let found=-1;
-      for(let j=0;j<WORDLE_LEN;j++){
+      for(let j=0;j<len;j++){
         if(!used[j] && answerArr[j]===guessArr[i]){ found=j; break; }
       }
       if(found>=0){ result[i]='present'; used[found]=true; }
@@ -5415,11 +5610,11 @@
     return result;
   }
 
-  function updateWordleKeyStatus(word, result){
+  function updateWordleKeyStatus(tokens, result){
     const s = wordleState;
     const rank = { absent:0, present:1, correct:2 };
-    for(let i=0;i<word.length;i++){
-      const letter = word[i], status = result[i];
+    for(let i=0;i<tokens.length;i++){
+      const letter = tokens[i], status = result[i];
       const cur = s.keyStatus[letter];
       if(!cur || rank[status] > rank[cur]) s.keyStatus[letter] = status;
     }
@@ -5439,12 +5634,12 @@
   function submitWordleGuess(){
     const s = wordleState;
     if(!s.running) return;
-    if(s.current.length !== WORDLE_LEN) return;
-    const word = s.current;
-    const result = evaluateWordleGuess(word, s.answer);
-    s.guesses.push({ word:word, result:result });
-    updateWordleKeyStatus(word, result);
-    s.current = '';
+    if(s.current.length !== s.wordLen) return;
+    const tokens = s.current.slice();
+    const result = evaluateWordleGuess(tokens, s.answerArr);
+    s.guesses.push({ tokens:tokens, result:result });
+    updateWordleKeyStatus(tokens, result);
+    s.current = [];
     document.getElementById('wordle-tries').textContent = s.guesses.length+'/'+WORDLE_MAX;
     renderWordleGrid();
     renderWordleKeyboard();
@@ -5456,21 +5651,15 @@
   function wordleInputLetter(letter){
     const s = wordleState;
     if(!s.running) return;
-    if(s.current.length >= WORDLE_LEN) return;
-    s.current += letter;
+    if(s.current.length >= s.wordLen) return;
+    s.current.push(letter);
     renderWordleGrid();
   }
   function wordleBackspace(){
     const s = wordleState;
     if(!s.running) return;
-    s.current = s.current.slice(0,-1);
+    s.current.pop();
     renderWordleGrid();
-  }
-
-  function startWordle(){
-    if(!wordleState || wordleState.running) return;
-    wordleState.running = true; wordleState.over=false;
-    document.getElementById('wordle-overlay').classList.add('hidden');
   }
 
   function finishWordle(won){
@@ -5485,14 +5674,12 @@
     const overlay = document.getElementById('wordle-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = won ? 'CORRECT!' : 'GAME OVER';
-    overlay.querySelector('.overlay-msg').textContent = '정답 ' + s.answer + ' · 점수 ' + score + ' · 다시 시작하려면 버튼을 누르세요';
+    overlay.querySelector('.overlay-msg').textContent = '정답 ' + s.answer + ' · 점수 ' + score + ' · 다시 도전하려면 버튼을 누르세요';
     finalizeScore('wordle', score, overlay);
   }
 
-  document.getElementById('wordle-start').addEventListener('click', function(){
-    if(wordleState.over) prepareWordle();
-    startWordle();
-  });
+  document.getElementById('wordle-start-ko').addEventListener('click', function(){ startWordleWithLang('ko'); });
+  document.getElementById('wordle-start-en').addEventListener('click', function(){ startWordleWithLang('en'); });
   document.getElementById('wordle-keyboard').addEventListener('click', function(e){
     const btn = e.target.closest('.wordle-key'); if(!btn) return;
     const key = btn.dataset.key;
@@ -5501,11 +5688,9 @@
     else wordleInputLetter(key);
   });
   function handleWordleKey(e){
-    if(!wordleState) return;
-    if(!wordleState.running){
-      if(e.key===' '){ e.preventDefault(); if(wordleState.over) prepareWordle(); startWordle(); }
-      return;
-    }
+    const s = wordleState;
+    if(!s || !s.lang || !s.running) return;
+    if(s.lang === 'ko') return;
     if(e.key==='Enter'){ e.preventDefault(); submitWordleGuess(); }
     else if(e.key==='Backspace'){ e.preventDefault(); wordleBackspace(); }
     else if(/^[a-zA-Z]$/.test(e.key)){ wordleInputLetter(e.key.toUpperCase()); }
@@ -5724,6 +5909,561 @@
     }
   }
 
+  /* ============================================================
+     SUDOKU
+  ============================================================= */
+  function dailySudokuSeed(){
+    const d = new Date();
+    return d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate() + 50000;
+  }
+  function seededShuffle(arr, rand){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){ const j=Math.floor(rand()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+  function isValidSudoku(grid, r, c, val){
+    for(let i=0;i<9;i++){
+      if(grid[r][i]===val) return false;
+      if(grid[i][c]===val) return false;
+    }
+    const br=Math.floor(r/3)*3, bc=Math.floor(c/3)*3;
+    for(let i=0;i<3;i++) for(let j=0;j<3;j++) if(grid[br+i][bc+j]===val) return false;
+    return true;
+  }
+  function solveSudokuFill(grid, rand){
+    for(let r=0;r<9;r++){
+      for(let c=0;c<9;c++){
+        if(grid[r][c]===0){
+          const nums = seededShuffle([1,2,3,4,5,6,7,8,9], rand);
+          for(let k=0;k<nums.length;k++){
+            const n = nums[k];
+            if(isValidSudoku(grid,r,c,n)){
+              grid[r][c]=n;
+              if(solveSudokuFill(grid,rand)) return true;
+              grid[r][c]=0;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  function generateSudokuSolution(rand){
+    const grid = Array.from({length:9}, function(){ return Array(9).fill(0); });
+    solveSudokuFill(grid, rand);
+    return grid;
+  }
+  function makeSudokuPuzzle(solution, clueCount, rand){
+    const puzzle = solution.map(function(row){ return row.slice(); });
+    const positions = [];
+    for(let r=0;r<9;r++) for(let c=0;c<9;c++) positions.push([r,c]);
+    const shuffled = seededShuffle(positions, rand);
+    const toRemove = 81 - clueCount;
+    for(let i=0;i<toRemove;i++){
+      puzzle[shuffled[i][0]][shuffled[i][1]] = 0;
+    }
+    return puzzle;
+  }
+
+  const SUDOKU_DIFFICULTY = {
+    easy:   { label:'쉬움',   clues:46, base:1200, timeRate:2, mistakePenalty:30, seedOffset:0 },
+    medium: { label:'보통',   clues:38, base:2000, timeRate:3, mistakePenalty:40, seedOffset:1000 },
+    hard:   { label:'어려움', clues:30, base:3000, timeRate:4, mistakePenalty:60, seedOffset:2000 }
+  };
+  let sudokuState;
+
+  function prepareSudoku(){
+    sudokuState = { difficulty:null, given:null, running:false, over:false };
+    document.getElementById('sudoku-board').innerHTML = '';
+    document.getElementById('sudoku-numpad').innerHTML = '';
+    document.getElementById('sudoku-time').textContent = '00:00';
+    document.getElementById('sudoku-mistakes').textContent = '0';
+    document.getElementById('sudoku-memo-toggle').textContent = '✏️ 메모: OFF';
+    document.getElementById('sudoku-memo-toggle').classList.remove('active');
+    loadMyBest('sudoku');
+    const overlay = document.getElementById('sudoku-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'SUDOKU';
+    overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 (모두 같은 문제로 겨뤄요)';
+  }
+
+  function startSudokuWithDifficulty(diffKey){
+    const diff = SUDOKU_DIFFICULTY[diffKey];
+    const rand = mulberry32(dailySudokuSeed() + diff.seedOffset);
+    const solution = generateSudokuSolution(rand);
+    const given = makeSudokuPuzzle(solution, diff.clues, rand);
+    sudokuState = {
+      difficulty:diffKey, given:given, solution:solution, player: given.map(function(row){ return row.slice(); }),
+      memos: Array.from({length:9}, function(){ return Array.from({length:9}, function(){ return new Set(); }); }),
+      memoMode:false, selectedR:null, selectedC:null, mistakes:0, elapsed:0, timerId:null, startTime:0,
+      running:true, over:false
+    };
+    document.getElementById('sudoku-overlay').classList.add('hidden');
+    document.getElementById('sudoku-time').textContent = '00:00';
+    document.getElementById('sudoku-mistakes').textContent = '0';
+    document.getElementById('sudoku-memo-toggle').textContent = '✏️ 메모: OFF';
+    document.getElementById('sudoku-memo-toggle').classList.remove('active');
+    renderSudokuBoard();
+    renderSudokuNumpad();
+    loadMyBest('sudoku');
+    sudokuState.startTime = performance.now();
+    sudokuState.timerId = setInterval(sudokuTick, 1000);
+  }
+
+  function renderSudokuBoard(){
+    const el = document.getElementById('sudoku-board');
+    el.innerHTML = '';
+    const s = sudokuState;
+    for(let r=0;r<9;r++){
+      for(let c=0;c<9;c++){
+        const cell = document.createElement('div');
+        let cls = 'sudoku-cell';
+        const isGiven = s.given[r][c] !== 0;
+        if(isGiven) cls += ' given';
+        if(s.selectedR===r && s.selectedC===c) cls += ' selected';
+        if(c===2||c===5) cls += ' boxRight';
+        if(r===2||r===5) cls += ' boxBottom';
+        const val = isGiven ? s.given[r][c] : s.player[r][c];
+        cell.className = cls;
+        cell.dataset.r = r; cell.dataset.c = c;
+        if(val){
+          cell.textContent = val;
+        }else if(!isGiven && s.memos[r][c].size > 0){
+          const memoGrid = document.createElement('div');
+          memoGrid.className = 'sudoku-memo-grid';
+          for(let n=1;n<=9;n++){
+            const memoCell = document.createElement('span');
+            memoCell.className = 'sudoku-memo-num';
+            memoCell.textContent = s.memos[r][c].has(n) ? n : '';
+            memoGrid.appendChild(memoCell);
+          }
+          cell.appendChild(memoGrid);
+        }
+        el.appendChild(cell);
+      }
+    }
+  }
+
+  function renderSudokuNumpad(){
+    const el = document.getElementById('sudoku-numpad');
+    el.innerHTML = '';
+    for(let n=1;n<=9;n++){
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = String(n);
+      btn.dataset.val = n;
+      el.appendChild(btn);
+    }
+    const erase = document.createElement('button');
+    erase.type = 'button';
+    erase.className = 'erase';
+    erase.textContent = '지우기';
+    erase.dataset.val = '0';
+    el.appendChild(erase);
+  }
+
+  function setSudokuCell(r, c, val){
+    const s = sudokuState;
+    if(s.given[r][c] !== 0) return;
+    if(s.player[r][c] === val) return;
+    s.player[r][c] = val;
+    if(val !== 0){
+      s.memos[r][c].clear();
+      if(val !== s.solution[r][c]) s.mistakes++;
+    }
+    document.getElementById('sudoku-mistakes').textContent = s.mistakes;
+    renderSudokuBoard();
+    checkSudokuComplete();
+  }
+
+  function toggleSudokuMemo(r, c, val){
+    const s = sudokuState;
+    if(s.given[r][c] !== 0 || s.player[r][c] !== 0) return;
+    const memoSet = s.memos[r][c];
+    if(memoSet.has(val)) memoSet.delete(val);
+    else memoSet.add(val);
+    renderSudokuBoard();
+  }
+
+  function checkSudokuComplete(){
+    const s = sudokuState;
+    for(let r=0;r<9;r++){
+      for(let c=0;c<9;c++){
+        if(s.player[r][c] !== s.solution[r][c]) return;
+      }
+    }
+    finishSudoku();
+  }
+
+  function sudokuTick(){
+    const s = sudokuState;
+    s.elapsed = Math.floor((performance.now()-s.startTime)/1000);
+    const mm = String(Math.floor(s.elapsed/60)).padStart(2,'0');
+    const ss = String(s.elapsed%60).padStart(2,'0');
+    document.getElementById('sudoku-time').textContent = mm+':'+ss;
+  }
+  function stopSudokuTimer(){
+    if(sudokuState && sudokuState.timerId){ clearInterval(sudokuState.timerId); sudokuState.timerId=null; }
+  }
+
+  function sudokuFilledCorrectCount(){
+    const s = sudokuState;
+    let count = 0, total = 0;
+    for(let r=0;r<9;r++){
+      for(let c=0;c<9;c++){
+        if(s.given[r][c] !== 0) continue;
+        total++;
+        if(s.player[r][c] === s.solution[r][c]) count++;
+      }
+    }
+    return { count:count, total:total };
+  }
+
+  function finishSudoku(){
+    const s = sudokuState;
+    s.running = false; s.over = true;
+    stopSudokuTimer();
+    const diff = SUDOKU_DIFFICULTY[s.difficulty];
+    const score = Math.max(100, diff.base - s.elapsed*diff.timeRate - s.mistakes*diff.mistakePenalty);
+    const overlay = document.getElementById('sudoku-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
+    overlay.querySelector('.overlay-msg').textContent = '['+diff.label+'] 점수 ' + score + ' · 난이도를 선택해서 다시 시작하세요';
+    finalizeScore('sudoku', score, overlay);
+  }
+
+  document.getElementById('sudoku-start-easy').addEventListener('click', function(){ startSudokuWithDifficulty('easy'); });
+  document.getElementById('sudoku-start-medium').addEventListener('click', function(){ startSudokuWithDifficulty('medium'); });
+  document.getElementById('sudoku-start-hard').addEventListener('click', function(){ startSudokuWithDifficulty('hard'); });
+  document.getElementById('sudoku-memo-toggle').addEventListener('click', function(){
+    if(!sudokuState || !sudokuState.running) return;
+    sudokuState.memoMode = !sudokuState.memoMode;
+    this.textContent = '✏️ 메모: ' + (sudokuState.memoMode ? 'ON' : 'OFF');
+    this.classList.toggle('active', sudokuState.memoMode);
+  });
+  document.getElementById('sudoku-board').addEventListener('click', function(e){
+    const cell = e.target.closest('.sudoku-cell'); if(!cell) return;
+    if(!sudokuState || !sudokuState.running) return;
+    if(cell.classList.contains('given')) return;
+    sudokuState.selectedR = Number(cell.dataset.r);
+    sudokuState.selectedC = Number(cell.dataset.c);
+    renderSudokuBoard();
+  });
+  document.getElementById('sudoku-numpad').addEventListener('click', function(e){
+    const btn = e.target.closest('button'); if(!btn) return;
+    const s = sudokuState;
+    if(!s || !s.running) return;
+    if(s.selectedR===null || s.selectedC===null) return;
+    const val = Number(btn.dataset.val);
+    if(val === 0){
+      setSudokuCell(s.selectedR, s.selectedC, 0);
+      s.memos[s.selectedR][s.selectedC].clear();
+      renderSudokuBoard();
+    }else if(s.memoMode){
+      toggleSudokuMemo(s.selectedR, s.selectedC, val);
+    }else{
+      setSudokuCell(s.selectedR, s.selectedC, val);
+    }
+  });
+  function handleSudokuKey(e){
+    const s = sudokuState;
+    if(!s || !s.running) return;
+    if(s.selectedR===null) return;
+    if(/^[1-9]$/.test(e.key)){
+      const val = Number(e.key);
+      if(s.memoMode) toggleSudokuMemo(s.selectedR, s.selectedC, val);
+      else setSudokuCell(s.selectedR, s.selectedC, val);
+    }else if(e.key==='Backspace' || e.key==='Delete' || e.key==='0'){
+      setSudokuCell(s.selectedR, s.selectedC, 0);
+      s.memos[s.selectedR][s.selectedC].clear();
+      renderSudokuBoard();
+    }
+  }
+
+  /* ============================================================
+     1010!
+  ============================================================= */
+  const TENTEN_SHAPES = [
+    { cells:[[0,0]], color:'#FF4757' },
+    { cells:[[0,0],[0,1]], color:'#00E5FF' },
+    { cells:[[0,0],[1,0]], color:'#00E5FF' },
+    { cells:[[0,0],[0,1],[0,2]], color:'#FFD23F' },
+    { cells:[[0,0],[1,0],[2,0]], color:'#FFD23F' },
+    { cells:[[0,0],[0,1],[0,2],[0,3]], color:'#3DFF7A' },
+    { cells:[[0,0],[1,0],[2,0],[3,0]], color:'#3DFF7A' },
+    { cells:[[0,0],[0,1],[0,2],[0,3],[0,4]], color:'#FF9F43' },
+    { cells:[[0,0],[1,0],[2,0],[3,0],[4,0]], color:'#FF9F43' },
+    { cells:[[0,0],[0,1],[1,0],[1,1]], color:'#4D7CFF' },
+    { cells:[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]], color:'#B466FF' },
+    { cells:[[0,0],[1,0],[2,0],[2,1]], color:'#FF2E7E' },
+    { cells:[[0,0],[0,1],[1,0],[2,0]], color:'#FF2E7E' },
+    { cells:[[0,0],[0,1],[0,2],[1,0]], color:'#FF2E7E' },
+    { cells:[[0,0],[0,1],[0,2],[1,2]], color:'#FF2E7E' },
+    { cells:[[0,0],[1,0],[1,1],[2,1]], color:'#FFD23F' }
+  ];
+  let tentenState;
+
+  function tentenRandomShape(){
+    const s = TENTEN_SHAPES[Math.floor(Math.random()*TENTEN_SHAPES.length)];
+    return { cells: s.cells.map(function(p){ return p.slice(); }), color: s.color };
+  }
+
+  function prepareTenTen(){
+    tentenState = {
+      grid: Array.from({length:10}, function(){ return Array(10).fill(null); }),
+      pieces: [tentenRandomShape(), tentenRandomShape(), tentenRandomShape()],
+      score:0, running:false, over:false
+    };
+    document.getElementById('tenten-score').textContent = '0';
+    loadMyBest('tenten');
+    renderTentenBoard();
+    renderTentenTray();
+    const overlay = document.getElementById('tenten-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = '1010!';
+    overlay.querySelector('.overlay-msg').textContent = '블록을 드래그해서 보드에 놓아 줄을 채워 없애세요';
+  }
+
+  function tentenCanPlace(grid, cells, ar, ac){
+    for(let i=0;i<cells.length;i++){
+      const r = ar+cells[i][0], c = ac+cells[i][1];
+      if(r<0||r>=10||c<0||c>=10) return false;
+      if(grid[r][c]) return false;
+    }
+    return true;
+  }
+
+  function tentenClearLines(){
+    const s = tentenState;
+    const fullRows = [], fullCols = [];
+    for(let r=0;r<10;r++){ if(s.grid[r].every(function(v){ return v; })) fullRows.push(r); }
+    for(let c=0;c<10;c++){
+      let full = true;
+      for(let r=0;r<10;r++){ if(!s.grid[r][c]) full = false; }
+      if(full) fullCols.push(c);
+    }
+    fullRows.forEach(function(r){ for(let c=0;c<10;c++) s.grid[r][c]=null; });
+    fullCols.forEach(function(c){ for(let r=0;r<10;r++) s.grid[r][c]=null; });
+    const cleared = fullRows.length + fullCols.length;
+    if(cleared > 0){
+      s.score += cleared*10 + Math.max(0, cleared-1)*20;
+    }
+  }
+
+  function tentenHasAnyMove(){
+    const s = tentenState;
+    return s.pieces.some(function(piece){
+      if(!piece) return false;
+      for(let r=0;r<10;r++){
+        for(let c=0;c<10;c++){
+          if(tentenCanPlace(s.grid, piece.cells, r, c)) return true;
+        }
+      }
+      return false;
+    });
+  }
+
+  function renderTentenBoard(){
+    const el = document.getElementById('tenten-board');
+    el.innerHTML = '';
+    const s = tentenState;
+    for(let r=0;r<10;r++){
+      for(let c=0;c<10;c++){
+        const cell = document.createElement('div');
+        cell.className = 'tenten-cell';
+        cell.dataset.r = r; cell.dataset.c = c;
+        if(s.grid[r][c]){
+          cell.style.background = s.grid[r][c];
+          cell.style.boxShadow = 'inset 0 0 0 1px rgba(255,255,255,0.2)';
+        }
+        el.appendChild(cell);
+      }
+    }
+  }
+
+  function renderTentenTray(){
+    const el = document.getElementById('tenten-tray');
+    el.innerHTML = '';
+    const s = tentenState;
+    s.pieces.forEach(function(piece, idx){
+      const slot = document.createElement('div');
+      slot.className = 'tenten-slot' + (piece ? '' : ' empty') + (tentenDrag && tentenDrag.pieceIdx===idx ? ' dragging' : '');
+      slot.dataset.idx = idx;
+      if(piece){
+        let maxR = 0, maxC = 0;
+        piece.cells.forEach(function(p){ if(p[0]+1>maxR) maxR=p[0]+1; if(p[1]+1>maxC) maxC=p[1]+1; });
+        slot.style.gridTemplateColumns = 'repeat('+maxC+', 1fr)';
+        slot.style.gridTemplateRows = 'repeat('+maxR+', 1fr)';
+        for(let r=0;r<maxR;r++){
+          for(let c=0;c<maxC;c++){
+            const cell = document.createElement('div');
+            const has = piece.cells.some(function(pc){ return pc[0]===r && pc[1]===c; });
+            if(has){
+              cell.className = 'tenten-piece-cell';
+              cell.style.background = piece.color;
+            }
+            slot.appendChild(cell);
+          }
+        }
+      }
+      el.appendChild(slot);
+    });
+  }
+
+  function tentenPlacePiece(pieceIdx, ar, ac){
+    const s = tentenState;
+    const piece = s.pieces[pieceIdx];
+    if(!piece || !tentenCanPlace(s.grid, piece.cells, ar, ac)) return false;
+    piece.cells.forEach(function(p){ s.grid[ar+p[0]][ac+p[1]] = piece.color; });
+    s.score += piece.cells.length;
+    s.pieces[pieceIdx] = null;
+    tentenClearLines();
+    if(s.pieces.every(function(p){ return p===null; })){
+      s.pieces = [tentenRandomShape(), tentenRandomShape(), tentenRandomShape()];
+    }
+    document.getElementById('tenten-score').textContent = s.score;
+    return true;
+  }
+
+  function startTenTen(){
+    if(!tentenState || tentenState.running) return;
+    tentenState.running = true; tentenState.over=false;
+    document.getElementById('tenten-overlay').classList.add('hidden');
+  }
+
+  function finishTenTen(){
+    const s = tentenState;
+    s.running = false; s.over = true;
+    const overlay = document.getElementById('tenten-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'GAME OVER';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' · 다시 시작하려면 버튼을 누르세요';
+    finalizeScore('tenten', s.score, overlay);
+  }
+
+  document.getElementById('tenten-start').addEventListener('click', function(){
+    if(tentenState.over) prepareTenTen();
+    startTenTen();
+  });
+
+  let tentenDrag = null;
+
+  function tentenBoardCellSize(){
+    const rect = document.getElementById('tenten-board').getBoundingClientRect();
+    return rect.width / 10;
+  }
+
+  function startTentenDrag(pieceIdx, clientX, clientY, pointerType){
+    const s = tentenState;
+    if(!s || !s.running) return;
+    const piece = s.pieces[pieceIdx];
+    if(!piece) return;
+    let maxR = 0, maxC = 0;
+    piece.cells.forEach(function(p){ if(p[0]+1>maxR) maxR=p[0]+1; if(p[1]+1>maxC) maxC=p[1]+1; });
+    const ghost = document.createElement('div');
+    ghost.className = 'tenten-ghost';
+    ghost.style.gridTemplateColumns = 'repeat('+maxC+', 1fr)';
+    ghost.style.gridTemplateRows = 'repeat('+maxR+', 1fr)';
+    for(let r=0;r<maxR;r++){
+      for(let c=0;c<maxC;c++){
+        const cell = document.createElement('div');
+        const has = piece.cells.some(function(pc){ return pc[0]===r && pc[1]===c; });
+        if(has){ cell.className='tenten-piece-cell'; cell.style.background=piece.color; }
+        ghost.appendChild(cell);
+      }
+    }
+    document.body.appendChild(ghost);
+    tentenDrag = {
+      pieceIdx:pieceIdx, ghostEl:ghost, maxR:maxR, maxC:maxC,
+      offsetY: pointerType==='touch' ? 70 : 0, anchorR:-99, anchorC:-99
+    };
+    renderTentenTray();
+    updateTentenDragPosition(clientX, clientY);
+  }
+
+  function updateTentenDragPosition(clientX, clientY){
+    if(!tentenDrag) return;
+    const s = tentenState;
+    const cellPx = tentenBoardCellSize();
+    const w = tentenDrag.maxC*cellPx, h = tentenDrag.maxR*cellPx;
+    tentenDrag.ghostEl.style.width = w+'px';
+    tentenDrag.ghostEl.style.height = h+'px';
+    const targetX = clientX, targetY = clientY - tentenDrag.offsetY;
+    tentenDrag.ghostEl.style.left = (targetX - w/2) + 'px';
+    tentenDrag.ghostEl.style.top = (targetY - h/2) + 'px';
+
+    const boardRect = document.getElementById('tenten-board').getBoundingClientRect();
+    const localX = targetX - boardRect.left - w/2;
+    const localY = targetY - boardRect.top - h/2;
+    tentenDrag.anchorC = Math.round(localX / cellPx);
+    tentenDrag.anchorR = Math.round(localY / cellPx);
+
+    const piece = s.pieces[tentenDrag.pieceIdx];
+    const valid = piece ? tentenCanPlace(s.grid, piece.cells, tentenDrag.anchorR, tentenDrag.anchorC) : false;
+    tentenDrag.ghostEl.classList.toggle('invalid', !valid);
+
+    document.querySelectorAll('#tenten-board .tenten-cell').forEach(function(cell){
+      cell.classList.remove('preview-valid','preview-invalid');
+    });
+    if(piece){
+      piece.cells.forEach(function(p){
+        const r = tentenDrag.anchorR+p[0], c = tentenDrag.anchorC+p[1];
+        if(r>=0&&r<10&&c>=0&&c<10){
+          const cell = document.querySelector('#tenten-board .tenten-cell[data-r="'+r+'"][data-c="'+c+'"]');
+          if(cell) cell.classList.add(valid ? 'preview-valid' : 'preview-invalid');
+        }
+      });
+    }
+  }
+
+  function endTentenDrag(commit){
+    if(!tentenDrag) return;
+    const s = tentenState;
+    if(commit && s && s.running){
+      const piece = s.pieces[tentenDrag.pieceIdx];
+      if(piece && tentenCanPlace(s.grid, piece.cells, tentenDrag.anchorR, tentenDrag.anchorC)){
+        tentenPlacePiece(tentenDrag.pieceIdx, tentenDrag.anchorR, tentenDrag.anchorC);
+        renderTentenBoard();
+        if(!tentenHasAnyMove()) finishTenTen();
+      }
+    }
+    if(tentenDrag.ghostEl && tentenDrag.ghostEl.parentNode) tentenDrag.ghostEl.parentNode.removeChild(tentenDrag.ghostEl);
+    document.querySelectorAll('#tenten-board .tenten-cell').forEach(function(cell){
+      cell.classList.remove('preview-valid','preview-invalid');
+    });
+    tentenDrag = null;
+    renderTentenTray();
+  }
+
+  document.getElementById('tenten-tray').addEventListener('pointerdown', function(e){
+    const slot = e.target.closest('.tenten-slot'); if(!slot || slot.classList.contains('empty')) return;
+    const s = tentenState;
+    if(!s || !s.running) return;
+    e.preventDefault();
+    startTentenDrag(Number(slot.dataset.idx), e.clientX, e.clientY, e.pointerType);
+  });
+  window.addEventListener('pointermove', function(e){
+    if(!tentenDrag) return;
+    updateTentenDragPosition(e.clientX, e.clientY);
+  });
+  window.addEventListener('pointerup', function(e){
+    if(!tentenDrag) return;
+    endTentenDrag(true);
+  });
+  window.addEventListener('pointercancel', function(e){
+    if(!tentenDrag) return;
+    endTentenDrag(false);
+  });
+  function handleTentenKey(e){
+    if(e.key===' '){
+      e.preventDefault();
+      const s = tentenState;
+      if(!s) return;
+      if(!s.running){ if(s.over) prepareTenTen(); startTenTen(); }
+    }
+  }
+
   /* ============ global key listener ============ */
   window.addEventListener('keyup', function(e){
     if(currentScreen==='breakout' && breakoutState && (e.key==='ArrowLeft'||e.key==='ArrowRight')){
@@ -5759,6 +6499,8 @@
     else if(currentScreen==='jumper') handleJumperKey(e);
     else if(currentScreen==='wordle') handleWordleKey(e);
     else if(currentScreen==='gomoku') handleGomokuKey(e);
+    else if(currentScreen==='sudoku') handleSudokuKey(e);
+    else if(currentScreen==='tenten') handleTentenKey(e);
   });
 
   /* ============ init ============ */
