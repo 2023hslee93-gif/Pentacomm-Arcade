@@ -508,6 +508,19 @@
   .gomokupvp-vs{ font-size:13px; color:var(--text-dim); text-align:center; }
   .gomokupvp-vs b.me{ color:var(--cyan); }
   .gomokupvp-vs b.opp{ color:var(--pink); }
+  .gomokupvp-history.hidden{ display:none; }
+  .gomokupvp-history{ display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; max-width:340px; margin:0 auto; }
+  .gomokupvp-history-list{ display:flex; flex-direction:column; gap:6px; width:100%; max-height:400px; overflow-y:auto; }
+  .gomokupvp-history-item{
+    display:flex; justify-content:space-between; align-items:center; gap:8px;
+    background:var(--card); border:1px solid var(--border); border-radius:8px; padding:9px 12px; font-size:13px;
+  }
+  .gomokupvp-history-item .result{ font-weight:700; flex-shrink:0; }
+  .gomokupvp-history-item .result.win{ color:var(--green); }
+  .gomokupvp-history-item .result.lose{ color:var(--red); }
+  .gomokupvp-history-item .result.draw{ color:var(--text-dim); }
+  .gomokupvp-history-item .date{ color:var(--text-dim); font-size:11px; flex-shrink:0; }
+  #gomokupvp-timer{ color:var(--yellow); }
 
   /* ---------- nickname modal ---------- */
   .nickname-modal{ position:fixed; inset:0; z-index:70; background:rgba(6,6,11,0.9); display:flex; align-items:center; justify-content:center; padding:20px; }
@@ -1422,11 +1435,14 @@
       <button class="back-btn" data-back>← 오락실로</button>
       <div class="hud pixel">
         <span id="gomokupvp-turn-label">로비</span>
+        <span id="gomokupvp-timer"></span>
+        <span>누적승<b id="gomokupvp-best">0</b></span>
       </div>
     </div>
     <div class="game-stage">
       <div class="gomokupvp-lobby" id="gomokupvp-lobby">
         <button class="start-btn" id="gomokupvp-create">방 만들기</button>
+        <button class="mini-btn" id="gomokupvp-history-btn">📜 대전 기록</button>
         <div class="gomokupvp-room-list" id="gomokupvp-room-list"></div>
       </div>
       <div class="gomokupvp-waiting hidden" id="gomokupvp-waiting">
@@ -1438,13 +1454,17 @@
         <canvas id="gomokupvp-canvas" width="325" height="325"></canvas>
         <button class="mini-btn" id="gomokupvp-leave">나가기</button>
       </div>
+      <div class="gomokupvp-history hidden" id="gomokupvp-history">
+        <div class="gomokupvp-history-list" id="gomokupvp-history-list"></div>
+        <button class="mini-btn" id="gomokupvp-history-back">로비로</button>
+      </div>
       <div class="overlay hidden" id="gomokupvp-overlay">
         <div class="overlay-title pixel" id="gomokupvp-overlay-title">결과</div>
         <div class="overlay-msg" id="gomokupvp-overlay-msg"></div>
         <button class="start-btn" id="gomokupvp-back-lobby">로비로</button>
       </div>
     </div>
-    <p class="controls-hint">같은 오락실 동료와 실시간으로 오목을 두세요 (흑돌: 방장 · 백돌: 참가자)</p>
+    <p class="controls-hint">같은 오락실 동료와 실시간으로 오목을 두세요 (흑돌: 방장 · 백돌: 참가자) · 턴당 10초</p>
   </section>
 
 </div>
@@ -1963,6 +1983,7 @@
       }
     }
     if(currentScreen === 'gomokupvp'){
+      stopGomokupvpTimerWatch();
       if(gomokupvpMatch && gomokupvpMatch.status === 'playing'){
         const winner = gomokupvpMyNum===1 ? 2 : 1;
         sb.from('gomoku_matches').update({ status:'finished', winner:winner, updated_at:new Date().toISOString() })
@@ -5986,6 +6007,8 @@
   let gomokupvpMatch = null;
   let gomokupvpMyNum = null;
   let gomokupvpCtx = null;
+  let gomokupvpTimerInterval = null;
+  const GOMOKUPVP_TURN_SECONDS = 10;
 
   function generateGomokupvpRoomCode(){
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -5999,13 +6022,24 @@
   function gomokupvpRemoveChannel(){
     if(gomokupvpChannel){ sb.removeChannel(gomokupvpChannel); gomokupvpChannel = null; }
   }
+  function startGomokupvpTimerWatch(){
+    stopGomokupvpTimerWatch();
+    gomokupvpTimerInterval = setInterval(gomokupvpTimerTick, 250);
+    gomokupvpTimerTick();
+  }
+  function stopGomokupvpTimerWatch(){
+    if(gomokupvpTimerInterval){ clearInterval(gomokupvpTimerInterval); gomokupvpTimerInterval = null; }
+  }
   function gomokupvpShowView(view){
     document.getElementById('gomokupvp-lobby').classList.toggle('hidden', view!=='lobby');
     document.getElementById('gomokupvp-waiting').classList.toggle('hidden', view!=='waiting');
     document.getElementById('gomokupvp-match').classList.toggle('hidden', view!=='match');
+    document.getElementById('gomokupvp-history').classList.toggle('hidden', view!=='history');
     document.getElementById('gomokupvp-overlay').classList.add('hidden');
-    const labelMap = { lobby:'로비', waiting:'대기중', match:'대전중' };
+    const labelMap = { lobby:'로비', waiting:'대기중', match:'대전중', history:'대전 기록' };
     document.getElementById('gomokupvp-turn-label').textContent = labelMap[view] || '';
+    document.getElementById('gomokupvp-timer').textContent = '';
+    if(view !== 'match') stopGomokupvpTimerWatch();
   }
 
   function prepareGomokupvp(){
@@ -6014,6 +6048,7 @@
     gomokupvpShowView('lobby');
     fetchGomokupvpRooms();
     subscribeGomokupvpLobby();
+    loadMyBest('gomokupvp');
   }
 
   async function fetchGomokupvpRooms(){
@@ -6088,7 +6123,7 @@
     if(!playerId) return;
     try{
       const { data, error } = await sb.from('gomoku_matches')
-        .update({ player2_id: playerId, player2_nickname: nickname || '익명', status:'playing', updated_at: new Date().toISOString() })
+        .update({ player2_id: playerId, player2_nickname: nickname || '익명', status:'playing', turn_started_at: new Date().toISOString(), updated_at: new Date().toISOString() })
         .eq('id', roomId)
         .eq('status', 'waiting')
         .select();
@@ -6103,6 +6138,7 @@
       gomokupvpShowView('match');
       subscribeGomokupvpMatch(roomId);
       renderGomokupvpMatch();
+      startGomokupvpTimerWatch();
     }catch(e){
       alert('참가에 실패했어요. 다시 시도해주세요.');
     }
@@ -6122,6 +6158,7 @@
     gomokupvpMatch = row;
     if(wasWaiting && row.status === 'playing'){
       gomokupvpShowView('match');
+      startGomokupvpTimerWatch();
     }
     if(!document.getElementById('gomokupvp-match').classList.contains('hidden')){
       renderGomokupvpMatch();
@@ -6129,6 +6166,33 @@
     if(row.status === 'finished'){
       finishGomokupvpMatch(row);
     }
+  }
+
+  function gomokupvpTimerTick(){
+    const m = gomokupvpMatch;
+    if(!m || m.status !== 'playing' || !m.turn_started_at) return;
+    const elapsed = (Date.now() - new Date(m.turn_started_at).getTime())/1000;
+    const remaining = Math.max(0, GOMOKUPVP_TURN_SECONDS - elapsed);
+    document.getElementById('gomokupvp-timer').textContent = Math.ceil(remaining) + '초';
+    if(remaining <= 0){
+      handleGomokupvpTimeout();
+    }
+  }
+
+  async function handleGomokupvpTimeout(){
+    const m = gomokupvpMatch;
+    if(!m || m.status !== 'playing') return;
+    const timedOutPlayer = m.current_turn;
+    const winner = timedOutPlayer === 1 ? 2 : 1;
+    try{
+      const { data } = await sb.from('gomoku_matches')
+        .update({ status:'finished', winner:winner, updated_at:new Date().toISOString() })
+        .eq('id', m.id).eq('status','playing').eq('current_turn', timedOutPlayer)
+        .select();
+      if(data && data.length>0){
+        handleGomokupvpUpdate(data[0]);
+      }
+    }catch(e){ /* ignore, realtime will resync if opponent's client wins the race */ }
   }
 
   function renderGomokupvpMatch(){
@@ -6168,6 +6232,14 @@
         ctx.shadowBlur = 0;
       }
     }
+    if(m.last_move_r != null && m.last_move_c != null){
+      const lx = GOMOKU_PAD + m.last_move_c*GOMOKU_CELL, ly = GOMOKU_PAD + m.last_move_r*GOMOKU_CELL;
+      ctx.beginPath();
+      ctx.arc(lx, ly, GOMOKU_CELL*0.48, 0, Math.PI*2);
+      ctx.strokeStyle = '#FFD23F';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    }
   }
 
   function gomokupvpCellFromPoint(clientX, clientY){
@@ -6187,7 +6259,7 @@
     newBoard[r][c] = gomokupvpMyNum;
     const moveCount = m.move_count+1;
     const won = checkGomokuWin(newBoard, r, c, gomokupvpMyNum);
-    const updates = { board:newBoard, move_count:moveCount, updated_at:new Date().toISOString() };
+    const updates = { board:newBoard, move_count:moveCount, updated_at:new Date().toISOString(), last_move_r:r, last_move_c:c, turn_started_at:new Date().toISOString() };
     if(won){ updates.status='finished'; updates.winner=gomokupvpMyNum; updates.current_turn=m.current_turn; }
     else if(moveCount >= GOMOKU_SIZE*GOMOKU_SIZE){ updates.status='finished'; updates.winner=0; updates.current_turn=m.current_turn; }
     else{ updates.current_turn = gomokupvpMyNum===1 ? 2 : 1; }
@@ -6212,21 +6284,36 @@
     attemptGomokupvpMove(cell.r, cell.c);
   });
 
+  async function incrementGomokupvpWins(){
+    if(!playerId) return 0;
+    try{
+      const { data: existing } = await sb.from('scores').select('score').eq('player_id', playerId).eq('game', 'gomokupvp').maybeSingle();
+      const newCount = (existing ? existing.score : 0) + 1;
+      await sb.from('scores').upsert({ player_id: playerId, game: 'gomokupvp', score: newCount, updated_at: new Date().toISOString() });
+      return newCount;
+    }catch(e){ return 0; }
+  }
+
   function finishGomokupvpMatch(row){
     if(!gomokupvpChannel) return;
     gomokupvpRemoveChannel();
+    stopGomokupvpTimerWatch();
     const won = row.winner === gomokupvpMyNum;
     const draw = row.winner === 0;
-    let score;
-    if(draw) score = 600;
-    else if(won) score = Math.max(400, 2000 - row.move_count*20);
-    else score = row.move_count*10;
     drawGomokupvpBoard();
     const overlay = document.getElementById('gomokupvp-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = draw ? 'DRAW' : (won ? 'YOU WIN!' : 'YOU LOSE');
-    overlay.querySelector('.overlay-msg').textContent = '점수 ' + score;
-    finalizeScore('gomokupvp', score, overlay);
+    if(won){
+      incrementGomokupvpWins().then(function(newCount){
+        overlay.querySelector('.overlay-msg').textContent = '승리! 누적 ' + newCount + '승';
+        loadMyBest('gomokupvp');
+        fetchLeaderboard('gomokupvp').then(function(board){ renderLeaderboardListFrom('gomokupvp', board); });
+        renderTeamBattle();
+      });
+    }else{
+      overlay.querySelector('.overlay-msg').textContent = draw ? '무승부예요' : '아쉽네요, 다음에 다시 도전해보세요';
+    }
   }
 
   async function leaveGomokupvpMatch(){
@@ -6252,6 +6339,53 @@
   document.getElementById('gomokupvp-leave').addEventListener('click', leaveGomokupvpMatch);
   document.getElementById('gomokupvp-back-lobby').addEventListener('click', function(){
     gomokupvpMatch = null; gomokupvpMyNum = null;
+    prepareGomokupvp();
+  });
+
+  async function fetchGomokupvpHistory(){
+    if(!playerId) return [];
+    try{
+      const [asP1, asP2] = await Promise.all([
+        sb.from('gomoku_matches').select('*').eq('player1_id', playerId).eq('status','finished').order('updated_at',{ascending:false}).limit(20),
+        sb.from('gomoku_matches').select('*').eq('player2_id', playerId).eq('status','finished').order('updated_at',{ascending:false}).limit(20)
+      ]);
+      const combined = (asP1.data||[]).concat(asP2.data||[]);
+      combined.sort(function(a,b){ return new Date(b.updated_at) - new Date(a.updated_at); });
+      return combined.slice(0,20);
+    }catch(e){ return []; }
+  }
+
+  function renderGomokupvpHistory(matches){
+    const el = document.getElementById('gomokupvp-history-list');
+    el.innerHTML = '';
+    if(matches.length === 0){
+      el.innerHTML = '<div class="gomokupvp-empty-msg">아직 대전 기록이 없어요</div>';
+      return;
+    }
+    matches.forEach(function(m){
+      const isP1 = m.player1_id === playerId;
+      const myNum = isP1 ? 1 : 2;
+      const oppNick = isP1 ? m.player2_nickname : m.player1_nickname;
+      let resultText, resultClass;
+      if(m.winner === 0){ resultText = '무승부'; resultClass = 'draw'; }
+      else if(m.winner === myNum){ resultText = '승리'; resultClass = 'win'; }
+      else{ resultText = '패배'; resultClass = 'lose'; }
+      const date = new Date(m.updated_at);
+      const dateStr = (date.getMonth()+1)+'/'+date.getDate()+' '+String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
+      const item = document.createElement('div');
+      item.className = 'gomokupvp-history-item';
+      item.innerHTML = '<span>vs ' + escapeHtml(oppNick||'상대') + '</span><span class="result '+resultClass+'">' + resultText + '</span><span class="date">' + dateStr + '</span>';
+      el.appendChild(item);
+    });
+  }
+
+  document.getElementById('gomokupvp-history-btn').addEventListener('click', async function(){
+    gomokupvpShowView('history');
+    document.getElementById('gomokupvp-history-list').innerHTML = '<div class="gomokupvp-empty-msg">불러오는 중...</div>';
+    const matches = await fetchGomokupvpHistory();
+    renderGomokupvpHistory(matches);
+  });
+  document.getElementById('gomokupvp-history-back').addEventListener('click', function(){
     prepareGomokupvp();
   });
 
