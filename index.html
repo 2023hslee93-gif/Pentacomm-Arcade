@@ -507,6 +507,48 @@
   .gomokupvp-history-item .result.lose{ color:var(--red); }
   .gomokupvp-history-item .result.draw{ color:var(--text-dim); }
   .gomokupvp-history-item .date{ color:var(--text-dim); font-size:11px; flex-shrink:0; }
+
+  /* ---------- catch mind ---------- */
+  .catchmind-wrap{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:360px; margin:0 auto; }
+  .catchmind-status{ text-align:center; font-size:12px; color:var(--text-dim); }
+  .catchmind-word-row{ display:flex; justify-content:center; }
+  .catchmind-word{
+    font-family:'Press Start 2P',monospace; font-size:17px; letter-spacing:5px; color:var(--yellow);
+    min-height:22px; text-align:center;
+  }
+  .catchmind-canvas-wrap{ display:flex; justify-content:center; }
+  #catchmind-canvas{ touch-action:none; cursor:crosshair; background:#fff; border-radius:8px; max-width:100%; }
+  .catchmind-toolbar{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center; }
+  .catchmind-toolbar.disabled{ opacity:0.35; pointer-events:none; }
+  .catchmind-colors{ display:flex; gap:5px; flex-wrap:wrap; justify-content:center; }
+  .catchmind-color-swatch{
+    width:22px; height:22px; border-radius:50%; border:2px solid transparent; cursor:pointer; touch-action:manipulation; padding:0;
+  }
+  .catchmind-color-swatch.active{ border-color:var(--cyan); box-shadow:0 0 0 1px var(--bg-deep) inset; }
+  .catchmind-sizes{ display:flex; gap:5px; }
+  .catchmind-size-btn{
+    width:26px; height:26px; border-radius:50%; background:var(--card); border:1px solid var(--border);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation; padding:0;
+  }
+  .catchmind-size-btn.active{ border-color:var(--cyan); }
+  .catchmind-size-dot{ background:#111; border-radius:50%; }
+  .catchmind-chat{
+    height:120px; overflow-y:auto; background:var(--bg-deep); border:1px solid var(--border); border-radius:8px;
+    padding:8px; display:flex; flex-direction:column; gap:3px; font-size:12.5px;
+  }
+  .catchmind-chat .msg-correct{ color:var(--green); font-weight:700; }
+  .catchmind-chat .msg-system{ color:var(--text-dim); font-style:italic; }
+  .catchmind-input-row{ display:flex; gap:8px; }
+  .catchmind-input-row input{
+    flex:1; min-width:0; padding:9px 12px; border-radius:6px; border:1px solid var(--border);
+    background:var(--bg-deep); color:var(--text); font-size:14px;
+  }
+  .catchmind-input-row input:disabled{ opacity:0.4; }
+  .catchmind-players{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; }
+  .catchmind-player-chip{
+    font-size:11px; padding:3px 9px; border-radius:12px; background:var(--card); color:var(--text-dim); border:1px solid var(--border);
+  }
+  .catchmind-player-chip.drawing{ background:var(--yellow); color:#2a1e00; border-color:var(--yellow); font-weight:700; }
   #gomokupvp-timer{ color:var(--yellow); }
 
   /* ---------- nickname modal ---------- */
@@ -833,6 +875,12 @@
         <div class="cabinet-screen" style="font-size:40px;">⚔️</div>
         <div class="cabinet-label pixel">오목대전</div>
         <div class="cabinet-sub">동료와 실시간 1:1 오목 대결</div>
+      </button>
+
+      <button class="cabinet" data-game="catchmind" style="--accent:var(--cyan)">
+        <div class="cabinet-screen" style="font-size:40px;">🎨</div>
+        <div class="cabinet-label pixel">캐치마인드</div>
+        <div class="cabinet-sub">모두 함께 그림 맞추기 (상시 오픈방)</div>
       </button>
     </div>
 
@@ -1435,6 +1483,38 @@
     <p class="controls-hint">같은 오락실 동료와 실시간으로 오목을 두세요 (흑돌: 방장 · 백돌: 참가자) · 턴당 10초</p>
   </section>
 
+  <!-- CATCH MIND -->
+  <section id="screen-catchmind" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span id="catchmind-timer">-</span>
+        <span>온라인<b id="catchmind-online-count">0</b></span>
+      </div>
+    </div>
+    <div class="catchmind-wrap">
+      <div class="catchmind-status" id="catchmind-status">불러오는 중...</div>
+      <div class="catchmind-word-row">
+        <div class="catchmind-word" id="catchmind-word"></div>
+      </div>
+      <div class="catchmind-canvas-wrap">
+        <canvas id="catchmind-canvas" width="320" height="320"></canvas>
+      </div>
+      <div class="catchmind-toolbar" id="catchmind-toolbar">
+        <div class="catchmind-colors" id="catchmind-colors"></div>
+        <div class="catchmind-sizes" id="catchmind-sizes"></div>
+        <button type="button" class="mini-btn" id="catchmind-clear">전체 지우기</button>
+      </div>
+      <div class="catchmind-chat" id="catchmind-chat"></div>
+      <div class="catchmind-input-row">
+        <input type="text" id="catchmind-guess-input" placeholder="정답을 입력하세요" autocomplete="off" maxlength="20" />
+        <button type="button" class="mini-btn" id="catchmind-guess-send">전송</button>
+      </div>
+      <div class="catchmind-players" id="catchmind-players"></div>
+    </div>
+    <p class="controls-hint">그리는 사람은 캔버스에 그리고, 나머지는 아래에서 정답을 맞혀보세요 · 항상 열려있는 공용 방이에요</p>
+  </section>
+
 </div>
 
 <script>
@@ -1507,7 +1587,8 @@
     { id:'gomoku', label:'GOMOKU', icon:'⚫', color:'var(--orange)' },
     { id:'sudoku', label:'SUDOKU', icon:'🔢', color:'var(--blue)' },
     { id:'tenten', label:'1010!', icon:'🧊', color:'var(--pink)' },
-    { id:'gomokupvp', label:'오목대전', icon:'⚔️', color:'var(--red)' }
+    { id:'gomokupvp', label:'오목대전', icon:'⚔️', color:'var(--red)' },
+    { id:'catchmind', label:'캐치마인드', icon:'🎨', color:'var(--cyan)' }
   ];
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
@@ -1945,6 +2026,9 @@
       gomokupvpRemoveChannel();
       gomokupvpMatch = null; gomokupvpMyNum = null;
     }
+    if(currentScreen === 'catchmind'){
+      cleanupCatchmind();
+    }
     if(currentScreen === 'sudoku' && sudokuState){
       stopSudokuTimer();
       if(!sudokuState.over && sudokuState.given){
@@ -1993,6 +2077,7 @@
     if(id === 'wordle') prepareWordle();
     if(id === 'gomoku') prepareGomoku();
     if(id === 'gomokupvp') prepareGomokupvp();
+    if(id === 'catchmind') prepareCatchmind();
     if(id === 'sudoku') prepareSudoku();
     if(id === 'tenten') prepareTenTen();
   }
@@ -6086,6 +6171,446 @@
   });
 
   /* ============================================================
+     CATCH MIND (real-time shared drawing room, Supabase Broadcast+Presence)
+  ============================================================= */
+  const CATCHMIND_WORDS = ['강아지','고양이','코끼리','기린','호랑이','사자','토끼','북극곰','팬더','펭귄',
+    '물고기','문어','거북이','개구리','나비','벌','독수리','공룡','악어','다람쥐',
+    '우산','안경','시계','자동차','비행기','기차','자전거','전화기','가방','신발',
+    '모자','열쇠','의자','책상','냉장고','텔레비전','카메라','피아노','기타','드럼',
+    '피자','햄버거','김밥','라면','치킨','아이스크림','케이크','도넛','사과','바나나',
+    '수박','딸기','포도','당근','브로콜리','계란','빵','우유','커피','초밥',
+    '학교','병원','도서관','공원','바다','산','다리','교회','놀이터','편의점',
+    '카페','영화관','공항','등대','의사','선생님','경찰관','요리사','화가','가수',
+    '소방관','농부','어부','마법사','태양','달','별','무지개','구름','번개',
+    '나무','꽃','눈사람','폭포','수영','춤','낚시','로봇','유령','마녀',
+    '왕관','반지','풍선','촛불','선물','열기구','우주선','깃발'];
+  const CATCHMIND_CANVAS_SIZE = 320;
+  const CATCHMIND_ROUND_SECONDS = 75;
+  const CATCHMIND_REVEAL_SECONDS = 4;
+  const CATCHMIND_GUESS_POINTS = [100, 70, 50];
+  const CATCHMIND_GUESS_DEFAULT = 30;
+  const CATCHMIND_DRAWER_BONUS = 20;
+  const CATCHMIND_COLORS = ['#111111','#FF4757','#FF9F43','#FFD23F','#3DFF7A','#00E5FF','#4D7CFF','#B466FF','#FF2E7E','#ffffff'];
+  const CATCHMIND_SIZES = [2, 4, 8, 14];
+
+  let catchmindDbChannel = null;
+  let catchmindLiveChannel = null;
+  let catchmindRoom = null;
+  let catchmindOnlineMap = {};
+  let catchmindLoopInterval = null;
+  let catchmindCtx = null;
+  let catchmindDrawing = false;
+  let catchmindCurrentColor = '#111111';
+  let catchmindCurrentSize = 4;
+  let catchmindLastPoint = null;
+  let catchmindSnapshotTimer = null;
+
+  function isCatchmindDrawer(){
+    return !!(catchmindRoom && catchmindRoom.drawer_id === playerId);
+  }
+
+  function clearCatchmindCanvasLocal(){
+    if(!catchmindCtx) return;
+    catchmindCtx.fillStyle = '#fff';
+    catchmindCtx.fillRect(0,0,CATCHMIND_CANVAS_SIZE,CATCHMIND_CANVAS_SIZE);
+  }
+  function loadCatchmindSnapshot(dataUrl){
+    if(!dataUrl || !catchmindCtx) return;
+    const img = new Image();
+    img.onload = function(){
+      clearCatchmindCanvasLocal();
+      catchmindCtx.drawImage(img, 0, 0, CATCHMIND_CANVAS_SIZE, CATCHMIND_CANVAS_SIZE);
+    };
+    img.src = dataUrl;
+  }
+
+  function renderCatchmindToolbar(){
+    const colorsEl = document.getElementById('catchmind-colors');
+    colorsEl.innerHTML = '';
+    CATCHMIND_COLORS.forEach(function(c){
+      const sw = document.createElement('button');
+      sw.type = 'button';
+      sw.className = 'catchmind-color-swatch' + (c===catchmindCurrentColor?' active':'');
+      sw.style.background = c;
+      if(c === '#ffffff') sw.style.border = '2px solid #ccc';
+      sw.addEventListener('click', function(){ catchmindCurrentColor = c; renderCatchmindToolbar(); });
+      colorsEl.appendChild(sw);
+    });
+    const sizesEl = document.getElementById('catchmind-sizes');
+    sizesEl.innerHTML = '';
+    CATCHMIND_SIZES.forEach(function(s){
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'catchmind-size-btn' + (s===catchmindCurrentSize?' active':'');
+      const dot = document.createElement('span');
+      dot.className = 'catchmind-size-dot';
+      const dotPx = Math.min(s+4,18);
+      dot.style.width = dotPx+'px';
+      dot.style.height = dotPx+'px';
+      btn.appendChild(dot);
+      btn.addEventListener('click', function(){ catchmindCurrentSize = s; renderCatchmindToolbar(); });
+      sizesEl.appendChild(btn);
+    });
+  }
+
+  function renderCatchmindPlayers(){
+    const el = document.getElementById('catchmind-players');
+    el.innerHTML = '';
+    Object.keys(catchmindOnlineMap).forEach(function(key){
+      const p = catchmindOnlineMap[key];
+      const isDrawing = catchmindRoom && catchmindRoom.drawer_id === p.playerId && catchmindRoom.status === 'drawing';
+      const chip = document.createElement('span');
+      chip.className = 'catchmind-player-chip' + (isDrawing ? ' drawing' : '');
+      chip.textContent = (p.nickname||'??') + (isDrawing ? ' ✏️' : '');
+      el.appendChild(chip);
+    });
+    document.getElementById('catchmind-online-count').textContent = Object.keys(catchmindOnlineMap).length;
+  }
+
+  function renderCatchmindUI(){
+    const room = catchmindRoom;
+    const toolbar = document.getElementById('catchmind-toolbar');
+    const guessInput = document.getElementById('catchmind-guess-input');
+    const wordEl = document.getElementById('catchmind-word');
+    const statusEl = document.getElementById('catchmind-status');
+    if(!room) return;
+    const amDrawer = isCatchmindDrawer();
+    toolbar.classList.toggle('disabled', !amDrawer || room.status !== 'drawing');
+    guessInput.disabled = amDrawer && room.status === 'drawing';
+    if(room.status === 'waiting'){
+      statusEl.textContent = '함께할 사람을 기다리는 중이에요 (최소 2명 필요)';
+      wordEl.textContent = '';
+    }else if(room.status === 'drawing'){
+      statusEl.textContent = amDrawer ? '내가 그리는 중이에요!' : (room.drawer_nickname||'??') + '님이 그리는 중';
+      if(amDrawer){
+        wordEl.textContent = room.word || '';
+      }else{
+        const len = room.word ? room.word.replace(/\s/g,'').length : 0;
+        wordEl.textContent = Array(len).fill('_').join(' ');
+      }
+    }else if(room.status === 'reveal'){
+      statusEl.textContent = '정답 공개!';
+      wordEl.textContent = room.word || '';
+    }
+    renderCatchmindPlayers();
+  }
+
+  function appendCatchmindChatEl(html){
+    const el = document.getElementById('catchmind-chat');
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    el.appendChild(div);
+    el.scrollTop = el.scrollHeight;
+  }
+  function appendCatchmindSystemMessage(text){
+    appendCatchmindChatEl('<span class="msg-system">' + escapeHtml(text) + '</span>');
+  }
+  function handleIncomingCatchmindChat(payload){
+    if(payload.kind === 'correct'){
+      appendCatchmindChatEl('<span class="msg-correct">🎉 ' + escapeHtml(payload.nickname) + '님 정답! (+' + payload.points + '점)</span>');
+    }else{
+      appendCatchmindChatEl('<b>' + escapeHtml(payload.nickname) + '</b>: ' + escapeHtml(payload.text));
+    }
+  }
+
+  async function addCatchmindScore(points){
+    if(!playerId || points <= 0) return;
+    try{
+      const { data: existing } = await sb.from('scores').select('score').eq('player_id', playerId).eq('game','catchmind').maybeSingle();
+      const newScore = (existing ? existing.score : 0) + points;
+      await sb.from('scores').upsert({ player_id: playerId, game:'catchmind', score:newScore, updated_at:new Date().toISOString() });
+      loadMyBest('catchmind');
+      renderTeamBattle();
+    }catch(e){}
+  }
+
+  function applyCatchmindRoomState(row){
+    const prevRound = catchmindRoom ? catchmindRoom.round_number : -1;
+    const prevStatus = catchmindRoom ? catchmindRoom.status : null;
+    catchmindRoom = row;
+    renderCatchmindUI();
+    if(row.round_number !== prevRound && row.status === 'drawing'){
+      clearCatchmindCanvasLocal();
+      if(!isCatchmindDrawer()) loadCatchmindSnapshot(row.canvas_snapshot);
+      appendCatchmindSystemMessage((row.drawer_nickname||'??') + '님이 그림을 그리기 시작했어요!');
+    }
+    if(row.status === 'reveal' && prevStatus === 'drawing'){
+      appendCatchmindSystemMessage('정답은 "' + row.word + '" 였어요!');
+      if(row.drawer_id === playerId){
+        const correctCount = (row.guessed_correctly||[]).length;
+        if(correctCount > 0) addCatchmindScore(correctCount * CATCHMIND_DRAWER_BONUS);
+      }
+    }
+  }
+
+  async function fetchCatchmindRoomState(){
+    try{
+      const { data, error } = await sb.from('catchmind_room').select('*').eq('id','main').maybeSingle();
+      if(error || !data) return;
+      applyCatchmindRoomState(data);
+    }catch(e){}
+  }
+
+  function handleIncomingCatchmindStroke(seg){
+    if(seg.type === 'clear'){ clearCatchmindCanvasLocal(); return; }
+    catchmindDrawSegment(seg, false);
+  }
+  function handleCatchmindPresenceSync(){
+    if(!catchmindLiveChannel) return;
+    const state = catchmindLiveChannel.presenceState();
+    catchmindOnlineMap = {};
+    Object.keys(state).forEach(function(key){
+      const metas = state[key];
+      if(metas && metas.length) catchmindOnlineMap[key] = metas[0];
+    });
+    renderCatchmindPlayers();
+  }
+
+  function teardownCatchmindChannels(){
+    if(catchmindDbChannel){ sb.removeChannel(catchmindDbChannel); catchmindDbChannel = null; }
+    if(catchmindLiveChannel){ sb.removeChannel(catchmindLiveChannel); catchmindLiveChannel = null; }
+  }
+
+  function setupCatchmindChannels(){
+    teardownCatchmindChannels();
+    catchmindDbChannel = sb.channel('catchmind-db')
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'catchmind_room', filter:'id=eq.main' }, function(payload){
+        applyCatchmindRoomState(payload.new);
+      })
+      .subscribe();
+
+    catchmindLiveChannel = sb.channel('catchmind-live', { config: { presence: { key: playerId || ('anon-'+Math.random()) } } });
+    catchmindLiveChannel
+      .on('broadcast', { event:'stroke' }, function(msg){ handleIncomingCatchmindStroke(msg.payload); })
+      .on('broadcast', { event:'chat' }, function(msg){ handleIncomingCatchmindChat(msg.payload); })
+      .on('presence', { event:'sync' }, function(){ handleCatchmindPresenceSync(); })
+      .subscribe(async function(status){
+        if(status === 'SUBSCRIBED'){
+          await catchmindLiveChannel.track({ playerId: playerId, nickname: nickname || '??' });
+        }
+      });
+  }
+
+  function pickCatchmindWord(){
+    return CATCHMIND_WORDS[Math.floor(Math.random()*CATCHMIND_WORDS.length)];
+  }
+  function pickCatchmindDrawer(){
+    const ids = Object.keys(catchmindOnlineMap);
+    if(ids.length === 0) return null;
+    const lastId = catchmindRoom ? catchmindRoom.last_drawer_id : null;
+    const candidates = lastId ? ids.filter(function(id){ return id !== lastId; }) : ids;
+    const pool = candidates.length ? candidates : ids;
+    return catchmindOnlineMap[pool[Math.floor(Math.random()*pool.length)]];
+  }
+
+  async function attemptCatchmindStartRound(){
+    if(!catchmindRoom) return;
+    const drawer = pickCatchmindDrawer();
+    if(!drawer) return;
+    const word = pickCatchmindWord();
+    const expectedRound = catchmindRoom.round_number;
+    const expectedStatus = catchmindRoom.status;
+    try{
+      const { data } = await sb.from('catchmind_room')
+        .update({
+          drawer_id: drawer.playerId, drawer_nickname: drawer.nickname,
+          word: word, round_number: expectedRound+1, round_started_at: new Date().toISOString(),
+          guessed_correctly: [], status: 'drawing', canvas_snapshot: null,
+          last_drawer_id: drawer.playerId, updated_at: new Date().toISOString()
+        })
+        .eq('id','main').eq('round_number', expectedRound).eq('status', expectedStatus)
+        .select();
+      if(data && data.length>0) applyCatchmindRoomState(data[0]);
+    }catch(e){}
+  }
+  async function attemptCatchmindReveal(){
+    if(!catchmindRoom) return;
+    const expectedRound = catchmindRoom.round_number;
+    try{
+      const { data } = await sb.from('catchmind_room')
+        .update({ status:'reveal', round_started_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+        .eq('id','main').eq('round_number', expectedRound).eq('status','drawing')
+        .select();
+      if(data && data.length>0) applyCatchmindRoomState(data[0]);
+    }catch(e){}
+  }
+  async function attemptCatchmindGoWaiting(){
+    if(!catchmindRoom) return;
+    const expectedRound = catchmindRoom.round_number;
+    try{
+      const { data } = await sb.from('catchmind_room')
+        .update({ status:'waiting', drawer_id:null, drawer_nickname:null, word:null, updated_at: new Date().toISOString() })
+        .eq('id','main').eq('round_number', expectedRound).neq('status','waiting')
+        .select();
+      if(data && data.length>0) applyCatchmindRoomState(data[0]);
+    }catch(e){}
+  }
+
+  async function catchmindLoopTick(){
+    if(!catchmindRoom){ await fetchCatchmindRoomState(); return; }
+    const onlineCount = Object.keys(catchmindOnlineMap).length;
+    const elapsed = catchmindRoom.round_started_at ? (Date.now() - new Date(catchmindRoom.round_started_at).getTime())/1000 : Infinity;
+
+    if(catchmindRoom.status === 'waiting'){
+      document.getElementById('catchmind-timer').textContent = '-';
+      if(onlineCount >= 2) await attemptCatchmindStartRound();
+      return;
+    }
+    if(catchmindRoom.status === 'drawing'){
+      const remaining = Math.max(0, CATCHMIND_ROUND_SECONDS - elapsed);
+      document.getElementById('catchmind-timer').textContent = Math.ceil(remaining) + '초';
+      if(onlineCount < 2){ await attemptCatchmindGoWaiting(); return; }
+      if(remaining <= 0) await attemptCatchmindReveal();
+      return;
+    }
+    if(catchmindRoom.status === 'reveal'){
+      const remaining = Math.max(0, CATCHMIND_REVEAL_SECONDS - elapsed);
+      document.getElementById('catchmind-timer').textContent = '다음 라운드 ' + Math.ceil(remaining) + '초';
+      if(onlineCount < 2){ await attemptCatchmindGoWaiting(); return; }
+      if(remaining <= 0) await attemptCatchmindStartRound();
+      return;
+    }
+  }
+  function startCatchmindLoop(){
+    stopCatchmindLoop();
+    catchmindLoopInterval = setInterval(catchmindLoopTick, 1000);
+    catchmindLoopTick();
+  }
+  function stopCatchmindLoop(){
+    if(catchmindLoopInterval){ clearInterval(catchmindLoopInterval); catchmindLoopInterval = null; }
+  }
+
+  function catchmindPointFromEvent(e){
+    const rect = document.getElementById('catchmind-canvas').getBoundingClientRect();
+    const scaleX = CATCHMIND_CANVAS_SIZE/rect.width, scaleY = CATCHMIND_CANVAS_SIZE/rect.height;
+    return { x: (e.clientX-rect.left)*scaleX, y: (e.clientY-rect.top)*scaleY };
+  }
+  function catchmindDrawSegment(seg, broadcast){
+    const ctx = catchmindCtx;
+    if(!ctx) return;
+    ctx.strokeStyle = seg.color;
+    ctx.lineWidth = seg.size;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    if(seg.type === 'start'){
+      ctx.beginPath();
+      ctx.moveTo(seg.x, seg.y);
+      ctx.lineTo(seg.x+0.01, seg.y+0.01);
+      ctx.stroke();
+    }else if(seg.type === 'draw'){
+      ctx.beginPath();
+      ctx.moveTo(seg.x0, seg.y0);
+      ctx.lineTo(seg.x1, seg.y1);
+      ctx.stroke();
+    }
+    if(broadcast && catchmindLiveChannel){
+      catchmindLiveChannel.send({ type:'broadcast', event:'stroke', payload: seg });
+    }
+  }
+  function scheduleCatchmindSnapshot(){
+    if(catchmindSnapshotTimer) clearTimeout(catchmindSnapshotTimer);
+    catchmindSnapshotTimer = setTimeout(saveCatchmindSnapshot, 800);
+  }
+  async function saveCatchmindSnapshot(){
+    if(!isCatchmindDrawer() || !catchmindRoom) return;
+    try{
+      const dataUrl = document.getElementById('catchmind-canvas').toDataURL('image/png');
+      await sb.from('catchmind_room').update({ canvas_snapshot: dataUrl, updated_at:new Date().toISOString() })
+        .eq('id','main').eq('round_number', catchmindRoom.round_number);
+    }catch(e){}
+  }
+
+  document.getElementById('catchmind-canvas').addEventListener('pointerdown', function(e){
+    if(!isCatchmindDrawer() || !catchmindRoom || catchmindRoom.status !== 'drawing') return;
+    e.preventDefault();
+    catchmindDrawing = true;
+    const p = catchmindPointFromEvent(e);
+    catchmindLastPoint = p;
+    catchmindDrawSegment({ type:'start', x:p.x, y:p.y, color:catchmindCurrentColor, size:catchmindCurrentSize }, true);
+  });
+  document.getElementById('catchmind-canvas').addEventListener('pointermove', function(e){
+    if(!catchmindDrawing) return;
+    const p = catchmindPointFromEvent(e);
+    catchmindDrawSegment({ type:'draw', x0:catchmindLastPoint.x, y0:catchmindLastPoint.y, x1:p.x, y1:p.y, color:catchmindCurrentColor, size:catchmindCurrentSize }, true);
+    catchmindLastPoint = p;
+  });
+  window.addEventListener('pointerup', function(){
+    if(catchmindDrawing){
+      catchmindDrawing = false;
+      catchmindLastPoint = null;
+      scheduleCatchmindSnapshot();
+    }
+  });
+  document.getElementById('catchmind-clear').addEventListener('click', function(){
+    if(!isCatchmindDrawer()) return;
+    clearCatchmindCanvasLocal();
+    if(catchmindLiveChannel) catchmindLiveChannel.send({ type:'broadcast', event:'stroke', payload:{ type:'clear' } });
+    scheduleCatchmindSnapshot();
+  });
+
+  async function submitCatchmindGuess(){
+    const input = document.getElementById('catchmind-guess-input');
+    const text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    if(!catchmindRoom || catchmindRoom.status !== 'drawing' || isCatchmindDrawer()){
+      if(catchmindLiveChannel) catchmindLiveChannel.send({ type:'broadcast', event:'chat', payload:{ kind:'text', nickname: nickname||'??', text:text } });
+      return;
+    }
+    if(text === catchmindRoom.word){
+      await attemptCatchmindCorrectGuess();
+    }else{
+      if(catchmindLiveChannel) catchmindLiveChannel.send({ type:'broadcast', event:'chat', payload:{ kind:'text', nickname: nickname||'??', text:text } });
+    }
+  }
+  async function attemptCatchmindCorrectGuess(){
+    const room = catchmindRoom;
+    const already = (room.guessed_correctly||[]).some(function(g){ return g.player_id === playerId; });
+    if(already) return;
+    const newList = (room.guessed_correctly||[]).slice();
+    const idx = newList.length;
+    const points = idx < CATCHMIND_GUESS_POINTS.length ? CATCHMIND_GUESS_POINTS[idx] : CATCHMIND_GUESS_DEFAULT;
+    newList.push({ player_id: playerId, nickname: nickname||'??', points: points });
+    try{
+      const { data } = await sb.from('catchmind_room')
+        .update({ guessed_correctly: newList, updated_at: new Date().toISOString() })
+        .eq('id','main').eq('round_number', room.round_number).eq('status','drawing')
+        .select();
+      if(data && data.length>0){
+        applyCatchmindRoomState(data[0]);
+        await addCatchmindScore(points);
+        if(catchmindLiveChannel) catchmindLiveChannel.send({ type:'broadcast', event:'chat', payload:{ kind:'correct', nickname: nickname||'??', points: points } });
+      }
+    }catch(e){}
+  }
+  document.getElementById('catchmind-guess-send').addEventListener('click', submitCatchmindGuess);
+  document.getElementById('catchmind-guess-input').addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); submitCatchmindGuess(); }
+  });
+  function handleCatchmindKey(e){ /* guess input handles its own Enter key */ }
+
+  function prepareCatchmind(){
+    document.getElementById('catchmind-chat').innerHTML = '';
+    document.getElementById('catchmind-status').textContent = '불러오는 중...';
+    document.getElementById('catchmind-word').textContent = '';
+    document.getElementById('catchmind-timer').textContent = '-';
+    catchmindCurrentColor = '#111111';
+    catchmindCurrentSize = 4;
+    renderCatchmindToolbar();
+    clearCatchmindCanvasLocal();
+    loadMyBest('catchmind');
+    setupCatchmindChannels();
+    startCatchmindLoop();
+  }
+  function cleanupCatchmind(){
+    stopCatchmindLoop();
+    teardownCatchmindChannels();
+    catchmindRoom = null;
+    catchmindOnlineMap = {};
+    if(catchmindSnapshotTimer){ clearTimeout(catchmindSnapshotTimer); catchmindSnapshotTimer = null; }
+  }
+
+  /* ============================================================
      SUDOKU
   ============================================================= */
   function dailySudokuSeed(){
@@ -6673,6 +7198,7 @@
     else if(currentScreen==='gomoku') handleGomokuKey(e);
     else if(currentScreen==='sudoku') handleSudokuKey(e);
     else if(currentScreen==='tenten') handleTentenKey(e);
+    else if(currentScreen==='catchmind') handleCatchmindKey(e);
   });
 
   /* ============ init ============ */
@@ -6692,6 +7218,7 @@
     jumperCtx = document.getElementById('jumper-canvas').getContext('2d');
     gomokuCtx = document.getElementById('gomoku-canvas').getContext('2d');
     gomokupvpCtx = document.getElementById('gomokupvp-canvas').getContext('2d');
+    catchmindCtx = document.getElementById('catchmind-canvas').getContext('2d');
     await runStorageHealthCheck();
     await initPlayer();
     renderTeamBattle();
