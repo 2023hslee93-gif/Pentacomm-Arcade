@@ -549,6 +549,39 @@
     font-size:11px; padding:3px 9px; border-radius:12px; background:var(--card); color:var(--text-dim); border:1px solid var(--border);
   }
   .catchmind-player-chip.drawing{ background:var(--yellow); color:#2a1e00; border-color:var(--yellow); font-weight:700; }
+
+  /* ---------- fortress ---------- */
+  .fortress-lobby.hidden, .fortress-waiting.hidden, .fortress-match.hidden{ display:none; }
+  .fortress-lobby{ display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; max-width:320px; margin:0 auto; }
+  .fortress-room-list{ display:flex; flex-direction:column; gap:8px; width:100%; }
+  .fortress-room-item{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 14px;
+  }
+  .fortress-room-item span{ font-size:14px; color:var(--text); }
+  .fortress-room-item button{
+    background:var(--cyan); color:#04222a; border:none; border-radius:6px; padding:6px 14px;
+    font-weight:700; cursor:pointer; touch-action:manipulation; flex-shrink:0;
+  }
+  .fortress-empty-msg{ text-align:center; color:var(--text-dim); padding:16px 0; font-size:14px; }
+  .fortress-waiting{ text-align:center; padding:40px 0; width:100%; }
+  .fortress-match{ display:flex; flex-direction:column; align-items:center; gap:10px; width:100%; max-width:400px; margin:0 auto; }
+  .fortress-vs{ font-size:13px; color:var(--text-dim); text-align:center; }
+  .fortress-vs b.me{ color:var(--cyan); }
+  .fortress-vs b.opp{ color:var(--pink); }
+  .fortress-hpbars{ display:flex; flex-direction:column; gap:4px; width:100%; max-width:380px; }
+  .fortress-hpbar{ display:flex; align-items:center; gap:8px; }
+  .fortress-hp-label{ font-size:11px; font-weight:700; width:32px; flex-shrink:0; }
+  .fortress-hp-label.me{ color:var(--cyan); }
+  .fortress-hp-label.opp{ color:var(--pink); }
+  .fortress-hp-track{ flex:1; height:10px; border-radius:5px; background:var(--bg-deep); overflow:hidden; border:1px solid var(--border); }
+  .fortress-hp-fill{ height:100%; transition:width .3s ease; }
+  .fortress-hp-fill.me{ background:var(--cyan); }
+  .fortress-hp-fill.opp{ background:var(--pink); }
+  .fortress-controls{ display:flex; flex-direction:column; gap:6px; width:100%; max-width:380px; }
+  .fortress-controls.disabled{ opacity:0.35; pointer-events:none; }
+  .fortress-controls label{ font-size:11px; color:var(--text-dim); }
+  .fortress-controls input[type="range"]{ width:100%; }
   #gomokupvp-timer{ color:var(--yellow); }
 
   /* ---------- nickname modal ---------- */
@@ -881,6 +914,12 @@
         <div class="cabinet-screen" style="font-size:40px;">🎨</div>
         <div class="cabinet-label pixel">캐치마인드</div>
         <div class="cabinet-sub">모두 함께 그림 맞추기 (상시 오픈방)</div>
+      </button>
+
+      <button class="cabinet" data-game="fortress" style="--accent:var(--orange)">
+        <div class="cabinet-screen" style="font-size:40px;">💣</div>
+        <div class="cabinet-label pixel">포트리스</div>
+        <div class="cabinet-sub">각도·파워 조절해서 실시간 1:1 포격전</div>
       </button>
     </div>
 
@@ -1515,6 +1554,50 @@
     <p class="controls-hint">그리는 사람은 캔버스에 그리고, 나머지는 아래에서 정답을 맞혀보세요 · 항상 열려있는 공용 방이에요</p>
   </section>
 
+  <!-- FORTRESS -->
+  <section id="screen-fortress" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span id="fortress-turn-label">로비</span>
+        <span id="fortress-timer"></span>
+        <span>누적승<b id="fortress-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="fortress-lobby" id="fortress-lobby">
+        <button class="start-btn" id="fortress-create">방 만들기</button>
+        <div class="fortress-room-list" id="fortress-room-list"></div>
+      </div>
+      <div class="fortress-waiting hidden" id="fortress-waiting">
+        <div class="pixel" style="margin-bottom:14px;">상대를 기다리는 중...</div>
+        <button class="start-btn" id="fortress-cancel">취소</button>
+      </div>
+      <div class="fortress-match hidden" id="fortress-match">
+        <div class="fortress-vs" id="fortress-vs"></div>
+        <div class="fortress-hpbars">
+          <div class="fortress-hpbar"><span class="fortress-hp-label me">나</span><div class="fortress-hp-track"><div class="fortress-hp-fill me" id="fortress-hp-me"></div></div></div>
+          <div class="fortress-hpbar"><span class="fortress-hp-label opp">상대</span><div class="fortress-hp-track"><div class="fortress-hp-fill opp" id="fortress-hp-opp"></div></div></div>
+        </div>
+        <canvas id="fortress-canvas" width="400" height="300"></canvas>
+        <div class="fortress-controls" id="fortress-controls">
+          <label>각도 <span id="fortress-angle-val">45</span>°</label>
+          <input type="range" id="fortress-angle" min="5" max="85" value="45" />
+          <label>파워 <span id="fortress-power-val">50</span></label>
+          <input type="range" id="fortress-power" min="5" max="100" value="50" />
+          <button class="start-btn" id="fortress-fire">발사!</button>
+        </div>
+        <button class="mini-btn" id="fortress-leave">나가기</button>
+      </div>
+      <div class="overlay hidden" id="fortress-overlay">
+        <div class="overlay-title pixel" id="fortress-overlay-title">결과</div>
+        <div class="overlay-msg" id="fortress-overlay-msg"></div>
+        <button class="start-btn" id="fortress-back-lobby">로비로</button>
+      </div>
+    </div>
+    <p class="controls-hint">각도·파워를 조절하고 발사! 턴당 20초 · 바람에 따라 궤적이 살짝 휘어요</p>
+  </section>
+
 </div>
 
 <script>
@@ -1588,7 +1671,8 @@
     { id:'sudoku', label:'SUDOKU', icon:'🔢', color:'var(--blue)' },
     { id:'tenten', label:'1010!', icon:'🧊', color:'var(--pink)' },
     { id:'gomokupvp', label:'오목대전', icon:'⚔️', color:'var(--red)' },
-    { id:'catchmind', label:'캐치마인드', icon:'🎨', color:'var(--cyan)' }
+    { id:'catchmind', label:'캐치마인드', icon:'🎨', color:'var(--cyan)' },
+    { id:'fortress', label:'포트리스', icon:'💣', color:'var(--orange)' }
   ];
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
@@ -2029,6 +2113,9 @@
     if(currentScreen === 'catchmind'){
       cleanupCatchmind();
     }
+    if(currentScreen === 'fortress'){
+      cleanupFortress();
+    }
     if(currentScreen === 'sudoku' && sudokuState){
       stopSudokuTimer();
       if(!sudokuState.over && sudokuState.given){
@@ -2078,6 +2165,7 @@
     if(id === 'gomoku') prepareGomoku();
     if(id === 'gomokupvp') prepareGomokupvp();
     if(id === 'catchmind') prepareCatchmind();
+    if(id === 'fortress') prepareFortress();
     if(id === 'sudoku') prepareSudoku();
     if(id === 'tenten') prepareTenTen();
   }
@@ -6611,6 +6699,395 @@
   }
 
   /* ============================================================
+     FORTRESS (real-time 1:1 artillery, Supabase Realtime)
+  ============================================================= */
+  const FORTRESS_W = 400, FORTRESS_H = 300;
+  const FORTRESS_GRAVITY = 0.22, FORTRESS_POWER_SCALE = 0.09;
+  const FORTRESS_TANK_RADIUS = 14;
+  const FORTRESS_TURN_SECONDS = 20;
+  let fortressChannel = null;
+  let fortressMatch = null;
+  let fortressMyNum = null;
+  let fortressCtx = null;
+  let fortressTimerInterval = null;
+  let fortressAnimating = false;
+
+  function generateFortressRoomCode(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for(let i=0;i<5;i++) code += chars[Math.floor(Math.random()*chars.length)];
+    return code;
+  }
+  function generateFortressTerrain(){
+    const terrain = [];
+    const amp1 = 20 + Math.random()*20, amp2 = 10 + Math.random()*15;
+    const phase1 = Math.random()*Math.PI*2, phase2 = Math.random()*Math.PI*2;
+    const freq1 = 1 + Math.random()*1.5, freq2 = 2 + Math.random()*2;
+    const base = 220;
+    for(let x=0;x<FORTRESS_W;x++){
+      const t = x/FORTRESS_W;
+      const h = base - amp1*Math.sin(t*Math.PI*freq1+phase1) - amp2*Math.sin(t*Math.PI*freq2+phase2);
+      terrain.push(Math.round(h));
+    }
+    return terrain;
+  }
+  function fortressGroundY(terrain, x){
+    const col = Math.max(0, Math.min(terrain.length-1, Math.round(x)));
+    return terrain[col];
+  }
+  function fortressSimulateShot(terrain, startX, startY, angleDeg, power, facingRight, wind, targetX, targetY){
+    const angleRad = angleDeg * Math.PI/180;
+    const dir = facingRight ? 1 : -1;
+    let vx = Math.cos(angleRad) * power * FORTRESS_POWER_SCALE * dir + (wind||0)*0.6;
+    let vy = -Math.sin(angleRad) * power * FORTRESS_POWER_SCALE;
+    let x = startX, y = startY;
+    const points = [{x:x,y:y}];
+    for(let step=0; step<2000; step++){
+      x += vx; y += vy; vy += FORTRESS_GRAVITY;
+      points.push({x:x,y:y});
+      if(x < 0 || x >= terrain.length){
+        return { landX:x, landY:y, points:points, hit:false };
+      }
+      const groundY = terrain[Math.round(x)];
+      if(y >= groundY){
+        const dist = Math.hypot(x-targetX, groundY-fortressGroundY(terrain,targetX));
+        return { landX:x, landY:groundY, points:points, hit:dist<=FORTRESS_TANK_RADIUS*3, distance:dist };
+      }
+    }
+    return { landX:x, landY:y, points:points, hit:false };
+  }
+  function fortressCalcDamage(distance){
+    if(distance == null) return 0;
+    if(distance <= FORTRESS_TANK_RADIUS*0.5) return 40;
+    if(distance <= FORTRESS_TANK_RADIUS) return 25;
+    if(distance <= FORTRESS_TANK_RADIUS*2) return 12;
+    if(distance <= FORTRESS_TANK_RADIUS*3) return 5;
+    return 0;
+  }
+
+  function fortressRemoveChannel(){
+    if(fortressChannel){ sb.removeChannel(fortressChannel); fortressChannel = null; }
+  }
+  function fortressShowView(view){
+    document.getElementById('fortress-lobby').classList.toggle('hidden', view!=='lobby');
+    document.getElementById('fortress-waiting').classList.toggle('hidden', view!=='waiting');
+    document.getElementById('fortress-match').classList.toggle('hidden', view!=='match');
+    document.getElementById('fortress-overlay').classList.add('hidden');
+    const labelMap = { lobby:'로비', waiting:'대기중', match:'대전중' };
+    document.getElementById('fortress-turn-label').textContent = labelMap[view] || '';
+    document.getElementById('fortress-timer').textContent = '';
+    if(view !== 'match') stopFortressTimerWatch();
+  }
+  function prepareFortress(){
+    fortressRemoveChannel();
+    fortressMatch = null; fortressMyNum = null;
+    fortressShowView('lobby');
+    fetchFortressRooms();
+    subscribeFortressLobby();
+    loadMyBest('fortress');
+  }
+  async function fetchFortressRooms(){
+    try{
+      const cutoff = new Date(Date.now() - 10*60*1000).toISOString();
+      const { data, error } = await sb.from('fortress_matches')
+        .select('id, player1_id, player1_nickname, created_at')
+        .eq('status','waiting').gte('created_at', cutoff).order('created_at', { ascending:true });
+      if(error) throw error;
+      renderFortressRoomList((data||[]).filter(function(row){ return row.player1_id !== playerId; }));
+    }catch(e){ renderFortressRoomList([]); }
+  }
+  function renderFortressRoomList(rooms){
+    const el = document.getElementById('fortress-room-list');
+    el.innerHTML = '';
+    if(rooms.length === 0){
+      el.innerHTML = '<div class="fortress-empty-msg">대기 중인 방이 없어요. 방을 만들어보세요!</div>';
+      return;
+    }
+    rooms.forEach(function(room){
+      const item = document.createElement('div');
+      item.className = 'fortress-room-item';
+      const span = document.createElement('span');
+      span.textContent = (room.player1_nickname || '익명') + '님이 상대를 기다리는 중';
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.textContent = '참가하기';
+      btn.addEventListener('click', function(){ joinFortressRoom(room.id); });
+      item.appendChild(span); item.appendChild(btn);
+      el.appendChild(item);
+    });
+  }
+  function subscribeFortressLobby(){
+    fortressRemoveChannel();
+    fortressChannel = sb.channel('fortress-lobby')
+      .on('postgres_changes', { event:'*', schema:'public', table:'fortress_matches' }, function(){ fetchFortressRooms(); })
+      .subscribe();
+  }
+  async function createFortressRoom(){
+    if(!playerId) return;
+    try{
+      const { data, error } = await sb.from('fortress_matches').insert({
+        room_code: generateFortressRoomCode(),
+        player1_id: playerId, player1_nickname: nickname || '익명',
+        terrain: generateFortressTerrain(), player1_x:40, player2_x:360,
+        player1_hp:100, player2_hp:100, current_turn:1, status:'waiting',
+        wind: Math.round((Math.random()*2-1)*10)/10, move_count:0
+      }).select().single();
+      if(error) throw error;
+      fortressMatch = data; fortressMyNum = 1;
+      fortressShowView('waiting');
+      subscribeFortressMatch(data.id);
+    }catch(e){ alert('방 생성에 실패했어요. 다시 시도해주세요.'); }
+  }
+  async function joinFortressRoom(roomId){
+    if(!playerId) return;
+    try{
+      const { data, error } = await sb.from('fortress_matches')
+        .update({ player2_id: playerId, player2_nickname: nickname || '익명', status:'playing',
+          turn_started_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+        .eq('id', roomId).eq('status','waiting').select();
+      if(error) throw error;
+      if(!data || data.length === 0){ alert('이미 다른 사람이 참가했어요.'); fetchFortressRooms(); return; }
+      fortressMatch = data[0]; fortressMyNum = 2;
+      fortressShowView('match');
+      subscribeFortressMatch(roomId);
+      renderFortressMatch();
+      startFortressTimerWatch();
+    }catch(e){ alert('참가에 실패했어요. 다시 시도해주세요.'); }
+  }
+  function subscribeFortressMatch(matchId){
+    fortressRemoveChannel();
+    fortressChannel = sb.channel('fortress-match-'+matchId)
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'fortress_matches', filter:'id=eq.'+matchId }, function(payload){
+        handleFortressUpdate(payload.new);
+      })
+      .subscribe();
+  }
+  function handleFortressUpdate(row){
+    const wasWaiting = fortressMatch && fortressMatch.status === 'waiting';
+    const prevMoveCount = fortressMatch ? fortressMatch.move_count : -1;
+    fortressMatch = row;
+    if(wasWaiting && row.status === 'playing'){
+      fortressShowView('match');
+      startFortressTimerWatch();
+    }
+    if(!document.getElementById('fortress-match').classList.contains('hidden')){
+      if(row.move_count !== prevMoveCount && row.last_shot){
+        animateFortressShot(row.last_shot, row);
+      }else{
+        renderFortressMatch();
+      }
+    }
+    if(row.status === 'finished'){
+      finishFortressMatch(row);
+    }
+  }
+
+  function renderFortressMatch(){
+    const m = fortressMatch;
+    if(!m) return;
+    const myNick = fortressMyNum===1 ? m.player1_nickname : m.player2_nickname;
+    const oppNick = fortressMyNum===1 ? m.player2_nickname : m.player1_nickname;
+    document.getElementById('fortress-vs').innerHTML = '<b class="me">'+escapeHtml(myNick||'나')+'</b> (나) vs <b class="opp">'+escapeHtml(oppNick||'상대')+'</b>';
+    const myHp = fortressMyNum===1 ? m.player1_hp : m.player2_hp;
+    const oppHp = fortressMyNum===1 ? m.player2_hp : m.player1_hp;
+    document.getElementById('fortress-hp-me').style.width = Math.max(0,myHp)+'%';
+    document.getElementById('fortress-hp-opp').style.width = Math.max(0,oppHp)+'%';
+    const myTurn = m.current_turn === fortressMyNum;
+    document.getElementById('fortress-turn-label').textContent = m.status==='playing' ? (myTurn ? '내 차례' : '상대 차례') : '종료';
+    document.getElementById('fortress-controls').classList.toggle('disabled', !myTurn || m.status!=='playing' || fortressAnimating);
+    drawFortressScene(null);
+  }
+
+  function drawFortressScene(projectilePoint){
+    const ctx = fortressCtx, m = fortressMatch;
+    if(!ctx || !m) return;
+    ctx.fillStyle = '#0d1b2a';
+    ctx.fillRect(0,0,FORTRESS_W,FORTRESS_H);
+    const terrain = m.terrain;
+    ctx.fillStyle = '#2d6a4f';
+    ctx.beginPath();
+    ctx.moveTo(0, FORTRESS_H);
+    for(let x=0;x<terrain.length;x++){ ctx.lineTo(x, terrain[x]); }
+    ctx.lineTo(FORTRESS_W, FORTRESS_H);
+    ctx.closePath();
+    ctx.fill();
+    function drawTank(x, color){
+      const y = fortressGroundY(terrain, x);
+      ctx.fillStyle = color;
+      ctx.fillRect(x-12, y-10, 24, 10);
+      ctx.beginPath();
+      ctx.arc(x, y-10, 7, 0, Math.PI*2);
+      ctx.fill();
+    }
+    drawTank(m.player1_x, '#00E5FF');
+    drawTank(m.player2_x, '#FF2E7E');
+    if(projectilePoint){
+      ctx.fillStyle = '#FFD23F';
+      ctx.beginPath();
+      ctx.arc(projectilePoint.x, projectilePoint.y, 4, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('바람 ' + (m.wind>0?'→':m.wind<0?'←':'-') + ' ' + Math.abs(m.wind||0).toFixed(1), 10, 16);
+  }
+
+  function animateFortressShot(shot, row){
+    if(fortressAnimating) return;
+    fortressAnimating = true;
+    document.getElementById('fortress-controls').classList.add('disabled');
+    const result = fortressSimulateShot(row.terrain, shot.startX, shot.startY, shot.angle, shot.power, shot.facingRight, shot.wind, shot.targetX, shot.targetY);
+    const points = result.points;
+    let i = 0;
+    const step = Math.max(1, Math.floor(points.length/90));
+    function tick(){
+      if(i >= points.length){
+        fortressAnimating = false;
+        renderFortressMatch();
+        return;
+      }
+      drawFortressScene(points[i]);
+      i += step;
+      requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  async function fireFortressShot(){
+    const m = fortressMatch;
+    if(!m || m.status !== 'playing' || m.current_turn !== fortressMyNum || fortressAnimating) return;
+    const angle = Number(document.getElementById('fortress-angle').value);
+    const power = Number(document.getElementById('fortress-power').value);
+    const facingRight = fortressMyNum === 1;
+    const startX = fortressMyNum===1 ? m.player1_x : m.player2_x;
+    const startY = fortressGroundY(m.terrain, startX) - 10;
+    const targetX = fortressMyNum===1 ? m.player2_x : m.player1_x;
+    const targetY = fortressGroundY(m.terrain, targetX);
+    const result = fortressSimulateShot(m.terrain, startX, startY, angle, power, facingRight, m.wind, targetX, targetY);
+    const damage = fortressCalcDamage(result.hit ? result.distance : null);
+    const oppHpField = fortressMyNum===1 ? 'player2_hp' : 'player1_hp';
+    const newOppHp = Math.max(0, (fortressMyNum===1 ? m.player2_hp : m.player1_hp) - damage);
+    const nextTurn = fortressMyNum===1 ? 2 : 1;
+    const newWind = Math.round((Math.random()*2-1)*10)/10;
+    const updates = {
+      last_shot: { startX:startX, startY:startY, angle:angle, power:power, facingRight:facingRight, wind:m.wind, targetX:targetX, targetY:targetY },
+      move_count: m.move_count+1, wind:newWind, updated_at:new Date().toISOString()
+    };
+    updates[oppHpField] = newOppHp;
+    if(newOppHp <= 0){
+      updates.status = 'finished';
+      updates.winner = fortressMyNum;
+      updates.current_turn = m.current_turn;
+    }else{
+      updates.current_turn = nextTurn;
+      updates.turn_started_at = new Date().toISOString();
+    }
+    try{
+      const { data } = await sb.from('fortress_matches')
+        .update(updates).eq('id', m.id).eq('current_turn', fortressMyNum).select();
+      if(data && data.length>0){
+        fortressMatch = data[0];
+        animateFortressShot(updates.last_shot, fortressMatch);
+      }
+    }catch(e){}
+  }
+
+  document.getElementById('fortress-angle').addEventListener('input', function(){
+    document.getElementById('fortress-angle-val').textContent = this.value;
+  });
+  document.getElementById('fortress-power').addEventListener('input', function(){
+    document.getElementById('fortress-power-val').textContent = this.value;
+  });
+  document.getElementById('fortress-fire').addEventListener('click', fireFortressShot);
+
+  function fortressTimerTick(){
+    const m = fortressMatch;
+    if(!m || m.status !== 'playing' || !m.turn_started_at) return;
+    const elapsed = (Date.now() - new Date(m.turn_started_at).getTime())/1000;
+    const remaining = Math.max(0, FORTRESS_TURN_SECONDS - elapsed);
+    document.getElementById('fortress-timer').textContent = Math.ceil(remaining) + '초';
+    if(remaining <= 0) handleFortressTimeout();
+  }
+  function startFortressTimerWatch(){
+    stopFortressTimerWatch();
+    fortressTimerInterval = setInterval(fortressTimerTick, 250);
+  }
+  function stopFortressTimerWatch(){
+    if(fortressTimerInterval){ clearInterval(fortressTimerInterval); fortressTimerInterval = null; }
+  }
+  async function handleFortressTimeout(){
+    const m = fortressMatch;
+    if(!m || m.status !== 'playing') return;
+    const timedOutPlayer = m.current_turn;
+    const winner = timedOutPlayer === 1 ? 2 : 1;
+    try{
+      const { data } = await sb.from('fortress_matches')
+        .update({ status:'finished', winner:winner, updated_at:new Date().toISOString() })
+        .eq('id', m.id).eq('status','playing').eq('current_turn', timedOutPlayer).select();
+      if(data && data.length>0) handleFortressUpdate(data[0]);
+    }catch(e){}
+  }
+
+  async function incrementFortressWins(){
+    if(!playerId) return 0;
+    try{
+      const { data: existing } = await sb.from('scores').select('score').eq('player_id', playerId).eq('game','fortress').maybeSingle();
+      const newCount = (existing ? existing.score : 0) + 1;
+      await sb.from('scores').upsert({ player_id: playerId, game:'fortress', score:newCount, updated_at:new Date().toISOString() });
+      return newCount;
+    }catch(e){ return 0; }
+  }
+  function finishFortressMatch(row){
+    if(!fortressChannel) return;
+    fortressRemoveChannel();
+    stopFortressTimerWatch();
+    const won = row.winner === fortressMyNum;
+    drawFortressScene(null);
+    const overlay = document.getElementById('fortress-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = won ? 'YOU WIN!' : 'YOU LOSE';
+    if(won){
+      incrementFortressWins().then(function(newCount){
+        overlay.querySelector('.overlay-msg').textContent = '승리! 누적 ' + newCount + '승';
+        loadMyBest('fortress');
+        renderTeamBattle();
+      });
+    }else{
+      overlay.querySelector('.overlay-msg').textContent = '아쉽네요, 다음에 다시 도전해보세요';
+    }
+  }
+
+  async function leaveFortressMatch(){
+    const m = fortressMatch;
+    if(m && m.status === 'playing'){
+      const winner = fortressMyNum===1 ? 2 : 1;
+      try{ await sb.from('fortress_matches').update({ status:'finished', winner:winner, updated_at:new Date().toISOString() }).eq('id', m.id).eq('status','playing'); }catch(e){}
+    }
+    fortressRemoveChannel();
+    fortressMatch = null; fortressMyNum = null;
+    prepareFortress();
+  }
+  document.getElementById('fortress-create').addEventListener('click', createFortressRoom);
+  document.getElementById('fortress-cancel').addEventListener('click', async function(){
+    if(fortressMatch){
+      try{ await sb.from('fortress_matches').delete().eq('id', fortressMatch.id).eq('status','waiting'); }catch(e){}
+    }
+    fortressRemoveChannel();
+    fortressMatch = null; fortressMyNum = null;
+    prepareFortress();
+  });
+  document.getElementById('fortress-leave').addEventListener('click', leaveFortressMatch);
+  document.getElementById('fortress-back-lobby').addEventListener('click', function(){
+    fortressMatch = null; fortressMyNum = null;
+    prepareFortress();
+  });
+  function handleFortressKey(e){ /* pointer/slider driven, no keyboard shortcuts */ }
+  function cleanupFortress(){
+    stopFortressTimerWatch();
+    fortressRemoveChannel();
+    fortressMatch = null; fortressMyNum = null; fortressAnimating = false;
+  }
+
+  /* ============================================================
      SUDOKU
   ============================================================= */
   function dailySudokuSeed(){
@@ -7199,6 +7676,7 @@
     else if(currentScreen==='sudoku') handleSudokuKey(e);
     else if(currentScreen==='tenten') handleTentenKey(e);
     else if(currentScreen==='catchmind') handleCatchmindKey(e);
+    else if(currentScreen==='fortress') handleFortressKey(e);
   });
 
   /* ============ init ============ */
@@ -7219,6 +7697,7 @@
     gomokuCtx = document.getElementById('gomoku-canvas').getContext('2d');
     gomokupvpCtx = document.getElementById('gomokupvp-canvas').getContext('2d');
     catchmindCtx = document.getElementById('catchmind-canvas').getContext('2d');
+    fortressCtx = document.getElementById('fortress-canvas').getContext('2d');
     await runStorageHealthCheck();
     await initPlayer();
     renderTeamBattle();
