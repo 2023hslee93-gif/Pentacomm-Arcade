@@ -389,6 +389,23 @@
   .simon-pad.active{ opacity:1; box-shadow:0 0 20px var(--pad-color); }
   .simon-pad:focus-visible{ outline:2px solid #fff; }
 
+  /* ---------- numtap ---------- */
+  .numtap-board{
+    display:grid; grid-template-columns:repeat(5, 1fr); grid-auto-rows:1fr; gap:6px;
+    width:100%; max-width:320px; aspect-ratio:1/1; margin:0 auto; touch-action:manipulation;
+  }
+  .numtap-cell{
+    background:var(--bg-deep); border:1px solid var(--border); border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:700; color:var(--text);
+    cursor:pointer; transition:background .1s ease, border-color .1s ease;
+  }
+  .numtap-cell.done{
+    background:rgba(61,255,122,0.22); border-color:var(--green); color:var(--green);
+    opacity:.55; cursor:default;
+  }
+  .numtap-cell.wrong{ background:rgba(255,71,87,0.35); border-color:var(--red); }
+
   /* ---------- wordle ---------- */
   .wordle-wrap{
     display:flex; flex-direction:column; align-items:center; gap:16px;
@@ -920,6 +937,12 @@
         <div class="cabinet-screen" style="font-size:40px;">💣</div>
         <div class="cabinet-label pixel">포트리스</div>
         <div class="cabinet-sub">각도·파워 조절해서 실시간 1:1 포격전</div>
+      </button>
+
+      <button class="cabinet" data-game="numtap" style="--accent:var(--yellow)">
+        <div class="cabinet-screen" style="font-size:40px;">🎯</div>
+        <div class="cabinet-label pixel">NUMTAP</div>
+        <div class="cabinet-sub">1부터 25까지 순서대로 빠르게 터치하세요</div>
       </button>
     </div>
 
@@ -1598,6 +1621,27 @@
     <p class="controls-hint">각도·파워를 조절하고 발사! 턴당 20초 · 바람에 따라 궤적이 살짝 휘어요</p>
   </section>
 
+  <!-- NUMTAP -->
+  <section id="screen-numtap" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>TIME<b id="numtap-time">0.00</b></span>
+        <span>NEXT<b id="numtap-next">1</b></span>
+        <span>BEST<b id="numtap-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="numtap-board" id="numtap-board"></div>
+      <div class="overlay" id="numtap-overlay">
+        <div class="overlay-title pixel">NUMTAP</div>
+        <div class="overlay-msg">1부터 25까지 순서대로 빠르게 터치하세요</div>
+        <button class="start-btn" id="numtap-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">숫자를 1부터 25까지 순서대로 빠르게 터치하세요 · 빠를수록 점수가 높아요</p>
+  </section>
+
 </div>
 
 <script>
@@ -1672,7 +1716,8 @@
     { id:'tenten', label:'1010!', icon:'🧊', color:'var(--pink)' },
     { id:'gomokupvp', label:'오목대전', icon:'⚔️', color:'var(--red)' },
     { id:'catchmind', label:'캐치마인드', icon:'🎨', color:'var(--cyan)' },
-    { id:'fortress', label:'포트리스', icon:'💣', color:'var(--orange)' }
+    { id:'fortress', label:'포트리스', icon:'💣', color:'var(--orange)' },
+    { id:'numtap', label:'NUMTAP', icon:'🎯', color:'var(--yellow)' }
   ];
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
@@ -2131,6 +2176,7 @@
         submitScore('tenten', tentenState.score);
       }
     }
+    if(currentScreen === 'numtap' && numtapState){ stopNumtapTimers(); }
     currentScreen = id;
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
@@ -2168,6 +2214,7 @@
     if(id === 'fortress') prepareFortress();
     if(id === 'sudoku') prepareSudoku();
     if(id === 'tenten') prepareTenTen();
+    if(id === 'numtap') prepareNumtap();
   }
 
   async function openGameInfoModal(gameId){
@@ -7642,6 +7689,118 @@
       if(!s.running){ if(s.over) prepareTenTen(); startTenTen(); }
     }
   }
+
+  /* ============================================================
+     NUMTAP
+  ============================================================= */
+  let numtapState;
+
+  function shuffledNumtapOrder(){
+    const arr = [];
+    for(let i=1;i<=25;i++) arr.push(i);
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  }
+
+  function prepareNumtap(){
+    numtapState = { next:1, startTime:0, rafId:null, running:false, over:false };
+    renderNumtapBoard();
+    document.getElementById('numtap-next').textContent = '1';
+    document.getElementById('numtap-time').textContent = '0.00';
+    loadMyBest('numtap');
+    const overlay = document.getElementById('numtap-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'NUMTAP';
+    overlay.querySelector('.overlay-msg').textContent = '1부터 25까지 순서대로 빠르게 터치하세요';
+  }
+
+  function renderNumtapBoard(){
+    const order = shuffledNumtapOrder();
+    const el = document.getElementById('numtap-board');
+    el.innerHTML = '';
+    order.forEach(function(num){
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'numtap-cell';
+      btn.textContent = String(num);
+      btn.dataset.num = num;
+      el.appendChild(btn);
+    });
+  }
+
+  function numtapTick(){
+    if(!numtapState || !numtapState.running) return;
+    const elapsed = performance.now() - numtapState.startTime;
+    document.getElementById('numtap-time').textContent = (elapsed/1000).toFixed(2);
+    numtapState.rafId = requestAnimationFrame(numtapTick);
+  }
+
+  function startNumtap(){
+    if(!numtapState || numtapState.running) return;
+    numtapState.running = true;
+    numtapState.over = false;
+    numtapState.next = 1;
+    document.getElementById('numtap-next').textContent = '1';
+    document.getElementById('numtap-overlay').classList.add('hidden');
+    numtapState.startTime = performance.now();
+    numtapState.rafId = requestAnimationFrame(numtapTick);
+  }
+
+  function stopNumtapTimers(){
+    if(numtapState){
+      numtapState.running = false;
+      if(numtapState.rafId) cancelAnimationFrame(numtapState.rafId);
+    }
+  }
+
+  function handleNumtapTap(btn){
+    const s = numtapState;
+    if(!s || !s.running) return;
+    const num = Number(btn.dataset.num);
+    if(num === s.next){
+      btn.classList.add('done');
+      btn.disabled = true;
+      s.next++;
+      if(s.next <= 25){
+        document.getElementById('numtap-next').textContent = s.next;
+      }else{
+        endNumtap();
+      }
+    }else{
+      btn.classList.add('wrong');
+      setTimeout(function(){ btn.classList.remove('wrong'); }, 200);
+    }
+  }
+
+  function endNumtap(){
+    const s = numtapState;
+    if(!s || s.over) return;
+    s.running = false;
+    s.over = true;
+    if(s.rafId) cancelAnimationFrame(s.rafId);
+    const elapsedMs = performance.now() - s.startTime;
+    const elapsedSec = elapsedMs / 1000;
+    document.getElementById('numtap-time').textContent = elapsedSec.toFixed(2);
+    const score = Math.max(100, Math.round(6000 - elapsedSec * 100));
+    const overlay = document.getElementById('numtap-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
+    overlay.querySelector('.overlay-msg').textContent = elapsedSec.toFixed(2) + '초 · 점수 ' + score + ' · 다시 시작하려면 버튼을 누르세요';
+    finalizeScore('numtap', score, overlay);
+  }
+
+  document.getElementById('numtap-board').addEventListener('click', function(e){
+    const btn = e.target.closest('.numtap-cell'); if(!btn) return;
+    handleNumtapTap(btn);
+  });
+  document.getElementById('numtap-start').addEventListener('click', function(){
+    if(!numtapState) return;
+    if(numtapState.over) prepareNumtap();
+    startNumtap();
+  });
 
   /* ============ global key listener ============ */
   window.addEventListener('keyup', function(e){
