@@ -628,7 +628,10 @@
   #gomokupvp-timer{ color:var(--yellow); }
 
   /* ---------- yutnori ---------- */
-  .yutnori-wrap{ display:flex; flex-direction:column; align-items:center; gap:12px; width:100%; max-width:400px; margin:0 auto; }
+  .yutnori-lobby-view{ display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; max-width:320px; margin:0 auto; }
+  .yutnori-lobby-view.hidden{ display:none; }
+  .yutnori-room-view{ display:flex; flex-direction:column; align-items:center; gap:12px; width:100%; max-width:400px; margin:0 auto; }
+  .yutnori-room-view.hidden{ display:none; }
   .yutnori-teams{ display:flex; gap:10px; width:100%; }
   .yutnori-team-box{
     flex:1; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px;
@@ -640,8 +643,20 @@
   .yutnori-roster{ display:flex; flex-direction:column; gap:3px; min-height:20px; width:100%; align-items:center; }
   .yutnori-roster-item{ font-size:12px; color:var(--text-dim); }
   .yutnori-roster-empty{ font-size:11px; color:var(--text-dim); opacity:.5; }
-  .yutnori-lobby-actions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
-  .yutnori-board-area{ width:100%; max-width:340px; margin:0 auto; }
+  .yutnori-waiting{ display:flex; gap:4px; flex-wrap:wrap; justify-content:center; min-height:18px; }
+  .yutnori-waiting-piece{ width:16px; height:16px; border-radius:50%; border:2px solid #04040a; padding:0; cursor:pointer; }
+  .yutnori-waiting-piece.team-a{ background:var(--cyan); }
+  .yutnori-waiting-piece.team-b{ background:var(--pink); }
+  .yutnori-waiting-piece.selected{ box-shadow:0 0 6px 2px rgba(255,210,63,0.8); border-color:var(--yellow); }
+  .yutnori-finish-btn{
+    font-size:11px; padding:6px 10px; border-radius:6px; background:var(--yellow); color:#2a1e00;
+    border:none; font-weight:700; cursor:pointer; touch-action:manipulation;
+  }
+  .yutnori-board-area{ width:100%; max-width:340px; margin:0 auto; position:relative; }
+  .yutnori-board-area.spectating::after{
+    content:'👀 관전 중'; position:absolute; top:4px; right:4px; font-size:10px; color:var(--text-dim);
+    background:rgba(0,0,0,0.6); padding:2px 6px; border-radius:6px;
+  }
   .yutnori-board{ width:100%; height:auto; display:block; touch-action:manipulation; }
   .yutnori-line{ stroke:var(--text-dim); stroke-width:1.5; opacity:.5; }
   .yutnori-node{ fill:var(--bg-deep); stroke:var(--text-dim); stroke-width:1.5; }
@@ -651,16 +666,39 @@
   .yutnori-piece.team-b{ fill:var(--pink); }
   .yutnori-piece.mine{ cursor:pointer; }
   .yutnori-piece.mine:hover{ filter:brightness(1.3); }
-  .yutnori-pending{ display:flex; gap:6px; flex-wrap:wrap; justify-content:center; min-height:24px; }
+  .yutnori-piece.selected{ stroke:var(--yellow); stroke-width:3; filter:drop-shadow(0 0 6px rgba(255,210,63,0.85)); }
+  .yutnori-dest{ fill:rgba(255,210,63,0.25); stroke:var(--yellow); stroke-width:2.5; cursor:pointer; animation:yutnori-pulse 1s ease-in-out infinite; }
+  @keyframes yutnori-pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
+  .yutnori-throw-area{ display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .yutnori-sticks{ display:flex; gap:6px; justify-content:center; align-items:flex-end; height:64px; }
+  .yutnori-stick{
+    width:14px; height:54px; border-radius:7px; background:linear-gradient(180deg,#4a3420,#241608);
+    border:1px solid var(--border); transition:background .15s, border-color .15s, box-shadow .15s;
+  }
+  .yutnori-stick.belly{ background:linear-gradient(180deg,#fff5da,#e8c877); border-color:var(--yellow); }
+  .yutnori-stick.back-move{ background:linear-gradient(180deg,#5a1414,#240808); border-color:var(--red); box-shadow:0 0 8px rgba(255,60,60,.5); }
+  .yutnori-sticks.throwing .yutnori-stick{ animation:yutnori-tumble .6s ease-in-out; }
+  .yutnori-sticks.throwing .yutnori-stick:nth-child(2){ animation-delay:.03s; }
+  .yutnori-sticks.throwing .yutnori-stick:nth-child(3){ animation-delay:.06s; }
+  .yutnori-sticks.throwing .yutnori-stick:nth-child(4){ animation-delay:.09s; }
+  @keyframes yutnori-tumble{
+    0%{ transform:rotate(0deg) translateY(0); }
+    25%{ transform:rotate(180deg) translateY(-16px); }
+    50%{ transform:rotate(360deg) translateY(-22px); }
+    75%{ transform:rotate(540deg) translateY(-10px); }
+    100%{ transform:rotate(720deg) translateY(0); }
+  }
+  .yutnori-throw-label{ font-family:'Press Start 2P',monospace; font-size:12px; color:var(--yellow); min-height:16px; text-align:center; }
+  .yutnori-pending{ display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center; min-height:24px; }
   .yutnori-chip{
     font-family:'Press Start 2P',monospace; font-size:10px; padding:8px 10px; border-radius:6px;
-    background:var(--card); border:1px solid var(--border); color:var(--text); cursor:pointer;
+    background:var(--card); border:1px solid var(--border); color:var(--text);
   }
-  .yutnori-chip.armed{ border-color:var(--yellow); color:var(--yellow); box-shadow:0 0 8px rgba(255,210,63,0.5); }
-  .yutnori-controls{ display:flex; flex-direction:column; align-items:center; gap:8px; }
-  .yutnori-throw-result{ font-size:12px; color:var(--text-dim); }
-  .yutnori-fork{ display:flex; flex-direction:column; align-items:center; gap:8px; background:var(--card); border:1px solid var(--yellow); border-radius:8px; padding:14px; width:100%; }
-  .yutnori-fork.hidden{ display:none; }
+  .yutnori-pending-empty{ font-size:12px; color:var(--text-dim); opacity:.6; }
+  .yutnori-chip-discard{
+    font-size:11px; padding:6px 10px; border-radius:6px; background:var(--red); color:#2a0000;
+    border:none; font-weight:700; cursor:pointer; touch-action:manipulation;
+  }
 
   /* ---------- nickname modal ---------- */
   .nickname-modal{ position:fixed; inset:0; z-index:70; background:rgba(6,6,11,0.9); display:flex; align-items:center; justify-content:center; padding:20px; }
@@ -1722,45 +1760,52 @@
         <span>누적승<b id="yutnori-best">0</b></span>
       </div>
     </div>
-    <div class="yutnori-wrap">
-      <div class="yutnori-teams">
-        <div class="yutnori-team-box team-a">
-          <div class="yutnori-team-label">A팀</div>
-          <div class="yutnori-roster" id="yutnori-roster-a"></div>
-          <button type="button" class="mini-btn" id="yutnori-join-a">A팀 참가</button>
-        </div>
-        <div class="yutnori-team-box team-b">
-          <div class="yutnori-team-label">B팀</div>
-          <div class="yutnori-roster" id="yutnori-roster-b"></div>
-          <button type="button" class="mini-btn" id="yutnori-join-b">B팀 참가</button>
-        </div>
+    <div class="game-stage">
+      <div class="yutnori-lobby-view" id="yutnori-lobby-view">
+        <button type="button" class="start-btn" id="yutnori-create-room">방 만들기</button>
+        <div class="fortress-room-list" id="yutnori-room-list"></div>
+        <button type="button" class="mini-btn" id="yutnori-lobby-back">← 오락실로</button>
       </div>
-      <div class="yutnori-lobby-actions">
-        <button type="button" class="mini-btn" id="yutnori-leave-team">팀에서 나가기</button>
+      <div class="yutnori-room-view hidden" id="yutnori-room-view">
+        <div class="yutnori-teams">
+          <div class="yutnori-team-box team-a">
+            <div class="yutnori-team-label">A팀</div>
+            <div class="yutnori-roster" id="yutnori-roster-a"></div>
+            <div class="yutnori-waiting" id="yutnori-waiting-a"></div>
+            <button type="button" class="mini-btn" id="yutnori-join-a">A팀 참가</button>
+          </div>
+          <div class="yutnori-team-box team-b">
+            <div class="yutnori-team-label">B팀</div>
+            <div class="yutnori-roster" id="yutnori-roster-b"></div>
+            <div class="yutnori-waiting" id="yutnori-waiting-b"></div>
+            <button type="button" class="mini-btn" id="yutnori-join-b">B팀 참가</button>
+          </div>
+        </div>
         <button type="button" class="start-btn" id="yutnori-start-game">게임 시작</button>
-      </div>
-      <div class="yutnori-board-area">
-        <svg id="yutnori-board-svg" viewBox="0 0 340 340" class="yutnori-board"></svg>
-      </div>
-      <div class="yutnori-pending" id="yutnori-pending"></div>
-      <div class="yutnori-controls">
+        <div class="yutnori-board-area" id="yutnori-board-area">
+          <svg id="yutnori-board-svg" viewBox="0 0 340 340" class="yutnori-board"></svg>
+        </div>
+        <div class="yutnori-throw-area">
+          <div class="yutnori-sticks" id="yutnori-sticks">
+            <div class="yutnori-stick"></div>
+            <div class="yutnori-stick"></div>
+            <div class="yutnori-stick"></div>
+            <div class="yutnori-stick"></div>
+          </div>
+          <div class="yutnori-throw-label" id="yutnori-throw-label"></div>
+        </div>
+        <div class="yutnori-pending" id="yutnori-pending"></div>
         <button type="button" class="start-btn" id="yutnori-throw-btn">윷 던지기</button>
-        <button type="button" class="mini-btn" id="yutnori-discard-btn" style="display:none;">버리기 (이동 불가)</button>
-        <div class="yutnori-throw-result" id="yutnori-throw-result"></div>
-      </div>
-      <div class="yutnori-fork hidden" id="yutnori-fork">
-        <div class="overlay-msg">지름길로 갈까요?</div>
-        <button type="button" class="mini-btn" id="yutnori-fork-long">먼 길로</button>
-        <button type="button" class="mini-btn" id="yutnori-fork-short">지름길로</button>
-      </div>
-      <div class="overlay hidden" id="yutnori-overlay">
-        <div class="overlay-title pixel" id="yutnori-overlay-title">결과</div>
-        <div class="overlay-msg" id="yutnori-overlay-msg"></div>
-        <button type="button" class="start-btn" id="yutnori-rematch">다시하기</button>
-        <button type="button" class="mini-btn" id="yutnori-back-lobby">로비로</button>
+        <button type="button" class="mini-btn" id="yutnori-room-back">로비로 나가기</button>
+        <div class="overlay hidden" id="yutnori-overlay">
+          <div class="overlay-title pixel">결과</div>
+          <div class="overlay-msg"></div>
+          <button type="button" class="start-btn" id="yutnori-rematch">다시하기</button>
+          <button type="button" class="mini-btn" id="yutnori-overlay-leave">로비로</button>
+        </div>
       </div>
     </div>
-    <p class="controls-hint">A팀 또는 B팀에 참가 (최소 2인, 팀당 최대 2인) · 그 이상은 관전 · 던지고 → 결과 칩 선택 → 말 클릭해서 이동</p>
+    <p class="controls-hint">방 목록에서 참가하거나 방 만들기 · A팀/B팀 참가 (팀당 최대 2인, 그 이상은 관전) · 윷 던지기 → 말 클릭 → 강조된 칸 클릭해서 이동</p>
   </section>
 
 </div>
@@ -7930,7 +7975,7 @@
   });
 
   /* ============================================================
-     YUTNORI (real-time team A/B, Supabase Realtime, single room)
+     YUTNORI (real-time team A/B, individual rooms, Supabase Realtime)
   ============================================================= */
   const YUT_FINISH = 100;
   const YUT_NEXT = {
@@ -7964,7 +8009,6 @@
     21:[70,270],22:[120,220],23:[170,170],24:[220,120],25:[270,70],
     26:[70,70],27:[120,120],28:[220,220],29:[270,270]
   };
-  const YUT_FORK_NODES = [5,10,23];
   const YUT_OUTCOMES = [
     { label:'개', value:2, weight:0.375 },
     { label:'걸', value:3, weight:0.25 },
@@ -7994,8 +8038,14 @@
   function yutResolveChoice(chosenNode, remainingAfterFork){
     return yutAdvanceMove(chosenNode, remainingAfterFork - 1);
   }
-  function yutMoveBackward(pos){
-    return YUT_PREV[pos];
+  function yutMoveBackward(pos){ return YUT_PREV[pos]; }
+  function yutEnumerateDestinations(startPos, steps){
+    const leaves = [];
+    (function explore(res){
+      if(!res.needsChoice){ leaves.push(res.pos); return; }
+      res.options.forEach(function(opt){ explore(yutResolveChoice(opt, res.remaining)); });
+    })(yutAdvanceMove(startPos, steps));
+    return Array.from(new Set(leaves));
   }
   function yutApplyPieceMove(pieces, oppPieces, pieceIndex, destination){
     const fromPos = pieces[pieceIndex];
@@ -8014,164 +8064,230 @@
     }
     return { newPieces:newPieces, newOppPieces:newOppPieces, captured:captured };
   }
-  function yutCheckWin(pieces){
-    return pieces.every(function(p){ return p === YUT_FINISH; });
-  }
+  function yutCheckWin(pieces){ return pieces.every(function(p){ return p === YUT_FINISH; }); }
 
-  let yutnoriRoom = null;
+  let yutnoriMatch = null;
   let yutnoriChannel = null;
-  let yutnoriArmedThrowIdx = -1;
+  let yutnoriSelected = null; // { team, pieceIndex }
+  let yutnoriLastThrowKey = null;
 
   function yutMyTeam(){
-    if(!yutnoriRoom) return null;
-    if((yutnoriRoom.team_a||[]).some(function(p){ return p.id===playerId; })) return 'A';
-    if((yutnoriRoom.team_b||[]).some(function(p){ return p.id===playerId; })) return 'B';
+    if(!yutnoriMatch) return null;
+    if((yutnoriMatch.team_a||[]).some(function(p){ return p.id===playerId; })) return 'A';
+    if((yutnoriMatch.team_b||[]).some(function(p){ return p.id===playerId; })) return 'B';
     return null;
   }
   function yutIsMyTurn(){
-    return yutnoriRoom && yutnoriRoom.status==='playing' && yutnoriRoom.current_player_id===playerId;
+    return yutnoriMatch && yutnoriMatch.status==='playing' && yutnoriMatch.current_player_id===playerId;
   }
-  function yutRosterFor(team){ return team==='A' ? (yutnoriRoom.team_a||[]) : (yutnoriRoom.team_b||[]); }
-  function yutPiecesFor(team){ return team==='A' ? (yutnoriRoom.pieces_a||[0,0,0,0]) : (yutnoriRoom.pieces_b||[0,0,0,0]); }
+  function yutRosterFor(team){ return team==='A' ? (yutnoriMatch.team_a||[]) : (yutnoriMatch.team_b||[]); }
+  function yutPiecesFor(team){ return team==='A' ? (yutnoriMatch.pieces_a||[0,0,0,0]) : (yutnoriMatch.pieces_b||[0,0,0,0]); }
   function yutNicknameFor(pid){
-    const all = (yutnoriRoom.team_a||[]).concat(yutnoriRoom.team_b||[]);
+    const all = (yutnoriMatch.team_a||[]).concat(yutnoriMatch.team_b||[]);
     const f = all.find(function(p){ return p.id===pid; });
     return f ? f.nickname : '??';
   }
 
-  async function fetchYutnoriRoomState(){
-    try{
-      const { data } = await sb.from('yutnori_room').select('*').eq('id','main').maybeSingle();
-      if(data) applyYutnoriRoomState(data);
-    }catch(e){}
+  /* -------- lobby (room list) -------- */
+  function yutnoriShowView(view){
+    document.getElementById('yutnori-lobby-view').classList.toggle('hidden', view!=='lobby');
+    document.getElementById('yutnori-room-view').classList.toggle('hidden', view!=='room');
+    document.getElementById('yutnori-overlay').classList.add('hidden');
   }
-
-  function applyYutnoriRoomState(row){
-    yutnoriRoom = row;
-    yutnoriArmedThrowIdx = -1;
-    renderYutnoriUI();
-    if(row.status === 'finished' && row.winner){
-      showYutnoriResult(row.winner);
-    }
-  }
-
-  function teardownYutnoriChannel(){
+  function yutnoriRemoveChannel(){
     if(yutnoriChannel){ sb.removeChannel(yutnoriChannel); yutnoriChannel = null; }
   }
-  function setupYutnoriChannel(){
-    teardownYutnoriChannel();
-    yutnoriChannel = sb.channel('yutnori-db')
-      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'yutnori_room', filter:'id=eq.main' }, function(payload){
-        applyYutnoriRoomState(payload.new);
+  async function fetchYutnoriRoomList(){
+    try{
+      const cutoff = new Date(Date.now() - 60*60*1000).toISOString();
+      const { data, error } = await sb.from('yutnori_matches')
+        .select('id, host_nickname, status, team_a, team_b, created_at')
+        .in('status', ['waiting','playing']).gte('created_at', cutoff)
+        .order('created_at', { ascending:true });
+      if(error) throw error;
+      yutnoriRenderRoomList(data||[]);
+    }catch(e){ yutnoriRenderRoomList([]); }
+  }
+  function yutnoriRenderRoomList(rooms){
+    const el = document.getElementById('yutnori-room-list');
+    el.innerHTML = '';
+    if(rooms.length === 0){
+      el.innerHTML = '<div class="fortress-empty-msg">열려있는 방이 없어요. 방을 만들어보세요!</div>';
+      return;
+    }
+    rooms.forEach(function(room){
+      const item = document.createElement('div');
+      item.className = 'fortress-room-item';
+      const span = document.createElement('span');
+      const aCount = (room.team_a||[]).length, bCount = (room.team_b||[]).length;
+      const statusLabel = room.status==='playing' ? ' · 진행중(관전가능)' : '';
+      span.textContent = (room.host_nickname||'익명') + '님의 방 · A팀 ' + aCount + '/2 · B팀 ' + bCount + '/2' + statusLabel;
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.textContent = room.status==='playing' ? '관전하기' : '참가하기';
+      btn.addEventListener('click', function(){ yutnoriEnterRoom(room.id); });
+      item.appendChild(span); item.appendChild(btn);
+      el.appendChild(item);
+    });
+  }
+  function yutnoriSubscribeLobby(){
+    yutnoriRemoveChannel();
+    yutnoriChannel = sb.channel('yutnori-lobby')
+      .on('postgres_changes', { event:'*', schema:'public', table:'yutnori_matches' }, function(){ fetchYutnoriRoomList(); })
+      .subscribe();
+  }
+  async function createYutnoriRoom(){
+    if(!playerId) return;
+    try{
+      const { data, error } = await sb.from('yutnori_matches').insert({
+        host_id: playerId, host_nickname: nickname || '익명'
+      }).select().single();
+      if(error) throw error;
+      yutnoriEnterRoom(data.id);
+    }catch(e){ alert('방 생성에 실패했어요. 다시 시도해주세요.'); }
+  }
+  async function yutnoriEnterRoom(matchId){
+    try{
+      const { data, error } = await sb.from('yutnori_matches').select('*').eq('id', matchId).maybeSingle();
+      if(error || !data){ alert('방을 찾을 수 없어요.'); fetchYutnoriRoomList(); return; }
+      yutnoriMatch = data;
+      yutnoriSelected = null;
+      yutnoriLastThrowKey = data.last_throw ? JSON.stringify(data.last_throw) : null;
+      yutnoriShowView('room');
+      yutnoriBuildBoardSvg();
+      yutnoriSubscribeMatch(matchId);
+      renderYutnoriUI();
+      if(data.last_throw) yutnoriPlayThrowAnimation(data.last_throw, false);
+    }catch(e){}
+  }
+  function yutnoriSubscribeMatch(matchId){
+    yutnoriRemoveChannel();
+    yutnoriChannel = sb.channel('yutnori-match-'+matchId)
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'yutnori_matches', filter:'id=eq.'+matchId }, function(payload){
+        applyYutnoriMatchState(payload.new);
+      })
+      .on('postgres_changes', { event:'DELETE', schema:'public', table:'yutnori_matches', filter:'id=eq.'+matchId }, function(){
+        alert('방이 종료됐어요.');
+        yutnoriBackToLobby();
       })
       .subscribe();
   }
+  function applyYutnoriMatchState(row){
+    const newKey = row.last_throw ? JSON.stringify(row.last_throw) : null;
+    const throwChanged = newKey !== yutnoriLastThrowKey;
+    yutnoriLastThrowKey = newKey;
+    yutnoriMatch = row;
+    yutnoriSelected = null;
+    renderYutnoriUI();
+    if(throwChanged && row.last_throw) yutnoriPlayThrowAnimation(row.last_throw, true);
+    if(row.status === 'finished' && row.winner) showYutnoriResult(row.winner, row.winner_reason);
+  }
+  function yutnoriBackToLobby(){
+    yutnoriRemoveChannel();
+    yutnoriMatch = null;
+    yutnoriSelected = null;
+    yutnoriShowView('lobby');
+    fetchYutnoriRoomList();
+    yutnoriSubscribeLobby();
+  }
 
+  /* -------- team join / leave / start -------- */
   async function joinYutnoriTeam(team){
-    if(!yutnoriRoom || yutnoriRoom.status !== 'waiting') return;
+    if(!yutnoriMatch || yutnoriMatch.status !== 'waiting') return;
     if(yutMyTeam()) return;
     const roster = yutRosterFor(team);
     if(roster.length >= 2) return;
     const newRoster = roster.concat([{ id: playerId, nickname: nickname || '??' }]);
     const field = team==='A' ? 'team_a' : 'team_b';
-    const expected = yutnoriRoom.move_count;
+    const expected = yutnoriMatch.move_count;
     try{
       const payload = {}; payload[field] = newRoster; payload.move_count = expected+1; payload.updated_at = new Date().toISOString();
-      const { data } = await sb.from('yutnori_room').update(payload).eq('id','main').eq('move_count', expected).select();
-      if(data && data.length>0) applyYutnoriRoomState(data[0]);
-    }catch(e){}
-  }
-  async function leaveYutnoriTeam(){
-    if(!yutnoriRoom || yutnoriRoom.status !== 'waiting') return;
-    const team = yutMyTeam();
-    if(!team) return;
-    const field = team==='A' ? 'team_a' : 'team_b';
-    const newRoster = yutRosterFor(team).filter(function(p){ return p.id !== playerId; });
-    const expected = yutnoriRoom.move_count;
-    try{
-      const payload = {}; payload[field] = newRoster; payload.move_count = expected+1; payload.updated_at = new Date().toISOString();
-      const { data } = await sb.from('yutnori_room').update(payload).eq('id','main').eq('move_count', expected).select();
-      if(data && data.length>0) applyYutnoriRoomState(data[0]);
+      const { data } = await sb.from('yutnori_matches').update(payload).eq('id', yutnoriMatch.id).eq('move_count', expected).select();
+      if(data && data.length>0) applyYutnoriMatchState(data[0]);
     }catch(e){}
   }
   async function startYutnoriGame(){
-    if(!yutnoriRoom || yutnoriRoom.status !== 'waiting') return;
-    if(yutnoriRoom.team_a.length < 1 || yutnoriRoom.team_b.length < 1) return;
-    const expected = yutnoriRoom.move_count;
+    if(!yutnoriMatch || yutnoriMatch.status !== 'waiting') return;
+    if(yutnoriMatch.team_a.length < 1 || yutnoriMatch.team_b.length < 1) return;
+    const expected = yutnoriMatch.move_count;
     try{
-      const { data } = await sb.from('yutnori_room').update({
+      const { data } = await sb.from('yutnori_matches').update({
         status:'playing', pieces_a:[0,0,0,0], pieces_b:[0,0,0,0],
-        turns_taken_a:0, turns_taken_b:0, current_team:'A', current_player_id: yutnoriRoom.team_a[0].id,
-        extra_throws:1, pending_throws:[], pending_choice:null, last_throw:null, winner:null,
-        move_log:[], turn_started_at: new Date().toISOString(), move_count: expected+1, updated_at: new Date().toISOString()
-      }).eq('id','main').eq('move_count', expected).select();
-      if(data && data.length>0) applyYutnoriRoomState(data[0]);
+        turns_taken_a:0, turns_taken_b:0, current_team:'A', current_player_id: yutnoriMatch.team_a[0].id,
+        extra_throws:1, pending_throws:[], last_throw:null, winner:null, winner_reason:null,
+        turn_started_at: new Date().toISOString(), move_count: expected+1, updated_at: new Date().toISOString()
+      }).eq('id', yutnoriMatch.id).eq('move_count', expected).select();
+      if(data && data.length>0) applyYutnoriMatchState(data[0]);
     }catch(e){}
   }
   async function rematchYutnori(){
-    if(!yutnoriRoom || yutnoriRoom.status !== 'finished') return;
-    const expected = yutnoriRoom.move_count;
+    if(!yutnoriMatch || yutnoriMatch.status !== 'finished') return;
+    const expected = yutnoriMatch.move_count;
     try{
-      const { data } = await sb.from('yutnori_room').update({
+      const { data } = await sb.from('yutnori_matches').update({
         status:'waiting', pieces_a:[0,0,0,0], pieces_b:[0,0,0,0],
-        turns_taken_a:0, turns_taken_b:0, extra_throws:1, pending_throws:[], pending_choice:null,
-        last_throw:null, winner:null, move_log:[], move_count: expected+1, updated_at: new Date().toISOString()
-      }).eq('id','main').eq('move_count', expected).select();
-      if(data && data.length>0) applyYutnoriRoomState(data[0]);
+        turns_taken_a:0, turns_taken_b:0, extra_throws:1, pending_throws:[],
+        last_throw:null, winner:null, winner_reason:null, move_count: expected+1, updated_at: new Date().toISOString()
+      }).eq('id', yutnoriMatch.id).eq('move_count', expected).select();
+      if(data && data.length>0) applyYutnoriMatchState(data[0]);
     }catch(e){}
   }
 
-  async function yutnoriThrow(){
-    if(!yutIsMyTurn() || yutnoriRoom.extra_throws <= 0 || yutnoriRoom.pending_choice) return;
-    const outcome = yutThrow();
-    const newExtra = yutnoriRoom.extra_throws - 1 + (outcome.extra ? 1 : 0);
-    const newPending = (yutnoriRoom.pending_throws||[]).concat([{ label:outcome.label, value:outcome.value, back: !!outcome.back }]);
-    const expected = yutnoriRoom.move_count;
+  // called when the player leaves a room (back button or explicit leave) - removes them from their
+  // team and, per office-arcade rules, ends the match immediately if that empties a team mid-game.
+  async function yutnoriHandleLeave(){
+    const m = yutnoriMatch;
+    if(!m) return;
+    const team = yutMyTeam();
+    if(!team){ return; } // spectator, nothing to clean up
+    const field = team==='A' ? 'team_a' : 'team_b';
+    const newRoster = yutRosterFor(team).filter(function(p){ return p.id !== playerId; });
+    const otherTeam = team==='A' ? 'B' : 'A';
+    const otherRoster = yutRosterFor(otherTeam);
     try{
-      const { data } = await sb.from('yutnori_room').update({
+      if(m.status === 'playing' && newRoster.length === 0){
+        await sb.from('yutnori_matches').update({
+          [field]: newRoster, status:'finished', winner: otherRoster.length ? otherTeam : null,
+          winner_reason:'forfeit', updated_at: new Date().toISOString()
+        }).eq('id', m.id).eq('status','playing');
+      }else if(m.status === 'waiting'){
+        const otherFieldEmpty = otherRoster.length === 0;
+        if(newRoster.length === 0 && otherFieldEmpty){
+          await sb.from('yutnori_matches').delete().eq('id', m.id).eq('status','waiting');
+        }else{
+          const payload = {}; payload[field] = newRoster; payload.updated_at = new Date().toISOString();
+          await sb.from('yutnori_matches').update(payload).eq('id', m.id).eq('status','waiting');
+        }
+      }else{
+        const payload = {}; payload[field] = newRoster; payload.updated_at = new Date().toISOString();
+        await sb.from('yutnori_matches').update(payload).eq('id', m.id);
+      }
+    }catch(e){}
+  }
+
+  /* -------- throwing -------- */
+  async function yutnoriThrow(){
+    if(!yutIsMyTurn() || yutnoriMatch.extra_throws <= 0) return;
+    const outcome = yutThrow();
+    const newExtra = yutnoriMatch.extra_throws - 1 + (outcome.extra ? 1 : 0);
+    const newPending = (yutnoriMatch.pending_throws||[]).concat([{ label:outcome.label, value:outcome.value, back: !!outcome.back }]);
+    const expected = yutnoriMatch.move_count;
+    try{
+      const { data } = await sb.from('yutnori_matches').update({
         extra_throws:newExtra, pending_throws:newPending, last_throw:outcome,
         move_count: expected+1, updated_at: new Date().toISOString()
-      }).eq('id','main').eq('move_count', expected).eq('current_player_id', playerId).select();
-      if(data && data.length>0) applyYutnoriRoomState(data[0]);
+      }).eq('id', yutnoriMatch.id).eq('move_count', expected).eq('current_player_id', playerId).select();
+      if(data && data.length>0) applyYutnoriMatchState(data[0]);
     }catch(e){}
   }
 
-  function yutArmThrow(idx){
-    yutnoriArmedThrowIdx = (yutnoriArmedThrowIdx === idx) ? -1 : idx;
-    renderYutnoriUI();
-  }
-
-  function yutArmedHasNoValidTarget(){
-    if(yutnoriArmedThrowIdx < 0 || !yutnoriRoom) return false;
-    const armed = yutnoriRoom.pending_throws[yutnoriArmedThrowIdx];
-    if(!armed || !armed.back) return false;
-    const team = yutMyTeam();
-    if(!team) return false;
-    return yutPiecesFor(team).every(function(p){ return p === 0 || p === YUT_FINISH; });
-  }
-
-  async function yutnoriDiscardArmed(){
-    if(!yutIsMyTurn() || yutnoriArmedThrowIdx < 0 || yutnoriRoom.pending_choice) return;
-    const newPendingThrows = (yutnoriRoom.pending_throws||[]).filter(function(_,i){ return i !== yutnoriArmedThrowIdx; });
-    const expected = yutnoriRoom.move_count;
-    const passInfo = await yutnoriPassTurnIfDone(yutnoriRoom.extra_throws, newPendingThrows, null, null, 0);
-    if(passInfo.pending_throws === undefined) passInfo.pending_throws = newPendingThrows;
-    const payload = Object.assign({ move_count: expected+1, updated_at: new Date().toISOString() }, passInfo);
-    try{
-      const { data } = await sb.from('yutnori_room').update(payload).eq('id','main').eq('move_count', expected).select();
-      if(data && data.length>0) applyYutnoriRoomState(data[0]);
-    }catch(e){}
-  }
-
-  async function yutnoriPassTurnIfDone(newExtra, newPending, pieces_a, pieces_b, capturedBonus){
-    // returns the extra fields needed if turn should pass; caller merges into update payload
-    const team = yutnoriRoom.current_team;
-    const stillGoing = (newExtra + capturedBonus) > 0 || newPending.length > 0;
-    if(stillGoing) return { extra_throws:newExtra+capturedBonus };
+  function yutnoriPassTurnIfDone(currentExtra, newPending, capturedBonus){
+    const team = yutnoriMatch.current_team;
+    const stillGoing = (currentExtra + capturedBonus) > 0 || newPending.length > 0;
+    if(stillGoing) return { extra_throws: currentExtra+capturedBonus, pending_throws:newPending };
     const otherTeam = team==='A' ? 'B' : 'A';
-    const otherRoster = otherTeam==='A' ? yutnoriRoom.team_a : yutnoriRoom.team_b;
+    const otherRoster = otherTeam==='A' ? yutnoriMatch.team_a : yutnoriMatch.team_b;
     const takenField = otherTeam==='A' ? 'turns_taken_a' : 'turns_taken_b';
-    const takenCount = yutnoriRoom[takenField] || 0;
+    const takenCount = yutnoriMatch[takenField] || 0;
     const nextPlayer = otherRoster.length ? otherRoster[takenCount % otherRoster.length].id : null;
     const out = {
       current_team: otherTeam, current_player_id: nextPlayer,
@@ -8181,85 +8297,49 @@
     return out;
   }
 
-  async function yutnoriCommitMove(pieceIndex, destination, armedIdx){
+  async function yutnoriCommitMove(pieceIndex, destination, throwIdx){
     const team = yutMyTeam();
-    if(!team || !yutnoriRoom) return;
+    if(!team || !yutnoriMatch) return;
     const piecesField = team==='A' ? 'pieces_a' : 'pieces_b';
     const oppField = team==='A' ? 'pieces_b' : 'pieces_a';
     const pieces = yutPiecesFor(team).slice();
     const oppPieces = yutPiecesFor(team==='A'?'B':'A').slice();
     const moveResult = yutApplyPieceMove(pieces, oppPieces, pieceIndex, destination);
-    const newPendingThrows = (yutnoriRoom.pending_throws||[]).filter(function(_,i){ return i !== armedIdx; });
+    const newPendingThrows = (yutnoriMatch.pending_throws||[]).filter(function(_,i){ return i !== throwIdx; });
     const capturedBonus = moveResult.captured ? 1 : 0;
     const won = yutCheckWin(moveResult.newPieces);
-    const expected = yutnoriRoom.move_count;
+    const expected = yutnoriMatch.move_count;
     let payload = {};
     payload[piecesField] = moveResult.newPieces;
     payload[oppField] = moveResult.newOppPieces;
-    payload.pending_choice = null;
     if(won){
       payload.status = 'finished';
       payload.winner = team;
+      payload.winner_reason = 'finish';
       payload.pending_throws = [];
     }else{
-      const passInfo = await yutnoriPassTurnIfDone(yutnoriRoom.extra_throws, newPendingThrows, moveResult.newPieces, moveResult.newOppPieces, capturedBonus);
-      if(passInfo.pending_throws === undefined) passInfo.pending_throws = newPendingThrows;
-      Object.assign(payload, passInfo);
+      Object.assign(payload, yutnoriPassTurnIfDone(yutnoriMatch.extra_throws, newPendingThrows, capturedBonus));
     }
     payload.move_count = expected+1;
     payload.updated_at = new Date().toISOString();
     try{
-      const { data } = await sb.from('yutnori_room').update(payload).eq('id','main').eq('move_count', expected).select();
-      if(data && data.length>0) applyYutnoriRoomState(data[0]);
+      const { data } = await sb.from('yutnori_matches').update(payload).eq('id', yutnoriMatch.id).eq('move_count', expected).select();
+      if(data && data.length>0) applyYutnoriMatchState(data[0]);
     }catch(e){}
   }
 
-  async function yutnoriApplyToPiece(pieceIndex){
-    if(!yutIsMyTurn() || yutnoriArmedThrowIdx < 0 || yutnoriRoom.pending_choice) return;
-    const team = yutMyTeam();
-    const armed = yutnoriRoom.pending_throws[yutnoriArmedThrowIdx];
-    if(!armed) return;
-    const pieces = yutPiecesFor(team);
-    const startPos = pieces[pieceIndex];
-    if(pieces[pieceIndex] === YUT_FINISH) return;
-    if(armed.back){
-      if(startPos === 0) return;
-      const dest = yutMoveBackward(startPos);
-      await yutnoriCommitMove(pieceIndex, dest, yutnoriArmedThrowIdx);
-      return;
-    }
-    const result = yutAdvanceMove(startPos, armed.value);
-    if(result.needsChoice){
-      const expected = yutnoriRoom.move_count;
-      try{
-        const { data } = await sb.from('yutnori_room').update({
-          pending_choice: { atNode:result.atNode, options:result.options, remaining:result.remaining, pieceIndex:pieceIndex, armedIdx:yutnoriArmedThrowIdx },
-          move_count: expected+1, updated_at: new Date().toISOString()
-        }).eq('id','main').eq('move_count', expected).select();
-        if(data && data.length>0) applyYutnoriRoomState(data[0]);
-      }catch(e){}
-      return;
-    }
-    await yutnoriCommitMove(pieceIndex, result.pos, yutnoriArmedThrowIdx);
-  }
-
-  async function yutnoriResolveFork(chosenNode){
-    if(!yutnoriRoom || !yutnoriRoom.pending_choice) return;
+  async function yutnoriDiscardThrow(idx){
     if(!yutIsMyTurn()) return;
-    const pc = yutnoriRoom.pending_choice;
-    const result = yutResolveChoice(chosenNode, pc.remaining);
-    if(result.needsChoice){
-      const expected = yutnoriRoom.move_count;
-      try{
-        const { data } = await sb.from('yutnori_room').update({
-          pending_choice: { atNode:result.atNode, options:result.options, remaining:result.remaining, pieceIndex:pc.pieceIndex, armedIdx:pc.armedIdx },
-          move_count: expected+1, updated_at: new Date().toISOString()
-        }).eq('id','main').eq('move_count', expected).select();
-        if(data && data.length>0) applyYutnoriRoomState(data[0]);
-      }catch(e){}
-      return;
-    }
-    await yutnoriCommitMove(pc.pieceIndex, result.pos, pc.armedIdx);
+    const newPendingThrows = (yutnoriMatch.pending_throws||[]).filter(function(_,i){ return i !== idx; });
+    const expected = yutnoriMatch.move_count;
+    const payload = Object.assign(
+      { move_count: expected+1, updated_at: new Date().toISOString() },
+      yutnoriPassTurnIfDone(yutnoriMatch.extra_throws, newPendingThrows, 0)
+    );
+    try{
+      const { data } = await sb.from('yutnori_matches').update(payload).eq('id', yutnoriMatch.id).eq('move_count', expected).select();
+      if(data && data.length>0) applyYutnoriMatchState(data[0]);
+    }catch(e){}
   }
 
   async function incrementYutnoriWins(){
@@ -8272,12 +8352,74 @@
     }catch(e){ return 0; }
   }
 
+  /* -------- piece selection: click piece -> click highlighted destination -------- */
+  function yutnoriPieceUnfinishedOptions(team, pieceIndex){
+    // returns [{throwIdx, destination}] across all pending throws valid for this piece
+    const pieces = yutPiecesFor(team);
+    const pos = pieces[pieceIndex];
+    if(pos === YUT_FINISH) return [];
+    const list = yutnoriMatch.pending_throws || [];
+    const seenDest = {};
+    const out = [];
+    list.forEach(function(t, idx){
+      if(t.back){
+        if(pos === 0) return;
+        const dest = yutMoveBackward(pos);
+        if(!(dest in seenDest)){ seenDest[dest]=true; out.push({ throwIdx:idx, destination:dest }); }
+      }else{
+        yutEnumerateDestinations(pos, t.value).forEach(function(dest){
+          if(!(dest in seenDest)){ seenDest[dest]=true; out.push({ throwIdx:idx, destination:dest }); }
+        });
+      }
+    });
+    return out;
+  }
+  function yutnoriSelectPiece(team, pieceIndex){
+    if(!yutIsMyTurn() || team !== yutMyTeam()) return;
+    const options = yutnoriPieceUnfinishedOptions(team, pieceIndex);
+    if(options.length === 0){ yutnoriSelected = null; renderYutnoriUI(); return; }
+    yutnoriSelected = (yutnoriSelected && yutnoriSelected.pieceIndex===pieceIndex && yutnoriSelected.team===team) ? null : { team:team, pieceIndex:pieceIndex };
+    renderYutnoriUI();
+  }
+  function yutnoriClickDestination(destination, throwIdx){
+    if(!yutnoriSelected) return;
+    yutnoriCommitMove(yutnoriSelected.pieceIndex, destination, throwIdx);
+    yutnoriSelected = null;
+  }
+
+  /* -------- throw animation -------- */
+  function yutnoriPlayThrowAnimation(outcome, animate){
+    const sticksEl = document.getElementById('yutnori-sticks');
+    const labelEl = document.getElementById('yutnori-throw-label');
+    if(!sticksEl) return;
+    const sticks = sticksEl.querySelectorAll('.yutnori-stick');
+    sticks.forEach(function(s){ s.classList.remove('belly','back-move'); });
+    function reveal(){
+      if(outcome.back){
+        sticks.forEach(function(s){ s.classList.add('back-move'); });
+      }else{
+        const bellyCount = outcome.value === 5 ? 0 : outcome.value;
+        const idxs = [0,1,2,3];
+        for(let i=idxs.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=idxs[i]; idxs[i]=idxs[j]; idxs[j]=t; }
+        idxs.slice(0,bellyCount).forEach(function(i){ sticks[i].classList.add('belly'); });
+      }
+      labelEl.textContent = outcome.label + (outcome.back ? '' : ' (' + outcome.value + '칸)') + (outcome.extra ? ' · 한 번 더!' : '');
+    }
+    if(animate){
+      labelEl.textContent = '';
+      sticksEl.classList.add('throwing');
+      setTimeout(function(){ sticksEl.classList.remove('throwing'); reveal(); }, 600);
+    }else{
+      reveal();
+    }
+  }
+
+  /* -------- rendering -------- */
   function yutnoriPieceOffset(idx, total){
     if(total <= 1) return [0,0];
     const angle = (Math.PI*2/total) * idx;
     return [Math.cos(angle)*9, Math.sin(angle)*9];
   }
-
   function yutnoriBuildBoardSvg(){
     const svg = document.getElementById('yutnori-board-svg');
     let html = '';
@@ -8297,11 +8439,10 @@
     });
     svg.innerHTML = html;
   }
-
   function yutnoriRenderPieces(){
     const svg = document.getElementById('yutnori-board-svg');
-    svg.querySelectorAll('.yutnori-piece').forEach(function(el){ el.remove(); });
-    if(!yutnoriRoom) return;
+    svg.querySelectorAll('.yutnori-piece, .yutnori-dest').forEach(function(el){ el.remove(); });
+    if(!yutnoriMatch) return;
     ['A','B'].forEach(function(team){
       const pieces = yutPiecesFor(team);
       const groups = {};
@@ -8318,116 +8459,142 @@
         idxs.forEach(function(pieceIdx, i){
           const off = yutnoriPieceOffset(i, idxs.length);
           const cx = coord[0]+off[0], cy = coord[1]+off[1];
+          const isSelected = yutnoriSelected && yutnoriSelected.team===team && yutnoriSelected.pieceIndex===pieceIdx;
           const g = document.createElementNS('http://www.w3.org/2000/svg','circle');
-          g.setAttribute('cx', cx); g.setAttribute('cy', cy); g.setAttribute('r', 8);
-          g.setAttribute('class', 'yutnori-piece team-'+team.toLowerCase()+(yutMyTeam()===team?' mine':''));
+          g.setAttribute('cx', cx); g.setAttribute('cy', cy); g.setAttribute('r', isSelected?9.5:8);
+          g.setAttribute('class', 'yutnori-piece team-'+team.toLowerCase()+(team===yutMyTeam()?' mine':'')+(isSelected?' selected':''));
           g.dataset.team = team; g.dataset.pieceIndex = pieceIdx;
-          if(team === yutMyTeam() && yutIsMyTurn() && yutnoriArmedThrowIdx >= 0 && !yutnoriRoom.pending_choice){
-            g.addEventListener('click', function(){ yutnoriApplyToPiece(pieceIdx); });
+          if(team === yutMyTeam() && yutIsMyTurn()){
+            g.addEventListener('click', function(){ yutnoriSelectPiece(team, pieceIdx); });
           }
           svg.appendChild(g);
         });
       });
     });
+    // waiting pieces (pos===0) rendered as small row near each team's side label - handled in yutnoriRenderWaitingPieces
+    yutnoriRenderWaitingPieces();
+    // destination highlights for the selected piece
+    if(yutnoriSelected){
+      const opts = yutnoriPieceUnfinishedOptions(yutnoriSelected.team, yutnoriSelected.pieceIndex);
+      opts.forEach(function(opt){
+        const coord = YUT_COORDS[opt.destination];
+        const cx = coord ? coord[0] : 340, cy = coord ? coord[1] : 20; // FINISH has no coord -> corner label area
+        const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        ring.setAttribute('cx', cx); ring.setAttribute('cy', cy); ring.setAttribute('r', 13);
+        ring.setAttribute('class', 'yutnori-dest');
+        ring.addEventListener('click', function(){ yutnoriClickDestination(opt.destination, opt.throwIdx); });
+        svg.appendChild(ring);
+      });
+    }
   }
-
+  function yutnoriRenderWaitingPieces(){
+    ['a','b'].forEach(function(t){
+      const el = document.getElementById('yutnori-waiting-'+t);
+      if(!el) return;
+      el.innerHTML = '';
+      if(!yutnoriMatch) return;
+      const team = t.toUpperCase();
+      const pieces = yutPiecesFor(team);
+      pieces.forEach(function(pos, idx){
+        if(pos !== 0) return;
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        const selected = yutnoriSelected && yutnoriSelected.team===team && yutnoriSelected.pieceIndex===idx;
+        dot.className = 'yutnori-waiting-piece team-'+t+(selected?' selected':'');
+        if(team === yutMyTeam() && yutIsMyTurn()){
+          dot.addEventListener('click', function(){ yutnoriSelectPiece(team, idx); });
+        }
+        el.appendChild(dot);
+      });
+      if(yutnoriSelected && yutnoriSelected.team===team){
+        const opts = yutnoriPieceUnfinishedOptions(team, yutnoriSelected.pieceIndex);
+        const finishOpt = opts.find(function(o){ return o.destination===YUT_FINISH; });
+        // FINISH destination has no board coordinate - offer a text button instead
+        if(finishOpt){
+          const btn = document.createElement('button');
+          btn.type = 'button'; btn.className = 'yutnori-finish-btn';
+          btn.textContent = '완주 시키기 →';
+          btn.addEventListener('click', function(){ yutnoriClickDestination(YUT_FINISH, finishOpt.throwIdx); });
+          el.appendChild(btn);
+        }
+      }
+    });
+  }
   function yutnoriRenderRoster(team){
     const el = document.getElementById('yutnori-roster-'+team.toLowerCase());
     const roster = yutRosterFor(team);
     el.innerHTML = roster.map(function(p){ return '<div class="yutnori-roster-item">'+escapeHtml(p.nickname)+'</div>'; }).join('') || '<div class="yutnori-roster-empty">비어있음</div>';
   }
-
   function yutnoriRenderPendingThrows(){
     const el = document.getElementById('yutnori-pending');
-    if(!yutnoriRoom){ el.innerHTML = ''; return; }
-    const list = yutnoriRoom.pending_throws || [];
-    if(!list.length){ el.innerHTML = ''; document.getElementById('yutnori-discard-btn').style.display = 'none'; return; }
+    if(!yutnoriMatch){ el.innerHTML = ''; return; }
+    const list = yutnoriMatch.pending_throws || [];
+    if(!list.length){ el.innerHTML = '<span class="yutnori-pending-empty">던지기를 눌러보세요</span>'; return; }
     el.innerHTML = list.map(function(t, i){
-      const armed = (i === yutnoriArmedThrowIdx) ? ' armed' : '';
-      return '<button type="button" class="yutnori-chip'+armed+'" data-idx="'+i+'">'+t.label+(t.back?'':'('+t.value+')')+'</button>';
+      return '<span class="yutnori-chip">'+t.label+(t.back?'':'('+t.value+')')+'</span>';
     }).join('');
-    el.querySelectorAll('.yutnori-chip').forEach(function(btn){
-      btn.addEventListener('click', function(){ yutArmThrow(Number(btn.dataset.idx)); });
-    });
-    const discardBtn = document.getElementById('yutnori-discard-btn');
-    discardBtn.style.display = yutArmedHasNoValidTarget() ? '' : 'none';
-  }
-
-  function yutnoriRenderForkPrompt(){
-    const el = document.getElementById('yutnori-fork');
-    if(!yutnoriRoom || !yutnoriRoom.pending_choice){ el.classList.add('hidden'); return; }
-    if(!yutIsMyTurn()){
-      el.classList.remove('hidden');
-      el.querySelector('.overlay-msg').textContent = '상대가 지름길을 선택 중이에요...';
-      document.getElementById('yutnori-fork-long').style.display = 'none';
-      document.getElementById('yutnori-fork-short').style.display = 'none';
-      return;
+    if(yutIsMyTurn()){
+      list.forEach(function(t, i){
+        if(t.back){
+          const pieces = yutPiecesFor(yutMyTeam());
+          const hasTarget = pieces.some(function(p){ return p!==0 && p!==YUT_FINISH; });
+          if(!hasTarget){
+            const btn = document.createElement('button');
+            btn.type='button'; btn.className='yutnori-chip-discard'; btn.textContent='버리기';
+            btn.addEventListener('click', function(){ yutnoriDiscardThrow(i); });
+            el.appendChild(btn);
+          }
+        }
+      });
     }
-    el.classList.remove('hidden');
-    el.querySelector('.overlay-msg').textContent = '지름길로 갈까요?';
-    const opts = yutnoriRoom.pending_choice.options;
-    const longBtn = document.getElementById('yutnori-fork-long');
-    const shortBtn = document.getElementById('yutnori-fork-short');
-    longBtn.style.display = ''; shortBtn.style.display = '';
-    const shortNodes = [21,26,28];
-    const shortOpt = opts.find(function(o){ return shortNodes.indexOf(o)>=0; });
-    const longOpt = opts.find(function(o){ return o !== shortOpt; });
-    longBtn.onclick = function(){ yutnoriResolveFork(longOpt); };
-    shortBtn.onclick = function(){ yutnoriResolveFork(shortOpt); };
   }
-
   function yutnoriRenderTurnLabel(){
     const label = document.getElementById('yutnori-turn-label');
-    if(!yutnoriRoom || yutnoriRoom.status === 'waiting'){ label.textContent = '대기 중'; return; }
-    if(yutnoriRoom.status === 'finished'){ label.textContent = (yutnoriRoom.winner==='A'?'A':'B')+'팀 승리!'; return; }
-    const nick = yutnoriRoom.current_player_id ? yutNicknameFor(yutnoriRoom.current_player_id) : '?';
-    label.textContent = (yutnoriRoom.current_team==='A'?'A팀':'B팀') + ' ' + nick + '님 차례';
+    if(!yutnoriMatch || yutnoriMatch.status === 'waiting'){ label.textContent = '팀 구성 중'; return; }
+    if(yutnoriMatch.status === 'finished'){ label.textContent = (yutnoriMatch.winner==='A'?'A':'B')+'팀 승리!'; return; }
+    const nick = yutnoriMatch.current_player_id ? yutNicknameFor(yutnoriMatch.current_player_id) : '?';
+    label.textContent = (yutnoriMatch.current_team==='A'?'A팀':'B팀') + ' ' + nick + '님 차례';
   }
-
   function yutnoriRenderThrowBtn(){
     const btn = document.getElementById('yutnori-throw-btn');
-    const canThrow = yutIsMyTurn() && yutnoriRoom.extra_throws > 0 && !yutnoriRoom.pending_choice;
+    const canThrow = yutIsMyTurn() && yutnoriMatch.extra_throws > 0;
     btn.disabled = !canThrow;
-    const resultEl = document.getElementById('yutnori-throw-result');
-    resultEl.textContent = yutnoriRoom && yutnoriRoom.last_throw ? ('마지막 결과: ' + yutnoriRoom.last_throw.label) : '';
+    btn.textContent = canThrow ? '윷 던지기' : (yutnoriMatch && yutnoriMatch.status==='playing' ? '말을 이동하세요' : '윷 던지기');
   }
-
-  function yutnoriRenderLobby(){
+  function yutnoriRenderLobbyControls(){
     const startBtn = document.getElementById('yutnori-start-game');
     const joinA = document.getElementById('yutnori-join-a');
     const joinB = document.getElementById('yutnori-join-b');
-    const leaveBtn = document.getElementById('yutnori-leave-team');
-    if(!yutnoriRoom || yutnoriRoom.status !== 'waiting'){
-      startBtn.style.display = 'none'; joinA.style.display = 'none'; joinB.style.display = 'none'; leaveBtn.style.display = 'none';
+    if(!yutnoriMatch || yutnoriMatch.status !== 'waiting'){
+      startBtn.style.display = 'none'; joinA.style.display = 'none'; joinB.style.display = 'none';
       return;
     }
     const myTeam = yutMyTeam();
-    startBtn.style.display = (yutnoriRoom.team_a.length>=1 && yutnoriRoom.team_b.length>=1) ? '' : 'none';
-    joinA.style.display = (!myTeam && yutnoriRoom.team_a.length<2) ? '' : 'none';
-    joinB.style.display = (!myTeam && yutnoriRoom.team_b.length<2) ? '' : 'none';
-    leaveBtn.style.display = myTeam ? '' : 'none';
+    startBtn.style.display = (yutnoriMatch.team_a.length>=1 && yutnoriMatch.team_b.length>=1) ? '' : 'none';
+    joinA.style.display = (!myTeam && yutnoriMatch.team_a.length<2) ? '' : 'none';
+    joinB.style.display = (!myTeam && yutnoriMatch.team_b.length<2) ? '' : 'none';
   }
-
   function renderYutnoriUI(){
-    if(!yutnoriRoom) return;
+    if(!yutnoriMatch) return;
     yutnoriRenderRoster('A');
     yutnoriRenderRoster('B');
-    yutnoriRenderLobby();
+    yutnoriRenderLobbyControls();
     yutnoriRenderTurnLabel();
     yutnoriRenderThrowBtn();
     yutnoriRenderPendingThrows();
     yutnoriRenderPieces();
-    yutnoriRenderForkPrompt();
     const overlay = document.getElementById('yutnori-overlay');
-    if(yutnoriRoom.status !== 'finished') overlay.classList.add('hidden');
+    if(yutnoriMatch.status !== 'finished') overlay.classList.add('hidden');
+    const boardArea = document.getElementById('yutnori-board-area');
+    boardArea.classList.toggle('spectating', !yutMyTeam());
   }
-
-  function showYutnoriResult(winnerTeam){
+  function showYutnoriResult(winnerTeam, reason){
     const overlay = document.getElementById('yutnori-overlay');
     overlay.classList.remove('hidden');
     const myTeam = yutMyTeam();
     const won = myTeam && myTeam === winnerTeam;
-    overlay.querySelector('.overlay-title').textContent = (winnerTeam==='A'?'A팀':'B팀') + ' 승리!';
+    const reasonText = reason === 'forfeit' ? ' (상대팀 전원 퇴장)' : '';
+    overlay.querySelector('.overlay-title').textContent = (winnerTeam==='A'?'A팀':'B팀') + ' 승리!' + reasonText;
     if(won){
       incrementYutnoriWins().then(function(newCount){
         overlay.querySelector('.overlay-msg').textContent = '우리 팀 승리! 누적 ' + newCount + '승';
@@ -8437,33 +8604,42 @@
     }else if(myTeam){
       overlay.querySelector('.overlay-msg').textContent = '아쉽네요, 다음엔 이겨봐요';
     }else{
-      overlay.querySelector('.overlay-msg').textContent = '관전 종료 · 새 게임을 기다려보세요';
+      overlay.querySelector('.overlay-msg').textContent = '관전 종료 · 로비로 돌아가 다른 방을 찾아보세요';
     }
   }
 
   function prepareYutnori(){
-    yutnoriBuildBoardSvg();
-    document.getElementById('yutnori-overlay').classList.add('hidden');
-    document.getElementById('yutnori-fork').classList.add('hidden');
+    yutnoriMatch = null;
+    yutnoriSelected = null;
+    yutnoriLastThrowKey = null;
+    yutnoriShowView('lobby');
     loadMyBest('yutnori');
-    setupYutnoriChannel();
-    fetchYutnoriRoomState();
+    fetchYutnoriRoomList();
+    yutnoriSubscribeLobby();
   }
   function cleanupYutnori(){
-    teardownYutnoriChannel();
-    yutnoriRoom = null;
-    yutnoriArmedThrowIdx = -1;
+    yutnoriHandleLeave();
+    yutnoriRemoveChannel();
+    yutnoriMatch = null;
+    yutnoriSelected = null;
   }
   function handleYutnoriKey(e){ /* no keyboard controls */ }
 
+  document.getElementById('yutnori-create-room').addEventListener('click', createYutnoriRoom);
+  document.getElementById('yutnori-lobby-back').addEventListener('click', function(){ goTo('hub'); });
+  document.getElementById('yutnori-room-back').addEventListener('click', function(){
+    yutnoriHandleLeave();
+    yutnoriBackToLobby();
+  });
   document.getElementById('yutnori-join-a').addEventListener('click', function(){ joinYutnoriTeam('A'); });
   document.getElementById('yutnori-join-b').addEventListener('click', function(){ joinYutnoriTeam('B'); });
-  document.getElementById('yutnori-leave-team').addEventListener('click', leaveYutnoriTeam);
   document.getElementById('yutnori-start-game').addEventListener('click', startYutnoriGame);
   document.getElementById('yutnori-throw-btn').addEventListener('click', yutnoriThrow);
   document.getElementById('yutnori-rematch').addEventListener('click', rematchYutnori);
-  document.getElementById('yutnori-back-lobby').addEventListener('click', function(){ goTo('hub'); });
-  document.getElementById('yutnori-discard-btn').addEventListener('click', yutnoriDiscardArmed);
+  document.getElementById('yutnori-overlay-leave').addEventListener('click', function(){
+    yutnoriHandleLeave();
+    yutnoriBackToLobby();
+  });
 
   /* ============ global key listener ============ */
   window.addEventListener('keyup', function(e){
