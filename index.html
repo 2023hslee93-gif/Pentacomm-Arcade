@@ -652,6 +652,7 @@
     font-size:11px; padding:6px 10px; border-radius:6px; background:var(--yellow); color:#2a1e00;
     border:none; font-weight:700; cursor:pointer; touch-action:manipulation;
   }
+  .yutnori-start-btn{ background:var(--cyan); color:#04222a; }
   .yutnori-board-area{ width:100%; max-width:340px; margin:0 auto; position:relative; }
   .yutnori-board-area.spectating::after{
     content:'👀 관전 중'; position:absolute; top:4px; right:4px; font-size:10px; color:var(--text-dim);
@@ -8024,11 +8025,16 @@
     return YUT_OUTCOMES[0];
   }
   function yutAdvanceMove(pos, steps){
+    // 정통 규칙: 지름길(대각선) 선택은 그 말이 "던지는 시점에 이미 모서리/중앙에 위치해 있을 때"만 제공됨.
+    // 한 번의 던지기 안에서 모서리/중앙을 그냥 지나치는 경우엔 선택 없이 바깥 길을 그대로 진행한다.
+    if(steps > 0 && pos !== YUT_FINISH){
+      const startOptions = YUT_NEXT[pos];
+      if(startOptions.length > 1) return { needsChoice:true, atNode:pos, options:startOptions.slice(), remaining:steps };
+    }
     let cur = pos, remaining = steps;
     while(remaining > 0){
       if(cur === YUT_FINISH){ remaining = 0; break; }
       const options = YUT_NEXT[cur];
-      if(options.length > 1) return { needsChoice:true, atNode:cur, options:options.slice(), remaining };
       cur = options[0];
       remaining--;
       if(cur === YUT_FINISH){ remaining = 0; break; }
@@ -8271,9 +8277,12 @@
     const newExtra = yutnoriMatch.extra_throws - 1 + (outcome.extra ? 1 : 0);
     const newPending = (yutnoriMatch.pending_throws||[]).concat([{ label:outcome.label, value:outcome.value, back: !!outcome.back }]);
     const expected = yutnoriMatch.move_count;
+    // 같은 결과(예: 개 -> 개)가 연달아 나와도 매번 던지는 모션이 보이도록, 매 던지기마다 달라지는
+    // seq 값을 함께 저장해서 "내용이 같아서 변화 없음"으로 오인되지 않게 한다.
+    const lastThrowWithSeq = Object.assign({}, outcome, { seq: expected + 1 });
     try{
       const { data } = await sb.from('yutnori_matches').update({
-        extra_throws:newExtra, pending_throws:newPending, last_throw:outcome,
+        extra_throws:newExtra, pending_throws:newPending, last_throw:lastThrowWithSeq,
         move_count: expected+1, updated_at: new Date().toISOString()
       }).eq('id', yutnoriMatch.id).eq('move_count', expected).eq('current_player_id', playerId).select();
       if(data && data.length>0) applyYutnoriMatchState(data[0]);
@@ -8473,14 +8482,14 @@
     });
     // waiting pieces (pos===0) rendered as small row near each team's side label - handled in yutnoriRenderWaitingPieces
     yutnoriRenderWaitingPieces();
-    // destination highlights for the selected piece
+    // destination highlights for the selected piece (보드 위 칸으로 이동하는 경우만 - 출발선/완주는 버튼으로 별도 제공)
     if(yutnoriSelected){
       const opts = yutnoriPieceUnfinishedOptions(yutnoriSelected.team, yutnoriSelected.pieceIndex);
       opts.forEach(function(opt){
         const coord = YUT_COORDS[opt.destination];
-        const cx = coord ? coord[0] : 340, cy = coord ? coord[1] : 20; // FINISH has no coord -> corner label area
+        if(!coord) return;
         const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        ring.setAttribute('cx', cx); ring.setAttribute('cy', cy); ring.setAttribute('r', 13);
+        ring.setAttribute('cx', coord[0]); ring.setAttribute('cy', coord[1]); ring.setAttribute('r', 13);
         ring.setAttribute('class', 'yutnori-dest');
         ring.addEventListener('click', function(){ yutnoriClickDestination(opt.destination, opt.throwIdx); });
         svg.appendChild(ring);
@@ -8508,14 +8517,22 @@
       });
       if(yutnoriSelected && yutnoriSelected.team===team){
         const opts = yutnoriPieceUnfinishedOptions(team, yutnoriSelected.pieceIndex);
+        // FINISH·출발선(0)은 보드 위 칸이 아니라서 좌표가 없으므로, SVG 링 대신 버튼으로 제공한다.
         const finishOpt = opts.find(function(o){ return o.destination===YUT_FINISH; });
-        // FINISH destination has no board coordinate - offer a text button instead
         if(finishOpt){
           const btn = document.createElement('button');
           btn.type = 'button'; btn.className = 'yutnori-finish-btn';
           btn.textContent = '완주 시키기 →';
           btn.addEventListener('click', function(){ yutnoriClickDestination(YUT_FINISH, finishOpt.throwIdx); });
           el.appendChild(btn);
+        }
+        const startOpt = opts.find(function(o){ return o.destination===0; });
+        if(startOpt){
+          const btn2 = document.createElement('button');
+          btn2.type = 'button'; btn2.className = 'yutnori-finish-btn yutnori-start-btn';
+          btn2.textContent = '← 출발선으로';
+          btn2.addEventListener('click', function(){ yutnoriClickDestination(0, startOpt.throwIdx); });
+          el.appendChild(btn2);
         }
       }
     });
