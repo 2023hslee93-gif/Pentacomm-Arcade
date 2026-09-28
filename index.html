@@ -917,7 +917,7 @@
       <button class="cabinet" data-game="shikaku" style="--accent:var(--green)">
         <div class="cabinet-screen" style="font-size:40px;">🟩</div>
         <div class="cabinet-label pixel">SHIKAKU</div>
-        <div class="cabinet-sub">숫자 칸을 드래그해서 직사각형으로 격자를 채우세요</div>
+        <div class="cabinet-sub">드래그로 직사각형을 그려서 숫자만큼의 칸을 채우세요</div>
       </button>
     </div>
 
@@ -1523,7 +1523,7 @@
       </div>
       <div class="overlay" id="shikaku-overlay">
         <div class="overlay-title pixel">SHIKAKU</div>
-        <div class="overlay-msg">난이도를 선택하세요 · 숫자 칸에서 드래그해서 숫자만큼의 칸 수를 가진 직사각형을 만드세요</div>
+        <div class="overlay-msg">난이도를 선택하세요 · 드래그해서 직사각형을 그리고, 안에 숫자가 정확히 하나 있고 그 숫자만큼 칸을 채우면 성공</div>
         <div class="shikaku-diff-row">
           <button class="start-btn" id="shikaku-start-easy">쉬움</button>
           <button class="start-btn" id="shikaku-start-medium">보통</button>
@@ -1531,7 +1531,7 @@
         </div>
       </div>
     </div>
-    <p class="controls-hint">숫자 칸에서 드래그해서 직사각형을 그리세요 · 숫자 = 직사각형이 차지할 칸 수 · 빈칸 없이 모두 채우면 클리어 · 만든 조각을 탭하면 취소돼요</p>
+    <p class="controls-hint">빈 칸에서 드래그해서 직사각형을 그리세요 · 안에 숫자가 정확히 하나, 그 숫자 = 칸 수여야 해요 · 빈칸 없이 모두 채우면 클리어 · 만든 조각을 탭하면 취소돼요</p>
   </section>
 
 </div>
@@ -6871,7 +6871,7 @@
     const overlay = document.getElementById('shikaku-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = 'SHIKAKU';
-    overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 · 숫자 칸에서 드래그해서 숫자만큼의 칸 수를 가진 직사각형을 만드세요';
+    overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 · 드래그해서 직사각형을 그리고, 안에 숫자가 정확히 하나 있고 그 숫자만큼 칸을 채우면 성공';
   }
 
   function renderShikakuBoard(){
@@ -7071,8 +7071,6 @@
     if(!s || !s.running) return;
     const pos = shikakuCellFromEvent(e);
     if(s.covered[pos.r][pos.c] !== -1) return;
-    const clueIdx = s.clues.findIndex(function(cl){ return cl.r===pos.r && cl.c===pos.c; });
-    if(clueIdx === -1) return;
     s.drag = { startR:pos.r, startC:pos.c, curR:pos.r, curC:pos.c };
     updateShikakuPreview();
     if(e.cancelable) e.preventDefault();
