@@ -163,32 +163,6 @@
 
   .hub-footer{ text-align:center; color:var(--text-dim); font-size:12px; margin-top:36px; }
 
-  /* ---------- chuseok event banner ---------- */
-  .chuseok-banner{
-    display:flex; align-items:center; gap:16px; width:100%; margin-top:22px;
-    background:linear-gradient(135deg, rgba(255,159,67,0.20), rgba(255,46,126,0.14));
-    border:2px solid var(--yellow); border-radius:14px; padding:18px 20px;
-    cursor:pointer; text-align:left; color:var(--text); font-family:inherit;
-    position:relative; overflow:hidden; box-shadow:0 0 18px rgba(255,210,63,0.25);
-    transition:transform .15s ease, border-color .15s ease;
-  }
-  .chuseok-banner:hover, .chuseok-banner:focus-visible{ transform:translateY(-2px); border-color:var(--pink); }
-  .chuseok-banner:focus-visible{ outline:2px solid var(--yellow); outline-offset:3px; }
-  .chuseok-badge{
-    position:absolute; top:10px; right:14px; background:var(--red); color:#fff;
-    font-size:9.5px; font-family:'Press Start 2P',monospace; padding:5px 8px; border-radius:20px;
-    box-shadow:0 0 10px rgba(255,46,126,0.6); letter-spacing:.3px; white-space:nowrap;
-  }
-  .chuseok-icon{ font-size:40px; line-height:1; flex-shrink:0; }
-  .chuseok-text{ flex:1; min-width:0; }
-  .chuseok-title{ font-size:17px; color:var(--yellow); text-shadow:0 0 10px var(--yellow); margin-bottom:6px; }
-  .chuseok-sub{ font-size:12px; color:var(--text-dim); }
-  .chuseok-cta{ font-size:11px; color:var(--cyan); white-space:nowrap; font-weight:700; flex-shrink:0; }
-  @media (max-width:480px){
-    .chuseok-banner{ flex-wrap:wrap; padding:16px; }
-    .chuseok-cta{ margin-left:56px; }
-  }
-
   /* ---------- rankings ---------- */
   .refresh-btn{ background:none; border:1px solid var(--border); color:var(--text-dim); border-radius:6px; width:26px; height:26px; cursor:pointer; font-size:13px; }
   .refresh-btn:hover, .refresh-btn:focus-visible{ color:var(--text); border-color:var(--text); }
@@ -592,79 +566,34 @@
   .fortress-controls input[type="range"]{ width:100%; }
   #gomokupvp-timer{ color:var(--yellow); }
 
-  /* ---------- yutnori ---------- */
-  .yutnori-lobby-view{ display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; max-width:320px; margin:0 auto; }
-  .yutnori-lobby-view.hidden{ display:none; }
-  .yutnori-room-view{ display:flex; flex-direction:column; align-items:center; gap:12px; width:100%; max-width:400px; margin:0 auto; }
-  .yutnori-room-view.hidden{ display:none; }
-  .yutnori-teams{ display:flex; gap:10px; width:100%; }
-  .yutnori-team-box{
-    flex:1; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px;
-    display:flex; flex-direction:column; align-items:center; gap:6px;
+  /* ---------- shikaku ---------- */
+  .shikaku-wrap{ display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; max-width:360px; margin:0 auto; }
+  .shikaku-diff-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .shikaku-board{
+    position:relative; width:100%; max-width:360px; aspect-ratio:1/1; margin:0 auto;
+    background:var(--text-dim); border:2px solid var(--text-dim); touch-action:none; user-select:none;
   }
-  .yutnori-team-box.team-a{ border-color:rgba(0,229,255,0.4); }
-  .yutnori-team-box.team-b{ border-color:rgba(255,46,126,0.4); }
-  .yutnori-team-label{ font-family:'Press Start 2P',monospace; font-size:11px; color:var(--text); }
-  .yutnori-roster{ display:flex; flex-direction:column; gap:3px; min-height:20px; width:100%; align-items:center; }
-  .yutnori-roster-item{ font-size:12px; color:var(--text-dim); }
-  .yutnori-roster-empty{ font-size:11px; color:var(--text-dim); opacity:.5; }
-  .yutnori-waiting{ display:flex; gap:4px; flex-wrap:wrap; justify-content:center; min-height:18px; }
-  .yutnori-waiting-piece{ width:16px; height:16px; border-radius:50%; border:2px solid #04040a; padding:0; cursor:pointer; }
-  .yutnori-waiting-piece.team-a{ background:var(--cyan); }
-  .yutnori-waiting-piece.team-b{ background:var(--pink); }
-  .yutnori-waiting-piece.selected{ box-shadow:0 0 6px 2px rgba(255,210,63,0.8); border-color:var(--yellow); }
-  .yutnori-finish-btn{
-    font-size:11px; padding:6px 10px; border-radius:6px; background:var(--yellow); color:#2a1e00;
-    border:none; font-weight:700; cursor:pointer; touch-action:manipulation;
+  .shikaku-grid{
+    position:absolute; inset:0; display:grid; gap:1px; background:var(--text-dim);
   }
-  .yutnori-start-btn{ background:var(--cyan); color:#04222a; }
-  .yutnori-board-area{ width:100%; max-width:340px; margin:0 auto; position:relative; }
-  .yutnori-board-area.spectating::after{
-    content:'👀 관전 중'; position:absolute; top:4px; right:4px; font-size:10px; color:var(--text-dim);
-    background:rgba(0,0,0,0.6); padding:2px 6px; border-radius:6px;
+  .shikaku-cell{
+    background:var(--bg-deep); display:flex; align-items:center; justify-content:center;
+    font-size:15px; font-weight:700; color:var(--text); position:relative;
   }
-  .yutnori-board{ width:100%; height:auto; display:block; touch-action:manipulation; }
-  .yutnori-line{ stroke:var(--text-dim); stroke-width:1.5; opacity:.5; }
-  .yutnori-node{ fill:var(--bg-deep); stroke:var(--text-dim); stroke-width:1.5; }
-  .yutnori-node.fork{ fill:var(--bg-deep); stroke:var(--yellow); stroke-width:2; }
-  .yutnori-piece{ stroke:#04040a; stroke-width:2; cursor:default; }
-  .yutnori-piece.team-a{ fill:var(--cyan); }
-  .yutnori-piece.team-b{ fill:var(--pink); }
-  .yutnori-piece.mine{ cursor:pointer; }
-  .yutnori-piece.mine:hover{ filter:brightness(1.3); }
-  .yutnori-piece.selected{ stroke:var(--yellow); stroke-width:3; filter:drop-shadow(0 0 6px rgba(255,210,63,0.85)); }
-  .yutnori-dest{ fill:rgba(255,210,63,0.25); stroke:var(--yellow); stroke-width:2.5; cursor:pointer; animation:yutnori-pulse 1s ease-in-out infinite; }
-  @keyframes yutnori-pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
-  .yutnori-throw-area{ display:flex; flex-direction:column; align-items:center; gap:8px; }
-  .yutnori-sticks{ display:flex; gap:6px; justify-content:center; align-items:flex-end; height:64px; }
-  .yutnori-stick{
-    width:14px; height:54px; border-radius:7px; background:linear-gradient(180deg,#4a3420,#241608);
-    border:1px solid var(--border); transition:background .15s, border-color .15s, box-shadow .15s;
+  .shikaku-cell.clue{ color:var(--yellow); text-shadow:0 0 6px rgba(255,210,63,0.5); }
+  .shikaku-pieces{ position:absolute; inset:0; pointer-events:none; }
+  .shikaku-piece{
+    position:absolute; box-sizing:border-box; border:2px solid rgba(255,255,255,0.55);
+    border-radius:3px; pointer-events:auto; cursor:pointer;
+    animation:shikaku-pop .15s ease;
   }
-  .yutnori-stick.belly{ background:linear-gradient(180deg,#fff5da,#e8c877); border-color:var(--yellow); }
-  .yutnori-stick.back-move{ background:linear-gradient(180deg,#5a1414,#240808); border-color:var(--red); box-shadow:0 0 8px rgba(255,60,60,.5); }
-  .yutnori-sticks.throwing .yutnori-stick{ animation:yutnori-tumble .6s ease-in-out; }
-  .yutnori-sticks.throwing .yutnori-stick:nth-child(2){ animation-delay:.03s; }
-  .yutnori-sticks.throwing .yutnori-stick:nth-child(3){ animation-delay:.06s; }
-  .yutnori-sticks.throwing .yutnori-stick:nth-child(4){ animation-delay:.09s; }
-  @keyframes yutnori-tumble{
-    0%{ transform:rotate(0deg) translateY(0); }
-    25%{ transform:rotate(180deg) translateY(-16px); }
-    50%{ transform:rotate(360deg) translateY(-22px); }
-    75%{ transform:rotate(540deg) translateY(-10px); }
-    100%{ transform:rotate(720deg) translateY(0); }
+  @keyframes shikaku-pop{ 0%{ transform:scale(0.85); opacity:0.3; } 100%{ transform:scale(1); opacity:1; } }
+  .shikaku-drag-preview{
+    position:absolute; box-sizing:border-box; border:2px dashed var(--cyan);
+    background:rgba(0,229,255,0.18); pointer-events:none; display:none;
   }
-  .yutnori-throw-label{ font-family:'Press Start 2P',monospace; font-size:12px; color:var(--yellow); min-height:16px; text-align:center; }
-  .yutnori-pending{ display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center; min-height:24px; }
-  .yutnori-chip{
-    font-family:'Press Start 2P',monospace; font-size:10px; padding:8px 10px; border-radius:6px;
-    background:var(--card); border:1px solid var(--border); color:var(--text);
-  }
-  .yutnori-pending-empty{ font-size:12px; color:var(--text-dim); opacity:.6; }
-  .yutnori-chip-discard{
-    font-size:11px; padding:6px 10px; border-radius:6px; background:var(--red); color:#2a0000;
-    border:none; font-weight:700; cursor:pointer; touch-action:manipulation;
-  }
+  .shikaku-drag-preview.visible{ display:block; }
+  .shikaku-drag-preview.invalid{ border-color:var(--red); background:rgba(255,71,87,0.22); }
 
   /* ---------- nickname modal ---------- */
   .nickname-modal{ position:fixed; inset:0; z-index:70; background:rgba(6,6,11,0.9); display:flex; align-items:center; justify-content:center; padding:20px; }
@@ -817,16 +746,6 @@
       <h1 class="logo pixel">NEON<span>ARCADE</span></h1>
       <p class="tagline">동전을 넣고 게임을 선택하세요</p>
     </header>
-
-    <button type="button" class="chuseok-banner" id="chuseok-yutnori-banner" data-game="yutnori">
-      <div class="chuseok-badge">추석 한정 이벤트</div>
-      <div class="chuseok-icon">🌕🎲</div>
-      <div class="chuseok-text">
-        <div class="chuseok-title pixel">윷놀이</div>
-        <div class="chuseok-sub">A팀 vs B팀 실시간 대결 · 최대 2:2 · 그 이상은 관전 가능</div>
-      </div>
-      <div class="chuseok-cta">참가하기 →</div>
-    </button>
 
     <div class="team-battle-panel">
       <h2><span>🏆 팀 대항전</span><button class="refresh-btn" data-refresh-team aria-label="팀 순위 새로고침">⟳</button></h2>
@@ -993,6 +912,12 @@
         <div class="cabinet-screen" style="font-size:40px;">🎯</div>
         <div class="cabinet-label pixel">NUMTAP</div>
         <div class="cabinet-sub">1부터 25까지 순서대로 빠르게 터치하세요</div>
+      </button>
+
+      <button class="cabinet" data-game="shikaku" style="--accent:var(--green)">
+        <div class="cabinet-screen" style="font-size:40px;">🟩</div>
+        <div class="cabinet-label pixel">SHIKAKU</div>
+        <div class="cabinet-sub">숫자 칸을 드래그해서 직사각형으로 격자를 채우세요</div>
       </button>
     </div>
 
@@ -1582,61 +1507,31 @@
     <p class="controls-hint">숫자를 1부터 25까지 순서대로 빠르게 터치하세요 · 빠를수록 점수가 높아요</p>
   </section>
 
-  <!-- YUTNORI -->
-  <section id="screen-yutnori" class="screen">
+  <!-- SHIKAKU -->
+  <section id="screen-shikaku" class="screen">
     <div class="game-topbar">
       <button class="back-btn" data-back>← 오락실로</button>
       <div class="hud pixel">
-        <span id="yutnori-turn-label">대기 중</span>
-        <span>누적승<b id="yutnori-best">0</b></span>
+        <span>TIME<b id="shikaku-time">00:00</b></span>
+        <span>남음<b id="shikaku-remaining">0</b></span>
+        <span>BEST<b id="shikaku-best">0</b></span>
       </div>
     </div>
     <div class="game-stage">
-      <div class="yutnori-lobby-view" id="yutnori-lobby-view">
-        <button type="button" class="start-btn" id="yutnori-create-room">방 만들기</button>
-        <div class="fortress-room-list" id="yutnori-room-list"></div>
-        <button type="button" class="mini-btn" id="yutnori-lobby-back">← 오락실로</button>
+      <div class="shikaku-wrap">
+        <div class="shikaku-board" id="shikaku-board"></div>
       </div>
-      <div class="yutnori-room-view hidden" id="yutnori-room-view">
-        <div class="yutnori-teams">
-          <div class="yutnori-team-box team-a">
-            <div class="yutnori-team-label">A팀</div>
-            <div class="yutnori-roster" id="yutnori-roster-a"></div>
-            <div class="yutnori-waiting" id="yutnori-waiting-a"></div>
-            <button type="button" class="mini-btn" id="yutnori-join-a">A팀 참가</button>
-          </div>
-          <div class="yutnori-team-box team-b">
-            <div class="yutnori-team-label">B팀</div>
-            <div class="yutnori-roster" id="yutnori-roster-b"></div>
-            <div class="yutnori-waiting" id="yutnori-waiting-b"></div>
-            <button type="button" class="mini-btn" id="yutnori-join-b">B팀 참가</button>
-          </div>
-        </div>
-        <button type="button" class="start-btn" id="yutnori-start-game">게임 시작</button>
-        <div class="yutnori-board-area" id="yutnori-board-area">
-          <svg id="yutnori-board-svg" viewBox="0 0 340 340" class="yutnori-board"></svg>
-        </div>
-        <div class="yutnori-throw-area">
-          <div class="yutnori-sticks" id="yutnori-sticks">
-            <div class="yutnori-stick"></div>
-            <div class="yutnori-stick"></div>
-            <div class="yutnori-stick"></div>
-            <div class="yutnori-stick"></div>
-          </div>
-          <div class="yutnori-throw-label" id="yutnori-throw-label"></div>
-        </div>
-        <div class="yutnori-pending" id="yutnori-pending"></div>
-        <button type="button" class="start-btn" id="yutnori-throw-btn">윷 던지기</button>
-        <button type="button" class="mini-btn" id="yutnori-room-back">로비로 나가기</button>
-        <div class="overlay hidden" id="yutnori-overlay">
-          <div class="overlay-title pixel">결과</div>
-          <div class="overlay-msg"></div>
-          <button type="button" class="start-btn" id="yutnori-rematch">다시하기</button>
-          <button type="button" class="mini-btn" id="yutnori-overlay-leave">로비로</button>
+      <div class="overlay" id="shikaku-overlay">
+        <div class="overlay-title pixel">SHIKAKU</div>
+        <div class="overlay-msg">난이도를 선택하세요 · 숫자 칸에서 드래그해서 숫자만큼의 칸 수를 가진 직사각형을 만드세요</div>
+        <div class="shikaku-diff-row">
+          <button class="start-btn" id="shikaku-start-easy">쉬움</button>
+          <button class="start-btn" id="shikaku-start-medium">보통</button>
+          <button class="start-btn" id="shikaku-start-hard">어려움</button>
         </div>
       </div>
     </div>
-    <p class="controls-hint">방 목록에서 참가하거나 방 만들기 · A팀/B팀 참가 (팀당 최대 2인, 그 이상은 관전) · 윷 던지기 → 말 클릭 → 강조된 칸 클릭해서 이동</p>
+    <p class="controls-hint">숫자 칸에서 드래그해서 직사각형을 그리세요 · 숫자 = 직사각형이 차지할 칸 수 · 빈칸 없이 모두 채우면 클리어 · 만든 조각을 탭하면 취소돼요</p>
   </section>
 
 </div>
@@ -1710,7 +1605,7 @@
     { id:'catchmind', label:'캐치마인드', icon:'🎨', color:'var(--cyan)' },
     { id:'fortress', label:'포트리스', icon:'💣', color:'var(--orange)' },
     { id:'numtap', label:'NUMTAP', icon:'🎯', color:'var(--yellow)' },
-    { id:'yutnori', label:'윷놀이', icon:'🎲', color:'var(--red)' }
+    { id:'shikaku', label:'SHIKAKU', icon:'🟩', color:'var(--green)' }
   ];
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
@@ -2158,7 +2053,7 @@
       }
     }
     if(currentScreen === 'numtap' && numtapState){ stopNumtapTimers(); }
-    if(currentScreen === 'yutnori'){ cleanupYutnori(); }
+    if(currentScreen === 'shikaku' && shikakuState){ stopShikakuTimer(); }
     currentScreen = id;
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
@@ -2192,7 +2087,7 @@
     if(id === 'sudoku') prepareSudoku();
     if(id === 'tenten') prepareTenTen();
     if(id === 'numtap') prepareNumtap();
-    if(id === 'yutnori') prepareYutnori();
+    if(id === 'shikaku') prepareShikaku();
   }
 
   async function openGameInfoModal(gameId){
@@ -2203,7 +2098,7 @@
     document.getElementById('game-info-icon').textContent = game.icon;
     document.getElementById('game-info-title').textContent = game.label;
     const cabinetBtn = document.querySelector('[data-game="'+gameId+'"]');
-    const descEl = cabinetBtn ? cabinetBtn.querySelector('.cabinet-sub, .chuseok-sub') : null;
+    const descEl = cabinetBtn ? cabinetBtn.querySelector('.cabinet-sub') : null;
     document.getElementById('game-info-desc').textContent = descEl ? descEl.textContent : '';
     document.getElementById('game-info-ranklist').innerHTML = '<li class="lb-empty">불러오는 중...</li>';
     modal.classList.remove('hidden');
@@ -2227,9 +2122,6 @@
 
   document.querySelectorAll('.cabinet[data-game]').forEach(function(btn){
     btn.addEventListener('click', function(){ openGameInfoModal(btn.dataset.game); });
-  });
-  document.getElementById('chuseok-yutnori-banner').addEventListener('click', function(){
-    openGameInfoModal('yutnori');
   });
   document.querySelectorAll('[data-back]').forEach(function(btn){
     btn.addEventListener('click', function(){ goTo('hub'); });
@@ -6923,687 +6815,314 @@
   });
 
   /* ============================================================
-     YUTNORI (real-time team A/B, individual rooms, Supabase Realtime)
+     SHIKAKU (rectangle-division puzzle)
   ============================================================= */
-  const YUT_FINISH = 100;
-  const YUT_NEXT = {
-    0:[1],1:[2],2:[3],3:[4],4:[5],
-    5:[6,21],
-    6:[7],7:[8],8:[9],9:[10],
-    10:[11,26],
-    11:[12],12:[13],13:[14],14:[15],
-    15:[16],16:[17],17:[18],18:[19],19:[20],
-    20:[YUT_FINISH],
-    21:[22],22:[23],
-    23:[24,28],
-    24:[25],25:[15],
-    26:[27],27:[23],
-    28:[29],29:[20]
+  const SHIKAKU_DIFFICULTY = {
+    easy:   { label:'쉬움',   rows:5, cols:5, pieces:6,  base:1500, timeRate:8 },
+    medium: { label:'보통',   rows:6, cols:6, pieces:9,  base:2500, timeRate:10 },
+    hard:   { label:'어려움', rows:8, cols:8, pieces:14, base:4000, timeRate:12 }
   };
-  const YUT_PREV = {
-    1:0,2:1,3:2,4:3,5:4,
-    6:5,7:6,8:7,9:8,10:9,
-    11:10,12:11,13:12,14:13,15:14,
-    16:15,17:16,18:17,19:18,20:19,
-    21:5,22:21,23:22,
-    24:23,25:24,
-    26:10,27:26,28:23,29:28
-  };
-  const YUT_COORDS = {
-    1:[260,320],2:[200,320],3:[140,320],4:[80,320],5:[20,320],
-    6:[20,260],7:[20,200],8:[20,140],9:[20,80],10:[20,20],
-    11:[80,20],12:[140,20],13:[200,20],14:[260,20],15:[320,20],
-    16:[320,80],17:[320,140],18:[320,200],19:[320,260],20:[320,320],
-    21:[70,270],22:[120,220],23:[170,170],24:[220,120],25:[270,70],
-    26:[70,70],27:[120,120],28:[220,220],29:[270,270]
-  };
-  const YUT_OUTCOMES = [
-    { label:'개', value:2, weight:0.375 },
-    { label:'걸', value:3, weight:0.25 },
-    { label:'도', value:1, weight:0.1875 },
-    { label:'윷', value:4, weight:0.09375, extra:true },
-    { label:'백도', value:-1, weight:0.0625, back:true },
-    { label:'모', value:5, weight:0.03125, extra:true }
+  const SHIKAKU_PALETTE = [
+    'rgba(0,229,255,0.38)', 'rgba(255,46,126,0.38)', 'rgba(255,210,63,0.38)',
+    'rgba(46,213,115,0.38)', 'rgba(255,159,67,0.38)', 'rgba(120,120,255,0.38)', 'rgba(255,99,132,0.38)'
   ];
-  function yutThrow(){
-    const r = Math.random();
-    let acc = 0;
-    for(const o of YUT_OUTCOMES){ acc += o.weight; if(r < acc) return o; }
-    return YUT_OUTCOMES[0];
-  }
-  function yutAdvanceMove(pos, steps){
-    // 정통 규칙: 지름길(대각선) 선택은 그 말이 "던지는 시점에 이미 모서리/중앙에 위치해 있을 때"만 제공됨.
-    // 한 번의 던지기 안에서 모서리/중앙을 그냥 지나치는 경우엔 선택 없이 바깥 길을 그대로 진행한다.
-    if(steps > 0 && pos !== YUT_FINISH){
-      const startOptions = YUT_NEXT[pos];
-      if(startOptions.length > 1) return { needsChoice:true, atNode:pos, options:startOptions.slice(), remaining:steps };
-    }
-    let cur = pos, remaining = steps;
-    while(remaining > 0){
-      if(cur === YUT_FINISH){ remaining = 0; break; }
-      const options = YUT_NEXT[cur];
-      cur = options[0];
-      remaining--;
-      if(cur === YUT_FINISH){ remaining = 0; break; }
-    }
-    return { needsChoice:false, pos:cur };
-  }
-  function yutResolveChoice(chosenNode, remainingAfterFork){
-    return yutAdvanceMove(chosenNode, remainingAfterFork - 1);
-  }
-  function yutMoveBackward(pos){ return YUT_PREV[pos]; }
-  function yutEnumerateDestinations(startPos, steps){
-    const leaves = [];
-    (function explore(res){
-      if(!res.needsChoice){ leaves.push(res.pos); return; }
-      res.options.forEach(function(opt){ explore(yutResolveChoice(opt, res.remaining)); });
-    })(yutAdvanceMove(startPos, steps));
-    return Array.from(new Set(leaves));
-  }
-  function yutApplyPieceMove(pieces, oppPieces, pieceIndex, destination){
-    const fromPos = pieces[pieceIndex];
-    const groupIdx = pieces.map(function(p,i){ return (p===fromPos && fromPos!==0) ? i : -1; }).filter(function(i){ return i>=0; });
-    const movingIndices = fromPos===0 ? [pieceIndex] : groupIdx;
-    const newPieces = pieces.slice();
-    movingIndices.forEach(function(i){ newPieces[i] = destination; });
-    let captured = false;
-    let newOppPieces = oppPieces;
-    if(destination !== 0 && destination !== YUT_FINISH){
-      const oppHit = oppPieces.some(function(p){ return p === destination; });
-      if(oppHit){
-        captured = true;
-        newOppPieces = oppPieces.map(function(p){ return p === destination ? 0 : p; });
-      }
-    }
-    return { newPieces:newPieces, newOppPieces:newOppPieces, captured:captured };
-  }
-  function yutCheckWin(pieces){ return pieces.every(function(p){ return p === YUT_FINISH; }); }
+  let shikakuState;
 
-  let yutnoriMatch = null;
-  let yutnoriChannel = null;
-  let yutnoriSelected = null; // { team, pieceIndex }
-  let yutnoriLastThrowKey = null;
-
-  function yutMyTeam(){
-    if(!yutnoriMatch) return null;
-    if((yutnoriMatch.team_a||[]).some(function(p){ return p.id===playerId; })) return 'A';
-    if((yutnoriMatch.team_b||[]).some(function(p){ return p.id===playerId; })) return 'B';
-    return null;
-  }
-  function yutIsMyTurn(){
-    return yutnoriMatch && yutnoriMatch.status==='playing' && yutnoriMatch.current_player_id===playerId;
-  }
-  function yutRosterFor(team){ return team==='A' ? (yutnoriMatch.team_a||[]) : (yutnoriMatch.team_b||[]); }
-  function yutPiecesFor(team){ return team==='A' ? (yutnoriMatch.pieces_a||[0,0,0,0]) : (yutnoriMatch.pieces_b||[0,0,0,0]); }
-  function yutNicknameFor(pid){
-    const all = (yutnoriMatch.team_a||[]).concat(yutnoriMatch.team_b||[]);
-    const f = all.find(function(p){ return p.id===pid; });
-    return f ? f.nickname : '??';
-  }
-
-  /* -------- lobby (room list) -------- */
-  function yutnoriShowView(view){
-    document.getElementById('yutnori-lobby-view').classList.toggle('hidden', view!=='lobby');
-    document.getElementById('yutnori-room-view').classList.toggle('hidden', view!=='room');
-    document.getElementById('yutnori-overlay').classList.add('hidden');
-  }
-  function yutnoriRemoveChannel(){
-    if(yutnoriChannel){ sb.removeChannel(yutnoriChannel); yutnoriChannel = null; }
-  }
-  async function fetchYutnoriRoomList(){
-    try{
-      const cutoff = new Date(Date.now() - 60*60*1000).toISOString();
-      const { data, error } = await sb.from('yutnori_matches')
-        .select('id, host_nickname, status, team_a, team_b, created_at')
-        .in('status', ['waiting','playing']).gte('created_at', cutoff)
-        .order('created_at', { ascending:true });
-      if(error) throw error;
-      yutnoriRenderRoomList(data||[]);
-    }catch(e){ yutnoriRenderRoomList([]); }
-  }
-  function yutnoriRenderRoomList(rooms){
-    const el = document.getElementById('yutnori-room-list');
-    el.innerHTML = '';
-    if(rooms.length === 0){
-      el.innerHTML = '<div class="fortress-empty-msg">열려있는 방이 없어요. 방을 만들어보세요!</div>';
-      return;
-    }
-    rooms.forEach(function(room){
-      const item = document.createElement('div');
-      item.className = 'fortress-room-item';
-      const span = document.createElement('span');
-      const aCount = (room.team_a||[]).length, bCount = (room.team_b||[]).length;
-      const statusLabel = room.status==='playing' ? ' · 진행중(관전가능)' : '';
-      span.textContent = (room.host_nickname||'익명') + '님의 방 · A팀 ' + aCount + '/2 · B팀 ' + bCount + '/2' + statusLabel;
-      const btn = document.createElement('button');
-      btn.type = 'button'; btn.textContent = room.status==='playing' ? '관전하기' : '참가하기';
-      btn.addEventListener('click', function(){ yutnoriEnterRoom(room.id); });
-      item.appendChild(span); item.appendChild(btn);
-      el.appendChild(item);
-    });
-  }
-  function yutnoriSubscribeLobby(){
-    yutnoriRemoveChannel();
-    yutnoriChannel = sb.channel('yutnori-lobby')
-      .on('postgres_changes', { event:'*', schema:'public', table:'yutnori_matches' }, function(){ fetchYutnoriRoomList(); })
-      .subscribe();
-  }
-  async function createYutnoriRoom(){
-    if(!playerId) return;
-    try{
-      const { data, error } = await sb.from('yutnori_matches').insert({
-        host_id: playerId, host_nickname: nickname || '익명'
-      }).select().single();
-      if(error) throw error;
-      yutnoriEnterRoom(data.id);
-    }catch(e){ alert('방 생성에 실패했어요. 다시 시도해주세요.'); }
-  }
-  async function yutnoriEnterRoom(matchId){
-    try{
-      const { data, error } = await sb.from('yutnori_matches').select('*').eq('id', matchId).maybeSingle();
-      if(error || !data){ alert('방을 찾을 수 없어요.'); fetchYutnoriRoomList(); return; }
-      yutnoriMatch = data;
-      yutnoriSelected = null;
-      yutnoriLastThrowKey = data.last_throw ? JSON.stringify(data.last_throw) : null;
-      yutnoriShowView('room');
-      yutnoriBuildBoardSvg();
-      yutnoriSubscribeMatch(matchId);
-      renderYutnoriUI();
-      if(data.last_throw) yutnoriPlayThrowAnimation(data.last_throw, false);
-    }catch(e){}
-  }
-  function yutnoriSubscribeMatch(matchId){
-    yutnoriRemoveChannel();
-    yutnoriChannel = sb.channel('yutnori-match-'+matchId)
-      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'yutnori_matches', filter:'id=eq.'+matchId }, function(payload){
-        applyYutnoriMatchState(payload.new);
-      })
-      .on('postgres_changes', { event:'DELETE', schema:'public', table:'yutnori_matches', filter:'id=eq.'+matchId }, function(){
-        alert('방이 종료됐어요.');
-        yutnoriBackToLobby();
-      })
-      .subscribe();
-  }
-  function applyYutnoriMatchState(row){
-    const newKey = row.last_throw ? JSON.stringify(row.last_throw) : null;
-    const throwChanged = newKey !== yutnoriLastThrowKey;
-    yutnoriLastThrowKey = newKey;
-    yutnoriMatch = row;
-    yutnoriSelected = null;
-    renderYutnoriUI();
-    if(throwChanged && row.last_throw) yutnoriPlayThrowAnimation(row.last_throw, true);
-    if(row.status === 'finished' && row.winner) showYutnoriResult(row.winner, row.winner_reason);
-  }
-  function yutnoriBackToLobby(){
-    yutnoriRemoveChannel();
-    yutnoriMatch = null;
-    yutnoriSelected = null;
-    yutnoriShowView('lobby');
-    fetchYutnoriRoomList();
-    yutnoriSubscribeLobby();
-  }
-
-  /* -------- team join / leave / start -------- */
-  async function joinYutnoriTeam(team){
-    if(!yutnoriMatch || yutnoriMatch.status !== 'waiting') return;
-    if(yutMyTeam()) return;
-    const roster = yutRosterFor(team);
-    if(roster.length >= 2) return;
-    const newRoster = roster.concat([{ id: playerId, nickname: nickname || '??' }]);
-    const field = team==='A' ? 'team_a' : 'team_b';
-    const expected = yutnoriMatch.move_count;
-    try{
-      const payload = {}; payload[field] = newRoster; payload.move_count = expected+1; payload.updated_at = new Date().toISOString();
-      const { data } = await sb.from('yutnori_matches').update(payload).eq('id', yutnoriMatch.id).eq('move_count', expected).select();
-      if(data && data.length>0) applyYutnoriMatchState(data[0]);
-    }catch(e){}
-  }
-  async function startYutnoriGame(){
-    if(!yutnoriMatch || yutnoriMatch.status !== 'waiting') return;
-    if(yutnoriMatch.team_a.length < 1 || yutnoriMatch.team_b.length < 1) return;
-    const expected = yutnoriMatch.move_count;
-    try{
-      const { data } = await sb.from('yutnori_matches').update({
-        status:'playing', pieces_a:[0,0,0,0], pieces_b:[0,0,0,0],
-        turns_taken_a:0, turns_taken_b:0, current_team:'A', current_player_id: yutnoriMatch.team_a[0].id,
-        extra_throws:1, pending_throws:[], last_throw:null, winner:null, winner_reason:null,
-        turn_started_at: new Date().toISOString(), move_count: expected+1, updated_at: new Date().toISOString()
-      }).eq('id', yutnoriMatch.id).eq('move_count', expected).select();
-      if(data && data.length>0) applyYutnoriMatchState(data[0]);
-    }catch(e){}
-  }
-  async function rematchYutnori(){
-    if(!yutnoriMatch || yutnoriMatch.status !== 'finished') return;
-    const expected = yutnoriMatch.move_count;
-    try{
-      const { data } = await sb.from('yutnori_matches').update({
-        status:'waiting', pieces_a:[0,0,0,0], pieces_b:[0,0,0,0],
-        turns_taken_a:0, turns_taken_b:0, extra_throws:1, pending_throws:[],
-        last_throw:null, winner:null, winner_reason:null, move_count: expected+1, updated_at: new Date().toISOString()
-      }).eq('id', yutnoriMatch.id).eq('move_count', expected).select();
-      if(data && data.length>0) applyYutnoriMatchState(data[0]);
-    }catch(e){}
-  }
-
-  // called when the player leaves a room (back button or explicit leave) - removes them from their
-  // team and, per office-arcade rules, ends the match immediately if that empties a team mid-game.
-  async function yutnoriHandleLeave(){
-    const m = yutnoriMatch;
-    if(!m) return;
-    const team = yutMyTeam();
-    if(!team){ return; } // spectator, nothing to clean up
-    const field = team==='A' ? 'team_a' : 'team_b';
-    const newRoster = yutRosterFor(team).filter(function(p){ return p.id !== playerId; });
-    const otherTeam = team==='A' ? 'B' : 'A';
-    const otherRoster = yutRosterFor(otherTeam);
-    try{
-      if(m.status === 'playing' && newRoster.length === 0){
-        await sb.from('yutnori_matches').update({
-          [field]: newRoster, status:'finished', winner: otherRoster.length ? otherTeam : null,
-          winner_reason:'forfeit', updated_at: new Date().toISOString()
-        }).eq('id', m.id).eq('status','playing');
-      }else if(m.status === 'waiting'){
-        const otherFieldEmpty = otherRoster.length === 0;
-        if(newRoster.length === 0 && otherFieldEmpty){
-          await sb.from('yutnori_matches').delete().eq('id', m.id).eq('status','waiting');
-        }else{
-          const payload = {}; payload[field] = newRoster; payload.updated_at = new Date().toISOString();
-          await sb.from('yutnori_matches').update(payload).eq('id', m.id).eq('status','waiting');
-        }
+  function generateShikaku(rows, cols, targetPieces){
+    let rects = [{ x:0, y:0, w:cols, h:rows }];
+    function canSplit(rect){ return rect.w > 1 || rect.h > 1; }
+    let guard = 0;
+    while(rects.length < targetPieces && guard < 500){
+      guard++;
+      const splittable = rects.filter(canSplit);
+      if(splittable.length === 0) break;
+      splittable.sort(function(a,b){ return (b.w*b.h) - (a.w*a.h); });
+      const poolSize = Math.max(1, Math.ceil(splittable.length * 0.5));
+      const rect = splittable[Math.floor(Math.random()*poolSize)];
+      const idx = rects.indexOf(rect);
+      let a, b;
+      if(rect.w >= rect.h && rect.w > 1){
+        const cut = 1 + Math.floor(Math.random()*(rect.w-1));
+        a = { x:rect.x, y:rect.y, w:cut, h:rect.h };
+        b = { x:rect.x+cut, y:rect.y, w:rect.w-cut, h:rect.h };
+      }else if(rect.h > 1){
+        const cut = 1 + Math.floor(Math.random()*(rect.h-1));
+        a = { x:rect.x, y:rect.y, w:rect.w, h:cut };
+        b = { x:rect.x, y:rect.y+cut, w:rect.w, h:rect.h-cut };
       }else{
-        const payload = {}; payload[field] = newRoster; payload.updated_at = new Date().toISOString();
-        await sb.from('yutnori_matches').update(payload).eq('id', m.id);
+        continue;
       }
-    }catch(e){}
-  }
-
-  /* -------- throwing -------- */
-  async function yutnoriThrow(){
-    if(!yutIsMyTurn() || yutnoriMatch.extra_throws <= 0) return;
-    const outcome = yutThrow();
-    const newExtra = yutnoriMatch.extra_throws - 1 + (outcome.extra ? 1 : 0);
-    const newPending = (yutnoriMatch.pending_throws||[]).concat([{ label:outcome.label, value:outcome.value, back: !!outcome.back }]);
-    const expected = yutnoriMatch.move_count;
-    // 같은 결과(예: 개 -> 개)가 연달아 나와도 매번 던지는 모션이 보이도록, 매 던지기마다 달라지는
-    // seq 값을 함께 저장해서 "내용이 같아서 변화 없음"으로 오인되지 않게 한다.
-    const lastThrowWithSeq = Object.assign({}, outcome, { seq: expected + 1 });
-    try{
-      const { data } = await sb.from('yutnori_matches').update({
-        extra_throws:newExtra, pending_throws:newPending, last_throw:lastThrowWithSeq,
-        move_count: expected+1, updated_at: new Date().toISOString()
-      }).eq('id', yutnoriMatch.id).eq('move_count', expected).eq('current_player_id', playerId).select();
-      if(data && data.length>0) applyYutnoriMatchState(data[0]);
-    }catch(e){}
-  }
-
-  function yutnoriPassTurnIfDone(currentExtra, newPending, capturedBonus){
-    const team = yutnoriMatch.current_team;
-    const stillGoing = (currentExtra + capturedBonus) > 0 || newPending.length > 0;
-    if(stillGoing) return { extra_throws: currentExtra+capturedBonus, pending_throws:newPending };
-    const otherTeam = team==='A' ? 'B' : 'A';
-    const otherRoster = otherTeam==='A' ? yutnoriMatch.team_a : yutnoriMatch.team_b;
-    const takenField = otherTeam==='A' ? 'turns_taken_a' : 'turns_taken_b';
-    const takenCount = yutnoriMatch[takenField] || 0;
-    const nextPlayer = otherRoster.length ? otherRoster[takenCount % otherRoster.length].id : null;
-    const out = {
-      current_team: otherTeam, current_player_id: nextPlayer,
-      extra_throws: 1, pending_throws: [], turn_started_at: new Date().toISOString()
-    };
-    out[takenField] = takenCount + 1;
-    return out;
-  }
-
-  async function yutnoriCommitMove(pieceIndex, destination, throwIdx){
-    const team = yutMyTeam();
-    if(!team || !yutnoriMatch) return;
-    const piecesField = team==='A' ? 'pieces_a' : 'pieces_b';
-    const oppField = team==='A' ? 'pieces_b' : 'pieces_a';
-    const pieces = yutPiecesFor(team).slice();
-    const oppPieces = yutPiecesFor(team==='A'?'B':'A').slice();
-    const moveResult = yutApplyPieceMove(pieces, oppPieces, pieceIndex, destination);
-    const newPendingThrows = (yutnoriMatch.pending_throws||[]).filter(function(_,i){ return i !== throwIdx; });
-    const capturedBonus = moveResult.captured ? 1 : 0;
-    const won = yutCheckWin(moveResult.newPieces);
-    const expected = yutnoriMatch.move_count;
-    let payload = {};
-    payload[piecesField] = moveResult.newPieces;
-    payload[oppField] = moveResult.newOppPieces;
-    if(won){
-      payload.status = 'finished';
-      payload.winner = team;
-      payload.winner_reason = 'finish';
-      payload.pending_throws = [];
-    }else{
-      Object.assign(payload, yutnoriPassTurnIfDone(yutnoriMatch.extra_throws, newPendingThrows, capturedBonus));
+      rects.splice(idx, 1, a, b);
     }
-    payload.move_count = expected+1;
-    payload.updated_at = new Date().toISOString();
-    try{
-      const { data } = await sb.from('yutnori_matches').update(payload).eq('id', yutnoriMatch.id).eq('move_count', expected).select();
-      if(data && data.length>0) applyYutnoriMatchState(data[0]);
-    }catch(e){}
-  }
-
-  async function yutnoriDiscardThrow(idx){
-    if(!yutIsMyTurn()) return;
-    const newPendingThrows = (yutnoriMatch.pending_throws||[]).filter(function(_,i){ return i !== idx; });
-    const expected = yutnoriMatch.move_count;
-    const payload = Object.assign(
-      { move_count: expected+1, updated_at: new Date().toISOString() },
-      yutnoriPassTurnIfDone(yutnoriMatch.extra_throws, newPendingThrows, 0)
-    );
-    try{
-      const { data } = await sb.from('yutnori_matches').update(payload).eq('id', yutnoriMatch.id).eq('move_count', expected).select();
-      if(data && data.length>0) applyYutnoriMatchState(data[0]);
-    }catch(e){}
-  }
-
-  async function incrementYutnoriWins(){
-    if(!playerId) return 0;
-    try{
-      const { data: existing } = await sb.from('scores').select('score').eq('player_id', playerId).eq('game','yutnori').maybeSingle();
-      const newCount = (existing ? existing.score : 0) + 1;
-      await sb.from('scores').upsert({ player_id: playerId, game:'yutnori', score:newCount, updated_at:new Date().toISOString() });
-      return newCount;
-    }catch(e){ return 0; }
-  }
-
-  /* -------- piece selection: click piece -> click highlighted destination -------- */
-  function yutnoriPieceUnfinishedOptions(team, pieceIndex){
-    // returns [{throwIdx, destination}] across all pending throws valid for this piece
-    const pieces = yutPiecesFor(team);
-    const pos = pieces[pieceIndex];
-    if(pos === YUT_FINISH) return [];
-    const list = yutnoriMatch.pending_throws || [];
-    const seenDest = {};
-    const out = [];
-    list.forEach(function(t, idx){
-      if(t.back){
-        if(pos === 0) return;
-        const dest = yutMoveBackward(pos);
-        if(!(dest in seenDest)){ seenDest[dest]=true; out.push({ throwIdx:idx, destination:dest }); }
-      }else{
-        yutEnumerateDestinations(pos, t.value).forEach(function(dest){
-          if(!(dest in seenDest)){ seenDest[dest]=true; out.push({ throwIdx:idx, destination:dest }); }
-        });
-      }
+    const clues = rects.map(function(r){
+      const cr = r.y + Math.floor(Math.random()*r.h);
+      const cc = r.x + Math.floor(Math.random()*r.w);
+      return { r:cr, c:cc, n:r.w*r.h };
     });
-    return out;
-  }
-  function yutnoriSelectPiece(team, pieceIndex){
-    if(!yutIsMyTurn() || team !== yutMyTeam()) return;
-    const options = yutnoriPieceUnfinishedOptions(team, pieceIndex);
-    if(options.length === 0){ yutnoriSelected = null; renderYutnoriUI(); return; }
-    yutnoriSelected = (yutnoriSelected && yutnoriSelected.pieceIndex===pieceIndex && yutnoriSelected.team===team) ? null : { team:team, pieceIndex:pieceIndex };
-    renderYutnoriUI();
-  }
-  function yutnoriClickDestination(destination, throwIdx){
-    if(!yutnoriSelected) return;
-    yutnoriCommitMove(yutnoriSelected.pieceIndex, destination, throwIdx);
-    yutnoriSelected = null;
+    return { rows:rows, cols:cols, clues:clues };
   }
 
-  /* -------- throw animation -------- */
-  function yutnoriPlayThrowAnimation(outcome, animate){
-    const sticksEl = document.getElementById('yutnori-sticks');
-    const labelEl = document.getElementById('yutnori-throw-label');
-    if(!sticksEl) return;
-    const sticks = sticksEl.querySelectorAll('.yutnori-stick');
-    sticks.forEach(function(s){ s.classList.remove('belly','back-move'); });
-    function reveal(){
-      if(outcome.back){
-        sticks.forEach(function(s){ s.classList.add('back-move'); });
-      }else{
-        const bellyCount = outcome.value === 5 ? 0 : outcome.value;
-        const idxs = [0,1,2,3];
-        for(let i=idxs.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=idxs[i]; idxs[i]=idxs[j]; idxs[j]=t; }
-        idxs.slice(0,bellyCount).forEach(function(i){ sticks[i].classList.add('belly'); });
-      }
-      labelEl.textContent = outcome.label + (outcome.back ? '' : ' (' + outcome.value + '칸)') + (outcome.extra ? ' · 한 번 더!' : '');
-    }
-    if(animate){
-      labelEl.textContent = '';
-      sticksEl.classList.add('throwing');
-      setTimeout(function(){ sticksEl.classList.remove('throwing'); reveal(); }, 600);
-    }else{
-      reveal();
-    }
-  }
-
-  /* -------- rendering -------- */
-  function yutnoriPieceOffset(idx, total){
-    if(total <= 1) return [0,0];
-    const angle = (Math.PI*2/total) * idx;
-    return [Math.cos(angle)*9, Math.sin(angle)*9];
-  }
-  function yutnoriBuildBoardSvg(){
-    const svg = document.getElementById('yutnori-board-svg');
-    let html = '';
-    html += '<line x1="20" y1="20" x2="320" y2="20" class="yutnori-line"/>';
-    html += '<line x1="320" y1="20" x2="320" y2="320" class="yutnori-line"/>';
-    html += '<line x1="320" y1="320" x2="20" y2="320" class="yutnori-line"/>';
-    html += '<line x1="20" y1="320" x2="20" y2="20" class="yutnori-line"/>';
-    html += '<line x1="20" y1="320" x2="320" y2="20" class="yutnori-line"/>';
-    html += '<line x1="20" y1="20" x2="320" y2="320" class="yutnori-line"/>';
-    Object.keys(YUT_COORDS).forEach(function(k){
-      const n = Number(k);
-      const c = YUT_COORDS[n];
-      const isCorner = (n===5||n===10||n===15||n===20);
-      const isCenter = (n===23);
-      const r = isCorner||isCenter ? 7 : 4.5;
-      html += '<circle cx="'+c[0]+'" cy="'+c[1]+'" r="'+r+'" class="yutnori-node'+(isCorner||isCenter?' fork':'')+'" data-node="'+n+'"></circle>';
-    });
-    svg.innerHTML = html;
-  }
-  function yutnoriRenderPieces(){
-    const svg = document.getElementById('yutnori-board-svg');
-    svg.querySelectorAll('.yutnori-piece, .yutnori-dest').forEach(function(el){ el.remove(); });
-    if(!yutnoriMatch) return;
-    ['A','B'].forEach(function(team){
-      const pieces = yutPiecesFor(team);
-      const groups = {};
-      pieces.forEach(function(pos, idx){
-        if(pos === 0 || pos === YUT_FINISH) return;
-        groups[pos] = groups[pos] || [];
-        groups[pos].push(idx);
-      });
-      Object.keys(groups).forEach(function(posKey){
-        const pos = Number(posKey);
-        const idxs = groups[posKey];
-        const coord = YUT_COORDS[pos];
-        if(!coord) return;
-        idxs.forEach(function(pieceIdx, i){
-          const off = yutnoriPieceOffset(i, idxs.length);
-          const cx = coord[0]+off[0], cy = coord[1]+off[1];
-          const isSelected = yutnoriSelected && yutnoriSelected.team===team && yutnoriSelected.pieceIndex===pieceIdx;
-          const g = document.createElementNS('http://www.w3.org/2000/svg','circle');
-          g.setAttribute('cx', cx); g.setAttribute('cy', cy); g.setAttribute('r', isSelected?9.5:8);
-          g.setAttribute('class', 'yutnori-piece team-'+team.toLowerCase()+(team===yutMyTeam()?' mine':'')+(isSelected?' selected':''));
-          g.dataset.team = team; g.dataset.pieceIndex = pieceIdx;
-          if(team === yutMyTeam() && yutIsMyTurn()){
-            g.addEventListener('click', function(){ yutnoriSelectPiece(team, pieceIdx); });
-          }
-          svg.appendChild(g);
-        });
-      });
-    });
-    // waiting pieces (pos===0) rendered as small row near each team's side label - handled in yutnoriRenderWaitingPieces
-    yutnoriRenderWaitingPieces();
-    // destination highlights for the selected piece (보드 위 칸으로 이동하는 경우만 - 출발선/완주는 버튼으로 별도 제공)
-    if(yutnoriSelected){
-      const opts = yutnoriPieceUnfinishedOptions(yutnoriSelected.team, yutnoriSelected.pieceIndex);
-      opts.forEach(function(opt){
-        const coord = YUT_COORDS[opt.destination];
-        if(!coord) return;
-        const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        ring.setAttribute('cx', coord[0]); ring.setAttribute('cy', coord[1]); ring.setAttribute('r', 13);
-        ring.setAttribute('class', 'yutnori-dest');
-        ring.addEventListener('click', function(){ yutnoriClickDestination(opt.destination, opt.throwIdx); });
-        svg.appendChild(ring);
-      });
-    }
-  }
-  function yutnoriRenderWaitingPieces(){
-    ['a','b'].forEach(function(t){
-      const el = document.getElementById('yutnori-waiting-'+t);
-      if(!el) return;
-      el.innerHTML = '';
-      if(!yutnoriMatch) return;
-      const team = t.toUpperCase();
-      const pieces = yutPiecesFor(team);
-      pieces.forEach(function(pos, idx){
-        if(pos !== 0) return;
-        const dot = document.createElement('button');
-        dot.type = 'button';
-        const selected = yutnoriSelected && yutnoriSelected.team===team && yutnoriSelected.pieceIndex===idx;
-        dot.className = 'yutnori-waiting-piece team-'+t+(selected?' selected':'');
-        if(team === yutMyTeam() && yutIsMyTurn()){
-          dot.addEventListener('click', function(){ yutnoriSelectPiece(team, idx); });
-        }
-        el.appendChild(dot);
-      });
-      if(yutnoriSelected && yutnoriSelected.team===team){
-        const opts = yutnoriPieceUnfinishedOptions(team, yutnoriSelected.pieceIndex);
-        // FINISH·출발선(0)은 보드 위 칸이 아니라서 좌표가 없으므로, SVG 링 대신 버튼으로 제공한다.
-        const finishOpt = opts.find(function(o){ return o.destination===YUT_FINISH; });
-        if(finishOpt){
-          const btn = document.createElement('button');
-          btn.type = 'button'; btn.className = 'yutnori-finish-btn';
-          btn.textContent = '완주 시키기 →';
-          btn.addEventListener('click', function(){ yutnoriClickDestination(YUT_FINISH, finishOpt.throwIdx); });
-          el.appendChild(btn);
-        }
-        const startOpt = opts.find(function(o){ return o.destination===0; });
-        if(startOpt){
-          const btn2 = document.createElement('button');
-          btn2.type = 'button'; btn2.className = 'yutnori-finish-btn yutnori-start-btn';
-          btn2.textContent = '← 출발선으로';
-          btn2.addEventListener('click', function(){ yutnoriClickDestination(0, startOpt.throwIdx); });
-          el.appendChild(btn2);
-        }
-      }
-    });
-  }
-  function yutnoriRenderRoster(team){
-    const el = document.getElementById('yutnori-roster-'+team.toLowerCase());
-    const roster = yutRosterFor(team);
-    el.innerHTML = roster.map(function(p){ return '<div class="yutnori-roster-item">'+escapeHtml(p.nickname)+'</div>'; }).join('') || '<div class="yutnori-roster-empty">비어있음</div>';
-  }
-  function yutnoriRenderPendingThrows(){
-    const el = document.getElementById('yutnori-pending');
-    if(!yutnoriMatch){ el.innerHTML = ''; return; }
-    const list = yutnoriMatch.pending_throws || [];
-    if(!list.length){ el.innerHTML = '<span class="yutnori-pending-empty">던지기를 눌러보세요</span>'; return; }
-    el.innerHTML = list.map(function(t, i){
-      return '<span class="yutnori-chip">'+t.label+(t.back?'':'('+t.value+')')+'</span>';
-    }).join('');
-    if(yutIsMyTurn()){
-      list.forEach(function(t, i){
-        if(t.back){
-          const pieces = yutPiecesFor(yutMyTeam());
-          const hasTarget = pieces.some(function(p){ return p!==0 && p!==YUT_FINISH; });
-          if(!hasTarget){
-            const btn = document.createElement('button');
-            btn.type='button'; btn.className='yutnori-chip-discard'; btn.textContent='버리기';
-            btn.addEventListener('click', function(){ yutnoriDiscardThrow(i); });
-            el.appendChild(btn);
-          }
-        }
-      });
-    }
-  }
-  function yutnoriRenderTurnLabel(){
-    const label = document.getElementById('yutnori-turn-label');
-    if(!yutnoriMatch || yutnoriMatch.status === 'waiting'){ label.textContent = '팀 구성 중'; return; }
-    if(yutnoriMatch.status === 'finished'){ label.textContent = (yutnoriMatch.winner==='A'?'A':'B')+'팀 승리!'; return; }
-    const nick = yutnoriMatch.current_player_id ? yutNicknameFor(yutnoriMatch.current_player_id) : '?';
-    label.textContent = (yutnoriMatch.current_team==='A'?'A팀':'B팀') + ' ' + nick + '님 차례';
-  }
-  function yutnoriRenderThrowBtn(){
-    const btn = document.getElementById('yutnori-throw-btn');
-    const canThrow = yutIsMyTurn() && yutnoriMatch.extra_throws > 0;
-    btn.disabled = !canThrow;
-    btn.textContent = canThrow ? '윷 던지기' : (yutnoriMatch && yutnoriMatch.status==='playing' ? '말을 이동하세요' : '윷 던지기');
-  }
-  function yutnoriRenderLobbyControls(){
-    const startBtn = document.getElementById('yutnori-start-game');
-    const joinA = document.getElementById('yutnori-join-a');
-    const joinB = document.getElementById('yutnori-join-b');
-    if(!yutnoriMatch || yutnoriMatch.status !== 'waiting'){
-      startBtn.style.display = 'none'; joinA.style.display = 'none'; joinB.style.display = 'none';
-      return;
-    }
-    const myTeam = yutMyTeam();
-    startBtn.style.display = (yutnoriMatch.team_a.length>=1 && yutnoriMatch.team_b.length>=1) ? '' : 'none';
-    joinA.style.display = (!myTeam && yutnoriMatch.team_a.length<2) ? '' : 'none';
-    joinB.style.display = (!myTeam && yutnoriMatch.team_b.length<2) ? '' : 'none';
-  }
-  function renderYutnoriUI(){
-    if(!yutnoriMatch) return;
-    yutnoriRenderRoster('A');
-    yutnoriRenderRoster('B');
-    yutnoriRenderLobbyControls();
-    yutnoriRenderTurnLabel();
-    yutnoriRenderThrowBtn();
-    yutnoriRenderPendingThrows();
-    yutnoriRenderPieces();
-    const overlay = document.getElementById('yutnori-overlay');
-    if(yutnoriMatch.status !== 'finished') overlay.classList.add('hidden');
-    const boardArea = document.getElementById('yutnori-board-area');
-    boardArea.classList.toggle('spectating', !yutMyTeam());
-  }
-  function showYutnoriResult(winnerTeam, reason){
-    const overlay = document.getElementById('yutnori-overlay');
+  function prepareShikaku(){
+    shikakuState = { difficulty:null, running:false, over:false };
+    document.getElementById('shikaku-board').innerHTML = '';
+    document.getElementById('shikaku-time').textContent = '00:00';
+    document.getElementById('shikaku-remaining').textContent = '0';
+    loadMyBest('shikaku');
+    const overlay = document.getElementById('shikaku-overlay');
     overlay.classList.remove('hidden');
-    const myTeam = yutMyTeam();
-    const won = myTeam && myTeam === winnerTeam;
-    const reasonText = reason === 'forfeit' ? ' (상대팀 전원 퇴장)' : '';
-    overlay.querySelector('.overlay-title').textContent = (winnerTeam==='A'?'A팀':'B팀') + ' 승리!' + reasonText;
-    if(won){
-      incrementYutnoriWins().then(function(newCount){
-        overlay.querySelector('.overlay-msg').textContent = '우리 팀 승리! 누적 ' + newCount + '승';
-        loadMyBest('yutnori');
-        renderTeamBattle();
-      });
-    }else if(myTeam){
-      overlay.querySelector('.overlay-msg').textContent = '아쉽네요, 다음엔 이겨봐요';
-    }else{
-      overlay.querySelector('.overlay-msg').textContent = '관전 종료 · 로비로 돌아가 다른 방을 찾아보세요';
+    overlay.querySelector('.overlay-title').textContent = 'SHIKAKU';
+    overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 · 숫자 칸에서 드래그해서 숫자만큼의 칸 수를 가진 직사각형을 만드세요';
+  }
+
+  function renderShikakuBoard(){
+    const s = shikakuState;
+    const boardEl = document.getElementById('shikaku-board');
+    boardEl.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.className = 'shikaku-grid';
+    grid.style.gridTemplateColumns = 'repeat(' + s.cols + ', 1fr)';
+    grid.style.gridTemplateRows = 'repeat(' + s.rows + ', 1fr)';
+    const clueMap = {};
+    s.clues.forEach(function(cl, i){ clueMap[cl.r+','+cl.c] = i; });
+    for(let r=0;r<s.rows;r++){
+      for(let c=0;c<s.cols;c++){
+        const cell = document.createElement('div');
+        cell.className = 'shikaku-cell';
+        const key = r+','+c;
+        if(clueMap.hasOwnProperty(key)){
+          cell.classList.add('clue');
+          cell.textContent = String(s.clues[clueMap[key]].n);
+        }
+        grid.appendChild(cell);
+      }
+    }
+    boardEl.appendChild(grid);
+    const piecesLayer = document.createElement('div');
+    piecesLayer.className = 'shikaku-pieces';
+    piecesLayer.id = 'shikaku-pieces-layer';
+    boardEl.appendChild(piecesLayer);
+    const preview = document.createElement('div');
+    preview.className = 'shikaku-drag-preview';
+    preview.id = 'shikaku-drag-preview';
+    boardEl.appendChild(preview);
+  }
+
+  function startShikakuWithDifficulty(diffKey){
+    const diff = SHIKAKU_DIFFICULTY[diffKey];
+    const puzzle = generateShikaku(diff.rows, diff.cols, diff.pieces);
+    shikakuState = {
+      difficulty: diffKey,
+      rows: diff.rows, cols: diff.cols,
+      clues: puzzle.clues,
+      placed: [],
+      nextPieceId: 1,
+      covered: Array.from({ length:diff.rows }, function(){ return new Array(diff.cols).fill(-1); }),
+      drag: null,
+      startTime: performance.now(),
+      elapsed: 0,
+      timerId: null,
+      running: true,
+      over: false
+    };
+    document.getElementById('shikaku-overlay').classList.add('hidden');
+    document.getElementById('shikaku-remaining').textContent = String(shikakuState.clues.length);
+    document.getElementById('shikaku-time').textContent = '00:00';
+    renderShikakuBoard();
+    shikakuState.timerId = setInterval(shikakuTick, 1000);
+  }
+
+  function shikakuTick(){
+    const s = shikakuState;
+    if(!s || !s.running) return;
+    s.elapsed = Math.floor((performance.now()-s.startTime)/1000);
+    const mm = String(Math.floor(s.elapsed/60)).padStart(2,'0');
+    const ss = String(s.elapsed%60).padStart(2,'0');
+    document.getElementById('shikaku-time').textContent = mm+':'+ss;
+  }
+
+  function stopShikakuTimer(){
+    if(shikakuState && shikakuState.timerId){ clearInterval(shikakuState.timerId); shikakuState.timerId = null; }
+  }
+
+  function shikakuCellFromEvent(e){
+    const boardEl = document.getElementById('shikaku-board');
+    const rect = boardEl.getBoundingClientRect();
+    const s = shikakuState;
+    const clientX = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+    const clientY = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+    let x = (clientX - rect.left) / rect.width;
+    let y = (clientY - rect.top) / rect.height;
+    x = Math.min(0.9999, Math.max(0, x));
+    y = Math.min(0.9999, Math.max(0, y));
+    const c = Math.min(s.cols-1, Math.max(0, Math.floor(x * s.cols)));
+    const r = Math.min(s.rows-1, Math.max(0, Math.floor(y * s.rows)));
+    return { r:r, c:c };
+  }
+
+  function updateShikakuPreview(){
+    const s = shikakuState;
+    if(!s || !s.drag) return;
+    const d = s.drag;
+    const minR = Math.min(d.startR,d.curR), maxR = Math.max(d.startR,d.curR);
+    const minC = Math.min(d.startC,d.curC), maxC = Math.max(d.startC,d.curC);
+    const preview = document.getElementById('shikaku-drag-preview');
+    if(!preview) return;
+    preview.style.left = (minC/s.cols*100)+'%';
+    preview.style.top = (minR/s.rows*100)+'%';
+    preview.style.width = ((maxC-minC+1)/s.cols*100)+'%';
+    preview.style.height = ((maxR-minR+1)/s.rows*100)+'%';
+    preview.classList.add('visible');
+    preview.classList.remove('invalid');
+  }
+
+  function hideShikakuPreview(){
+    const preview = document.getElementById('shikaku-drag-preview');
+    if(preview) preview.classList.remove('visible','invalid');
+  }
+
+  function flashShikakuInvalid(minR,minC,maxR,maxC){
+    const s = shikakuState;
+    const preview = document.getElementById('shikaku-drag-preview');
+    if(!preview) return;
+    preview.style.left = (minC/s.cols*100)+'%';
+    preview.style.top = (minR/s.rows*100)+'%';
+    preview.style.width = ((maxC-minC+1)/s.cols*100)+'%';
+    preview.style.height = ((maxR-minR+1)/s.rows*100)+'%';
+    preview.classList.add('visible','invalid');
+    setTimeout(function(){ preview.classList.remove('visible','invalid'); }, 250);
+  }
+
+  function renderShikakuPiece(piece){
+    const s = shikakuState;
+    const layer = document.getElementById('shikaku-pieces-layer');
+    if(!layer) return;
+    const div = document.createElement('div');
+    div.className = 'shikaku-piece';
+    div.style.left = (piece.minC/s.cols*100)+'%';
+    div.style.top = (piece.minR/s.rows*100)+'%';
+    div.style.width = ((piece.maxC-piece.minC+1)/s.cols*100)+'%';
+    div.style.height = ((piece.maxR-piece.minR+1)/s.rows*100)+'%';
+    div.style.background = piece.color;
+    div.dataset.pieceId = String(piece.id);
+    layer.appendChild(div);
+  }
+
+  function placeShikakuPiece(minR,minC,maxR,maxC,clueIdx){
+    const s = shikakuState;
+    const id = s.nextPieceId++;
+    for(let r=minR;r<=maxR;r++){
+      for(let c=minC;c<=maxC;c++){
+        s.covered[r][c] = id;
+      }
+    }
+    const color = SHIKAKU_PALETTE[id % SHIKAKU_PALETTE.length];
+    const piece = { id:id, minR:minR, minC:minC, maxR:maxR, maxC:maxC, clueIdx:clueIdx, color:color };
+    s.placed.push(piece);
+    renderShikakuPiece(piece);
+    document.getElementById('shikaku-remaining').textContent = String(s.clues.length - s.placed.length);
+    if(s.placed.length === s.clues.length){
+      endShikaku();
     }
   }
 
-  function prepareYutnori(){
-    yutnoriMatch = null;
-    yutnoriSelected = null;
-    yutnoriLastThrowKey = null;
-    yutnoriShowView('lobby');
-    loadMyBest('yutnori');
-    fetchYutnoriRoomList();
-    yutnoriSubscribeLobby();
+  function removeShikakuPiece(id){
+    const s = shikakuState;
+    if(!s || !s.running) return;
+    const idx = s.placed.findIndex(function(p){ return p.id === id; });
+    if(idx === -1) return;
+    const piece = s.placed[idx];
+    for(let r=piece.minR;r<=piece.maxR;r++){
+      for(let c=piece.minC;c<=piece.maxC;c++){
+        s.covered[r][c] = -1;
+      }
+    }
+    s.placed.splice(idx,1);
+    const layer = document.getElementById('shikaku-pieces-layer');
+    const el = layer ? layer.querySelector('[data-piece-id="'+id+'"]') : null;
+    if(el) el.remove();
+    document.getElementById('shikaku-remaining').textContent = String(s.clues.length - s.placed.length);
   }
-  function cleanupYutnori(){
-    yutnoriHandleLeave();
-    yutnoriRemoveChannel();
-    yutnoriMatch = null;
-    yutnoriSelected = null;
-  }
-  function handleYutnoriKey(e){ /* no keyboard controls */ }
 
-  document.getElementById('yutnori-create-room').addEventListener('click', createYutnoriRoom);
-  document.getElementById('yutnori-lobby-back').addEventListener('click', function(){ goTo('hub'); });
-  document.getElementById('yutnori-room-back').addEventListener('click', function(){
-    yutnoriHandleLeave();
-    yutnoriBackToLobby();
+  function attemptShikakuPlacement(drag){
+    const s = shikakuState;
+    const minR = Math.min(drag.startR, drag.curR), maxR = Math.max(drag.startR, drag.curR);
+    const minC = Math.min(drag.startC, drag.curC), maxC = Math.max(drag.startC, drag.curC);
+    const w = maxC-minC+1, h = maxR-minR+1, area = w*h;
+    let overlap = false;
+    for(let r=minR;r<=maxR && !overlap;r++){
+      for(let c=minC;c<=maxC;c++){
+        if(s.covered[r][c] !== -1){ overlap = true; break; }
+      }
+    }
+    const insideClues = [];
+    s.clues.forEach(function(cl, i){
+      if(cl.r>=minR && cl.r<=maxR && cl.c>=minC && cl.c<=maxC) insideClues.push(i);
+    });
+    const valid = !overlap && insideClues.length === 1 && s.clues[insideClues[0]].n === area;
+    if(valid){
+      placeShikakuPiece(minR,minC,maxR,maxC,insideClues[0]);
+    }else{
+      flashShikakuInvalid(minR,minC,maxR,maxC);
+    }
+  }
+
+  function shikakuPointerDown(e){
+    const s = shikakuState;
+    if(!s || !s.running) return;
+    const pos = shikakuCellFromEvent(e);
+    if(s.covered[pos.r][pos.c] !== -1) return;
+    const clueIdx = s.clues.findIndex(function(cl){ return cl.r===pos.r && cl.c===pos.c; });
+    if(clueIdx === -1) return;
+    s.drag = { startR:pos.r, startC:pos.c, curR:pos.r, curC:pos.c };
+    updateShikakuPreview();
+    if(e.cancelable) e.preventDefault();
+  }
+
+  function shikakuPointerMove(e){
+    const s = shikakuState;
+    if(!s || !s.drag) return;
+    const pos = shikakuCellFromEvent(e);
+    s.drag.curR = pos.r; s.drag.curC = pos.c;
+    updateShikakuPreview();
+    if(e.cancelable) e.preventDefault();
+  }
+
+  function shikakuPointerUp(e){
+    const s = shikakuState;
+    if(!s || !s.drag) return;
+    const drag = s.drag;
+    s.drag = null;
+    hideShikakuPreview();
+    attemptShikakuPlacement(drag);
+  }
+
+  function endShikaku(){
+    const s = shikakuState;
+    if(!s || s.over) return;
+    s.running = false;
+    s.over = true;
+    stopShikakuTimer();
+    const diff = SHIKAKU_DIFFICULTY[s.difficulty];
+    const score = Math.max(100, Math.round(diff.base - s.elapsed*diff.timeRate));
+    const overlay = document.getElementById('shikaku-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
+    overlay.querySelector('.overlay-msg').textContent = '['+diff.label+'] 점수 ' + score + ' · 난이도를 선택해서 다시 시작하세요';
+    finalizeScore('shikaku', score, overlay);
+  }
+
+  document.getElementById('shikaku-board').addEventListener('pointerdown', shikakuPointerDown);
+  window.addEventListener('pointermove', shikakuPointerMove);
+  window.addEventListener('pointerup', shikakuPointerUp);
+  document.getElementById('shikaku-board').addEventListener('click', function(e){
+    const pieceEl = e.target.closest('.shikaku-piece');
+    if(pieceEl && shikakuState && shikakuState.running){
+      removeShikakuPiece(Number(pieceEl.dataset.pieceId));
+    }
   });
-  document.getElementById('yutnori-join-a').addEventListener('click', function(){ joinYutnoriTeam('A'); });
-  document.getElementById('yutnori-join-b').addEventListener('click', function(){ joinYutnoriTeam('B'); });
-  document.getElementById('yutnori-start-game').addEventListener('click', startYutnoriGame);
-  document.getElementById('yutnori-throw-btn').addEventListener('click', yutnoriThrow);
-  document.getElementById('yutnori-rematch').addEventListener('click', rematchYutnori);
-  document.getElementById('yutnori-overlay-leave').addEventListener('click', function(){
-    yutnoriHandleLeave();
-    yutnoriBackToLobby();
-  });
+  document.getElementById('shikaku-start-easy').addEventListener('click', function(){ startShikakuWithDifficulty('easy'); });
+  document.getElementById('shikaku-start-medium').addEventListener('click', function(){ startShikakuWithDifficulty('medium'); });
+  document.getElementById('shikaku-start-hard').addEventListener('click', function(){ startShikakuWithDifficulty('hard'); });
 
   /* ============ global key listener ============ */
   window.addEventListener('keyup', function(e){
@@ -7632,7 +7151,6 @@
     else if(currentScreen==='tenten') handleTentenKey(e);
     else if(currentScreen==='catchmind') handleCatchmindKey(e);
     else if(currentScreen==='fortress') handleFortressKey(e);
-    else if(currentScreen==='yutnori') handleYutnoriKey(e);
   });
 
   /* ============ init ============ */
