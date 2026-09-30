@@ -225,6 +225,48 @@
   .roster-chip .dot{ width:8px; height:8px; border-radius:50%; background:var(--chip-color); box-shadow:0 0 6px var(--chip-color); }
   .roster-chip small{ color:var(--text-dim); font-size:10px; }
 
+  /* ---------- game request board ---------- */
+  .request-panel{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:18px; margin-top:20px; }
+  .request-panel h3{
+    margin:0 0 6px; font-size:13px; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .request-sub{ font-size:11.5px; color:var(--text-dim); margin:0 0 12px; }
+  .request-form{ display:flex; gap:8px; margin-bottom:14px; }
+  .request-form input{
+    flex:1; min-width:0; padding:10px 12px; border-radius:6px; border:1px solid var(--border);
+    background:var(--bg-deep); color:var(--text); font-family:inherit; font-size:13px;
+  }
+  .request-form input:focus-visible{ outline:2px solid var(--cyan); border-color:var(--cyan); }
+  .request-form button{
+    background:var(--cyan); color:#04222a; border:none; border-radius:6px; padding:0 16px;
+    font-weight:700; font-size:13px; cursor:pointer; touch-action:manipulation; white-space:nowrap;
+  }
+  .request-list{ display:flex; flex-direction:column; gap:8px; max-height:360px; overflow-y:auto; }
+  .request-item{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+    background:rgba(255,255,255,0.02); border-radius:8px; padding:10px 12px;
+  }
+  .request-item-main{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .request-item-content{ font-size:13px; color:var(--text); word-break:break-word; }
+  .request-item-meta{ font-size:10.5px; color:var(--text-dim); }
+  .request-like-btn{
+    display:flex; align-items:center; gap:5px; background:var(--bg-deep); border:1px solid var(--border);
+    border-radius:20px; padding:6px 11px; font-size:12px; color:var(--text-dim); cursor:pointer;
+    flex-shrink:0; touch-action:manipulation; transition:border-color .15s, color .15s;
+  }
+  .request-like-btn:hover{ border-color:var(--pink); }
+  .request-like-btn.liked{ border-color:var(--pink); color:var(--pink); background:rgba(255,46,126,0.12); }
+  .request-like-btn:disabled{ cursor:default; }
+
+  /* ---------- announcement popup ---------- */
+  .announce-list{ display:flex; flex-direction:column; gap:14px; max-height:60vh; overflow-y:auto; }
+  .announce-item{ border-bottom:1px solid var(--border); padding-bottom:14px; }
+  .announce-item:last-child{ border-bottom:none; padding-bottom:0; }
+  .announce-item-title{ font-size:13px; font-weight:700; color:var(--yellow); margin-bottom:4px; }
+  .announce-item-date{ font-size:10.5px; color:var(--text-dim); margin-bottom:6px; }
+  .announce-item-body{ font-size:12.5px; color:var(--text); line-height:1.5; white-space:pre-wrap; }
+
   /* ---------- GAME SCREENS ---------- */
   .game-topbar{
     display:flex; justify-content:space-between; align-items:center;
@@ -729,6 +771,20 @@
   </div>
 </div>
 
+<div class="game-info-modal hidden" id="announce-modal">
+  <div class="game-info-box">
+    <button type="button" class="modal-close" id="announce-close" aria-label="닫기">✕</button>
+    <div class="game-info-header">
+      <span class="game-info-icon">📢</span>
+      <div>
+        <div class="game-info-title pixel">업데이트 소식</div>
+        <div class="game-info-desc">오락실에 새로 생긴 게임이나 바뀐 점을 확인하세요</div>
+      </div>
+    </div>
+    <div class="announce-list" id="announce-list"><p class="lb-empty">불러오는 중...</p></div>
+  </div>
+</div>
+
 <div id="app">
 
   <!-- HUB -->
@@ -741,6 +797,7 @@
       <span id="player-name-display">🎮 –</span>
       <span id="player-team-display" class="team-badge"></span>
       <button class="link-btn" id="change-nickname-btn">닉네임/팀 변경</button>
+      <button class="link-btn" id="announce-open-btn">📢 업데이트 내역</button>
     </div>
     <header class="hub-header">
       <h1 class="logo pixel">NEON<span>ARCADE</span></h1>
@@ -924,6 +981,16 @@
     <div class="roster-panel">
       <h3><span>👥 참여 인원 (<span id="roster-count">0</span>명)</span><button class="refresh-btn" id="roster-refresh-btn" aria-label="참여 인원 새로고침">⟳</button></h3>
       <div class="roster-list" id="roster-list"><p class="lb-empty">불러오는 중...</p></div>
+    </div>
+
+    <div class="request-panel">
+      <h3><span>🎮 게임 신청</span><button class="refresh-btn" id="request-refresh-btn" aria-label="게임 신청 새로고침">⟳</button></h3>
+      <p class="request-sub">만들어졌으면 하는 게임을 남겨주세요 · 다른 사람 의견엔 👍를 눌러 힘을 보태주세요</p>
+      <form class="request-form" id="request-form">
+        <input type="text" id="request-input" maxlength="200" placeholder="예: 체스, 카드게임, 좀비 슈팅 등..." autocomplete="off" />
+        <button type="submit">등록</button>
+      </form>
+      <div class="request-list" id="request-list"><p class="lb-empty">불러오는 중...</p></div>
     </div>
 
     <footer class="hub-footer">게임을 선택해서 팀 대항전에 힘을 보태주세요</footer>
@@ -1950,6 +2017,150 @@
     renderRoster();
   });
 
+  /* ============ announcements (공지 팝업) ============ */
+  async function fetchAnnouncements(){
+    try{
+      const { data, error } = await sb.from('announcements').select('id, title, body, created_at').order('created_at', { ascending:false }).limit(15);
+      if(error || !data) return [];
+      return data;
+    }catch(e){ return []; }
+  }
+  function formatAnnounceDate(iso){
+    if(!iso) return '';
+    const d = new Date(iso);
+    return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0');
+  }
+  async function renderAnnouncements(){
+    const el = document.getElementById('announce-list');
+    const list = await fetchAnnouncements();
+    if(!el) return list;
+    if(list.length === 0){
+      el.innerHTML = '<p class="lb-empty">아직 등록된 공지가 없습니다</p>';
+      return list;
+    }
+    el.innerHTML = list.map(function(a){
+      return '<div class="announce-item"><div class="announce-item-title">'+escapeHtml(a.title)+'</div><div class="announce-item-date">'+formatAnnounceDate(a.created_at)+'</div><div class="announce-item-body">'+escapeHtml(a.body)+'</div></div>';
+    }).join('');
+    return list;
+  }
+  function openAnnounceModal(){
+    document.getElementById('announce-modal').classList.remove('hidden');
+  }
+  function closeAnnounceModal(){
+    document.getElementById('announce-modal').classList.add('hidden');
+  }
+  async function checkAnnouncementsOnLoad(){
+    const list = await renderAnnouncements();
+    if(!list || list.length === 0) return;
+    let lastSeen = null;
+    try{ lastSeen = localStorage.getItem('arcade-last-seen-announcement'); }catch(e){ lastSeen = null; }
+    if(list[0].id !== lastSeen){
+      openAnnounceModal();
+      try{ localStorage.setItem('arcade-last-seen-announcement', list[0].id); }catch(e){ /* ignore */ }
+    }
+  }
+  document.getElementById('announce-close').addEventListener('click', closeAnnounceModal);
+  document.getElementById('announce-modal').addEventListener('click', function(e){
+    if(e.target === this) closeAnnounceModal();
+  });
+  document.getElementById('announce-open-btn').addEventListener('click', function(){
+    renderAnnouncements();
+    openAnnounceModal();
+  });
+
+  /* ============ game request board (게임 신청 게시판) ============ */
+  let likedRequestIds = new Set();
+
+  async function fetchGameRequests(){
+    try{
+      const { data, error } = await sb.from('game_requests').select('id, player_id, nickname, content, created_at').order('created_at', { ascending:false }).limit(100);
+      if(error || !data) return [];
+      return data;
+    }catch(e){ return []; }
+  }
+  async function fetchGameRequestLikes(){
+    try{
+      const { data, error } = await sb.from('game_request_likes').select('request_id, player_id');
+      if(error || !data) return [];
+      return data;
+    }catch(e){ return []; }
+  }
+  function timeAgoLabel(iso){
+    if(!iso) return '';
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const min = Math.floor(diffMs/60000);
+    if(min < 1) return '방금 전';
+    if(min < 60) return min+'분 전';
+    const hr = Math.floor(min/60);
+    if(hr < 24) return hr+'시간 전';
+    const day = Math.floor(hr/24);
+    return day+'일 전';
+  }
+  async function renderGameRequests(){
+    const el = document.getElementById('request-list');
+    if(!el) return;
+    const results = await Promise.all([fetchGameRequests(), fetchGameRequestLikes()]);
+    const requests = results[0], likes = results[1];
+    const countByRequest = {};
+    likedRequestIds = new Set();
+    likes.forEach(function(l){
+      countByRequest[l.request_id] = (countByRequest[l.request_id] || 0) + 1;
+      if(l.player_id === playerId) likedRequestIds.add(l.request_id);
+    });
+    if(requests.length === 0){
+      el.innerHTML = '<p class="lb-empty">아직 등록된 신청이 없어요 · 첫 게임을 신청해보세요!</p>';
+      return;
+    }
+    el.innerHTML = requests.map(function(r){
+      const count = countByRequest[r.id] || 0;
+      const liked = likedRequestIds.has(r.id);
+      return '<div class="request-item">'
+        + '<div class="request-item-main">'
+        + '<div class="request-item-content">'+escapeHtml(r.content)+'</div>'
+        + '<div class="request-item-meta">'+escapeHtml(r.nickname || '???')+' · '+timeAgoLabel(r.created_at)+'</div>'
+        + '</div>'
+        + '<button type="button" class="request-like-btn'+(liked?' liked':'')+'" data-id="'+r.id+'"'+(liked?' disabled':'')+'>👍 <span>'+count+'</span></button>'
+        + '</div>';
+    }).join('');
+  }
+  async function submitGameRequest(content){
+    if(!playerId || !content) return;
+    try{
+      await sb.from('game_requests').insert({ player_id: playerId, nickname: nickname || 'GUEST', content: content });
+    }catch(e){ /* ignore */ }
+    renderGameRequests();
+  }
+  async function likeGameRequest(requestId, btn){
+    if(!playerId || likedRequestIds.has(requestId)) return;
+    likedRequestIds.add(requestId);
+    if(btn){
+      btn.disabled = true;
+      btn.classList.add('liked');
+      const countEl = btn.querySelector('span');
+      if(countEl) countEl.textContent = String(Number(countEl.textContent)+1);
+    }
+    try{
+      const { error } = await sb.from('game_request_likes').insert({ request_id: requestId, player_id: playerId });
+      if(error){ renderGameRequests(); }
+    }catch(e){ renderGameRequests(); }
+  }
+  document.getElementById('request-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    const input = document.getElementById('request-input');
+    const val = input.value.trim();
+    if(!val) return;
+    input.value = '';
+    submitGameRequest(val);
+  });
+  document.getElementById('request-refresh-btn').addEventListener('click', function(){
+    renderGameRequests();
+  });
+  document.getElementById('request-list').addEventListener('click', function(e){
+    const btn = e.target.closest('.request-like-btn');
+    if(!btn || btn.disabled) return;
+    likeGameRequest(btn.dataset.id, btn);
+  });
+
   document.querySelectorAll('.hub-tab').forEach(function(tab){
     tab.addEventListener('click', function(){
       document.querySelectorAll('.hub-tab').forEach(function(t){ t.classList.remove('active'); });
@@ -2061,6 +2272,7 @@
       runStorageHealthCheck();
       renderTeamBattle();
       renderRoster();
+      renderGameRequests();
       initCabinetLeaderSlots();
       renderCabinetLeaders();
     }
@@ -2762,7 +2974,8 @@
     const s = shisenState;
     s.running = false; s.over = true;
     stopShisenTimer();
-    const rawScore = 3600 - s.elapsed*3 - s.mismatches*12 - s.shuffles*30 - s.hints*30;
+    const elapsedExact = (performance.now() - s.startTime) / 1000;
+    const rawScore = 4200 - elapsedExact*12 - s.mismatches*10 - s.shuffles*25 - s.hints*25;
     const score = Math.max(100, Math.round(rawScore));
     const overlay = document.getElementById('shisen-overlay');
     overlay.classList.remove('hidden');
@@ -3073,7 +3286,8 @@
     const overlay = document.getElementById('mines-overlay');
     overlay.classList.remove('hidden');
     if(won){
-      const score = Math.max(100, 1500 - s.elapsed*5);
+      const elapsedExact = (performance.now() - s.startTime) / 1000;
+      const score = Math.max(100, Math.round(1800 - elapsedExact*12));
       overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
       overlay.querySelector('.overlay-msg').textContent = '점수 ' + score + ' · 다시 시작하려면 버튼을 누르세요';
       finalizeScore('mines', score, overlay);
@@ -3202,7 +3416,8 @@
     const s = memoryState;
     s.running = false; s.over = true;
     stopMemoryTimer();
-    const score = Math.max(100, 2300 - s.moves*10 - s.elapsed*2);
+    const elapsedExact = (performance.now() - s.startTime) / 1000;
+    const score = Math.max(100, Math.round(2600 - elapsedExact*8 - s.moves*8));
     const overlay = document.getElementById('memory-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
@@ -3425,7 +3640,8 @@
     const s = puzzleState;
     s.running = false; s.over = true;
     stopPuzzleTimer();
-    const score = Math.max(100, 1800 - s.moves*5 - s.elapsed*2);
+    const elapsedExact = (performance.now() - s.startTime) / 1000;
+    const score = Math.max(100, Math.round(2000 - elapsedExact*9 - s.moves*4));
     const overlay = document.getElementById('puzzle-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
@@ -6204,9 +6420,9 @@
   }
 
   const SUDOKU_DIFFICULTY = {
-    easy:   { label:'쉬움',   clues:46, base:1200, timeRate:2, mistakePenalty:30, seedOffset:0 },
-    medium: { label:'보통',   clues:38, base:2000, timeRate:3, mistakePenalty:40, seedOffset:1000 },
-    hard:   { label:'어려움', clues:30, base:3000, timeRate:4, mistakePenalty:60, seedOffset:2000 }
+    easy:   { label:'쉬움',   clues:46, base:1600, timeRate:7, mistakePenalty:30, seedOffset:0 },
+    medium: { label:'보통',   clues:38, base:2600, timeRate:9, mistakePenalty:40, seedOffset:1000 },
+    hard:   { label:'어려움', clues:30, base:3800, timeRate:11, mistakePenalty:60, seedOffset:2000 }
   };
   let sudokuState;
 
@@ -6362,7 +6578,8 @@
     s.running = false; s.over = true;
     stopSudokuTimer();
     const diff = SUDOKU_DIFFICULTY[s.difficulty];
-    const score = Math.max(100, diff.base - s.elapsed*diff.timeRate - s.mistakes*diff.mistakePenalty);
+    const elapsedExact = (performance.now() - s.startTime) / 1000;
+    const score = Math.max(100, Math.round(diff.base - elapsedExact*diff.timeRate - s.mistakes*diff.mistakePenalty));
     const overlay = document.getElementById('sudoku-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
@@ -7171,8 +7388,10 @@
     await initPlayer();
     renderTeamBattle();
     renderRoster();
+    renderGameRequests();
     initCabinetLeaderSlots();
     renderCabinetLeaders();
+    checkAnnouncementsOnLoad();
   });
 })();
 </script>
