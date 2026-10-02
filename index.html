@@ -649,7 +649,11 @@
     display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--border);
     border-radius:10px; padding:10px 16px; font-size:13px; color:var(--text);
   }
-  .hiddenpic-target-icon{ width:36px; height:36px; display:block; }
+  .hiddenpic-target-list{ display:flex; gap:6px; flex-wrap:wrap; }
+  .hiddenpic-target-slot{ width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; transition:opacity .2s; position:relative; }
+  .hiddenpic-target-slot.found{ opacity:0.35; }
+  .hiddenpic-target-slot.found::after{ content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#3dff7a; font-weight:bold; font-size:16px; text-shadow:0 0 4px rgba(0,0,0,0.8); }
+  .hiddenpic-target-icon{ width:32px; height:32px; display:block; }
   .hiddenpic-canvas-wrap canvas{ width:100%; max-width:380px; height:auto; cursor:crosshair; }
   .hiddenpic-diff-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
 
@@ -1672,15 +1676,16 @@
     <div class="game-stage">
       <div class="hiddenpic-wrap">
         <div class="hiddenpic-target" id="hiddenpic-target-bar">
-          <span>찾을 것:</span><canvas class="hiddenpic-target-icon" id="hiddenpic-target-icon" width="36" height="36"></canvas>
+          <span>찾을 것:</span>
+          <div class="hiddenpic-target-list" id="hiddenpic-target-list"></div>
         </div>
         <div class="hiddenpic-canvas-wrap">
-          <canvas id="hiddenpic-canvas" width="380" height="380"></canvas>
+          <canvas id="hiddenpic-canvas" width="380" height="253"></canvas>
         </div>
       </div>
       <div class="overlay" id="hiddenpic-overlay">
         <div class="overlay-title pixel">숨은그림찾기</div>
-        <div class="overlay-msg">난이도를 선택하세요 · 빽빽한 그림 속에 색까지 비슷하게 숨어있는 아이템을 모두 찾으세요</div>
+        <div class="overlay-msg">난이도를 선택하세요 · 사진 속에 숨어있는 서로 다른 물건들을 모두 찾으세요</div>
         <div class="hiddenpic-diff-row">
           <button class="start-btn" id="hiddenpic-start-easy">쉬움</button>
           <button class="start-btn" id="hiddenpic-start-medium">보통</button>
@@ -1688,7 +1693,7 @@
         </div>
       </div>
     </div>
-    <p class="controls-hint">위에 표시된 아이템이 비슷한 색의 다른 물건들 틈에 겹쳐 숨어있어요 · 자세히 보고 클릭/탭하세요 · 모두 찾으면 클리어</p>
+    <p class="controls-hint">위에 표시된 물건들이 사진 속 어딘가에 하나씩 숨어있어요 · 자세히 보고 클릭/탭하세요 · 모두 찾으면 클리어</p>
   </section>
 
 </div>
@@ -7488,7 +7493,7 @@
     if(typeof spotdiffState !== 'undefined' && spotdiffState && currentScreen === 'spotdiff') redrawSpotDiff();
     if(typeof hiddenpicState !== 'undefined' && hiddenpicState && currentScreen === 'hiddenpic'){
       drawHiddenPic();
-      if(hiddenpicState.target) drawHiddenpicTargetPreview(hiddenpicState.target);
+      if(hiddenpicState.targets) renderHiddenpicTargetList(hiddenpicState.targets);
     }
   }
   function getEmojiImage(emoji){
@@ -7746,103 +7751,132 @@
 
   /* ============================================================
      HIDDEN OBJECT (숨은그림찾기)
+     실제 사진(배경) 위에, 잎/물결/바위 같이 질감이 빽빽한 자리를 손으로
+     골라 작은 아이콘들을 심어둔다 — "하나의 완성된 장면" 안에 서로 다른
+     물건들이 각각 한 번씩 숨어있는, 고전적인 숨은그림찾기 구조.
+     좌표(x,y)는 사진의 가로/세로 비율(0~1)로 저장해 어떤 화면 크기에서도
+     같은 자리를 가리키도록 한다.
   ============================================================= */
-  const HIDDENPIC_SIZE = 380;
+  const HIDDENPIC_SCENES = [
+    { img:'assets/hiddenpic/scene1.jpg', w:1400, h:931, targets:[
+      {emoji:'🦋', x:0.10, y:0.16},
+      {emoji:'🐞', x:0.28, y:0.12},
+      {emoji:'🐿️', x:0.65, y:0.14},
+      {emoji:'🍂', x:0.12, y:0.55},
+      {emoji:'🦉', x:0.90, y:0.35},
+      {emoji:'🐠', x:0.30, y:0.85},
+      {emoji:'🐢', x:0.85, y:0.88}
+    ]},
+    { img:'assets/hiddenpic/scene2.jpg', w:1400, h:933, targets:[
+      {emoji:'🦗', x:0.14, y:0.55},
+      {emoji:'🐸', x:0.04, y:0.63},
+      {emoji:'🪶', x:0.67, y:0.47},
+      {emoji:'🕊️', x:0.12, y:0.10},
+      {emoji:'⛄', x:0.73, y:0.12},
+      {emoji:'🐟', x:0.90, y:0.78},
+      {emoji:'🐛', x:0.90, y:0.45}
+    ]},
+    { img:'assets/hiddenpic/scene3.jpg', w:1400, h:787, targets:[
+      {emoji:'🦉', x:0.08, y:0.15},
+      {emoji:'🐞', x:0.25, y:0.08},
+      {emoji:'🦋', x:0.85, y:0.12},
+      {emoji:'🐿️', x:0.93, y:0.32},
+      {emoji:'🦌', x:0.18, y:0.44},
+      {emoji:'🏮', x:0.45, y:0.53},
+      {emoji:'🐟', x:0.55, y:0.78}
+    ]}
+  ];
+  const HIDDENPIC_BASE_W = 380;
+  const HIDDENPIC_ICON_SIZE = 16;
   const HIDDENPIC_DIFFICULTY = {
-    easy:   { label:'쉬움',   decoyCount:45, targetCount:4, base:2200, timeRate:5, missPenalty:20 },
-    medium: { label:'보통',   decoyCount:65, targetCount:6, base:3200, timeRate:6, missPenalty:25 },
-    hard:   { label:'어려움', decoyCount:85, targetCount:8, base:4400, timeRate:7, missPenalty:30 }
+    easy:   { label:'쉬움',   count:4, base:2200, timeRate:5, missPenalty:20 },
+    medium: { label:'보통',   count:6, base:3200, timeRate:6, missPenalty:25 },
+    hard:   { label:'어려움', count:7, base:4400, timeRate:7, missPenalty:30 }
   };
   let hiddenpicCtx, hiddenpicState;
 
-  function generateHiddenPicAmbient(count){
-    const blobs = [];
-    for(let i=0;i<count;i++){
-      blobs.push({
-        x: Math.random()*HIDDENPIC_SIZE, y: Math.random()*HIDDENPIC_SIZE,
-        r: 60 + Math.random()*120, alpha: 0.06 + Math.random()*0.07
-      });
-    }
-    return blobs;
+  // 배경 사진 로더 — Twemoji 아이콘과 같은 캐시+비동기 패턴 재사용
+  const sceneImageCache = {};
+  function getSceneImage(src){
+    let entry = sceneImageCache[src];
+    if(entry) return entry;
+    entry = { img:null, loaded:false, failed:false };
+    sceneImageCache[src] = entry;
+    const img = new Image();
+    img.onload = function(){ entry.loaded = true; onEmojiImageReady(); };
+    img.onerror = function(){ entry.failed = true; onEmojiImageReady(); };
+    img.src = src;
+    entry.img = img;
+    return entry;
   }
 
-  // "진짜 숨기기": 아이템을 서로 떨어뜨려 놓지 않고 화면 전체를 빽빽하게 채우며,
-  // 타겟도 클러터와 자연스럽게 색 계열이 비슷한 아이콘으로 골라서 섞이게 하고,
-  // 바로 위에는 클러터를 겹쳐 그려 일부가 가려지도록 만든다.
-  function generateHiddenPic(decoyCount, targetCount){
-    const theme = SCENE_THEMES[Math.floor(Math.random()*SCENE_THEMES.length)];
-    const targetEmoji = theme.hiddenTarget;
-    const margin = 18;
-    function randPos(){
-      return { x: margin + Math.random()*(HIDDENPIC_SIZE-margin*2), y: margin + Math.random()*(HIDDENPIC_SIZE-margin*2) };
-    }
-    function randSize(){ return 17 + Math.random()*8; }
-    function randRot(){ return Math.random()*Math.PI*2; }
-
-    const items = [];
-    // 1) 배경을 가득 채우는 잡다한 클러터 (서로 겹쳐도 OK — 간격을 억지로 띄우지 않는다)
-    for(let i=0;i<decoyCount;i++){
-      const p = randPos();
-      items.push({
-        x:p.x, y:p.y, size:randSize(), rot:randRot(), flip: Math.random()<0.5,
-        emoji: pickRand(theme.decoys),
-        isTarget:false, found:false
-      });
-    }
-    // 2) 타겟 + 그 위에 겹쳐 그릴 위장용 클러터 (타겟을 부분적으로 가려줌)
-    let placedTargets = 0;
-    for(let t=0;t<targetCount;t++){
-      const p = randPos();
-      const size = randSize();
-      const targetObj = { x:p.x, y:p.y, size:size, rot:randRot(), flip:Math.random()<0.5, emoji:targetEmoji, isTarget:true, found:false };
-      items.push(targetObj);
-      placedTargets++;
-      const camoCount = 1 + (Math.random()<0.6 ? 1 : 0);
-      for(let c=0;c<camoCount;c++){
-        const ang = Math.random()*Math.PI*2;
-        const dist = size*0.2 + Math.random()*size*0.25;
-        items.push({
-          x: p.x + Math.cos(ang)*dist, y: p.y + Math.sin(ang)*dist,
-          size: size*(0.85+Math.random()*0.3), rot: randRot(), flip: Math.random()<0.5,
-          emoji: pickRand(theme.decoys),
-          isTarget:false, found:false
-        });
-      }
-    }
-    return { target:targetEmoji, bg:theme.bg, items:items, targetCount:placedTargets, ambient: generateHiddenPicAmbient(6) };
+  // 난이도에 맞는 개수만큼, 고른 장면의 타겟 중 무작위로 골라 이번 판을 구성한다.
+  function generateHiddenPic(count){
+    const scene = HIDDENPIC_SCENES[Math.floor(Math.random()*HIDDENPIC_SCENES.length)];
+    const shuffled = scene.targets.map(function(t){ return Object.assign({}, t); });
+    for(let i=shuffled.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const tmp=shuffled[i]; shuffled[i]=shuffled[j]; shuffled[j]=tmp; }
+    const picked = shuffled.slice(0, Math.min(count, shuffled.length)).map(function(t){
+      return { emoji:t.emoji, x:t.x, y:t.y, found:false };
+    });
+    const canvasH = Math.round(HIDDENPIC_BASE_W * scene.h / scene.w);
+    return { img: scene.img, canvasW: HIDDENPIC_BASE_W, canvasH: canvasH, targets: picked };
   }
 
-  function drawHiddenpicTargetPreview(emoji){
-    const canvasEl = document.getElementById('hiddenpic-target-icon');
-    const ctx = canvasEl.getContext('2d');
-    ctx.clearRect(0,0,canvasEl.width,canvasEl.height);
-    drawEmojiIcon(ctx, emoji, canvasEl.width/2, canvasEl.height/2, canvasEl.width/2-3, 0, false);
+  // 상단 "찾을 것" 목록 — 타겟마다 작은 아이콘 하나씩, 찾으면 흐려지고 체크 표시
+  function renderHiddenpicTargetList(targets){
+    const list = document.getElementById('hiddenpic-target-list');
+    list.innerHTML = '';
+    targets.forEach(function(t){
+      const slot = document.createElement('div');
+      slot.className = 'hiddenpic-target-slot' + (t.found ? ' found' : '');
+      const canvasEl = document.createElement('canvas');
+      canvasEl.width = 32; canvasEl.height = 32;
+      canvasEl.className = 'hiddenpic-target-icon';
+      slot.appendChild(canvasEl);
+      list.appendChild(slot);
+      drawEmojiIcon(canvasEl.getContext('2d'), t.emoji, 16, 16, 13, 0, false);
+    });
+  }
+  function updateHiddenpicTargetSlot(idx, found){
+    const list = document.getElementById('hiddenpic-target-list');
+    const slot = list.children[idx];
+    if(slot) slot.classList.toggle('found', found);
   }
 
   function drawHiddenPic(){
     const ctx = hiddenpicCtx, s = hiddenpicState;
-    ctx.clearRect(0,0,HIDDENPIC_SIZE,HIDDENPIC_SIZE);
-    ctx.fillStyle = s.bg || '#12121c';
-    ctx.fillRect(0,0,HIDDENPIC_SIZE,HIDDENPIC_SIZE);
-    if(s.ambient){
-      s.ambient.forEach(function(b){
-        ctx.save();
-        ctx.globalAlpha = b.alpha;
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
-        ctx.fill();
-        ctx.restore();
-      });
+    if(!s || !s.canvasW) return;
+    const canvasEl = document.getElementById('hiddenpic-canvas');
+    if(canvasEl.width !== s.canvasW || canvasEl.height !== s.canvasH){
+      canvasEl.width = s.canvasW; canvasEl.height = s.canvasH;
     }
-    s.items.forEach(function(it){
-      drawEmojiIcon(ctx, it.emoji, it.x, it.y, it.size, it.rot, it.flip);
-      if(it.isTarget && it.found){
+    ctx.clearRect(0,0,s.canvasW,s.canvasH);
+    const bgEntry = getSceneImage(s.img);
+    if(bgEntry.loaded){
+      ctx.drawImage(bgEntry.img, 0, 0, s.canvasW, s.canvasH);
+    }else{
+      ctx.fillStyle = '#12121c';
+      ctx.fillRect(0,0,s.canvasW,s.canvasH);
+      if(bgEntry.failed){
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.font = '13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('사진을 불러올 수 없습니다', s.canvasW/2, s.canvasH/2);
+      }
+    }
+    s.targets.forEach(function(t){
+      // 사진 위에 그냥 얹힌 스티커처럼 보이지 않도록 옅은 그림자를 깔아 자연스럽게 녹인다
+      ctx.shadowColor = 'rgba(0,0,0,0.45)';
+      ctx.shadowBlur = 3;
+      ctx.shadowOffsetY = 1;
+      drawEmojiIcon(ctx, t.emoji, t.x*s.canvasW, t.y*s.canvasH, HIDDENPIC_ICON_SIZE, 0, false);
+      ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+      if(t.found){
         ctx.save();
-        ctx.strokeStyle = 'rgba(61,255,122,0.9)';
+        ctx.strokeStyle = 'rgba(61,255,122,0.95)';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(it.x, it.y, it.size*0.9+6, 0, Math.PI*2);
+        ctx.arc(t.x*s.canvasW, t.y*s.canvasH, HIDDENPIC_ICON_SIZE*1.3, 0, Math.PI*2);
         ctx.stroke();
         ctx.restore();
       }
@@ -7851,33 +7885,32 @@
 
   function prepareHiddenpic(){
     hiddenpicState = { difficulty:null, running:false, over:false };
-    if(hiddenpicCtx) hiddenpicCtx.clearRect(0,0,HIDDENPIC_SIZE,HIDDENPIC_SIZE);
     document.getElementById('hiddenpic-time').textContent = '00:00';
     document.getElementById('hiddenpic-found').textContent = '0/0';
-    const previewCanvas = document.getElementById('hiddenpic-target-icon');
-    previewCanvas.getContext('2d').clearRect(0,0,previewCanvas.width,previewCanvas.height);
+    document.getElementById('hiddenpic-target-list').innerHTML = '';
     loadMyBest('hiddenpic');
     const overlay = document.getElementById('hiddenpic-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = '숨은그림찾기';
-    overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 · 빽빽한 그림 속에 비슷한 색의 아이템을 모두 찾으세요';
+    overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 · 사진 속에 숨어있는 서로 다른 물건들을 모두 찾으세요';
   }
 
   function startHiddenpicWithDifficulty(diffKey){
     const diff = HIDDENPIC_DIFFICULTY[diffKey];
-    const puzzle = generateHiddenPic(diff.decoyCount, diff.targetCount);
+    const puzzle = generateHiddenPic(diff.count);
     hiddenpicState = {
       difficulty: diffKey,
-      items: puzzle.items, target: puzzle.target, totalTargets: puzzle.targetCount,
-      bg: puzzle.bg, ambient: puzzle.ambient,
+      img: puzzle.img, canvasW: puzzle.canvasW, canvasH: puzzle.canvasH,
+      targets: puzzle.targets, totalTargets: puzzle.targets.length,
       foundCount: 0, misses: 0,
       startTime: performance.now(), elapsed: 0, timerId: null,
       running: true, over: false
     };
     document.getElementById('hiddenpic-overlay').classList.add('hidden');
-    drawHiddenpicTargetPreview(puzzle.target);
-    document.getElementById('hiddenpic-found').textContent = '0/'+puzzle.targetCount;
+    renderHiddenpicTargetList(hiddenpicState.targets);
+    document.getElementById('hiddenpic-found').textContent = '0/'+hiddenpicState.totalTargets;
     document.getElementById('hiddenpic-time').textContent = '00:00';
+    getSceneImage(puzzle.img);
     drawHiddenPic();
     hiddenpicState.timerId = setInterval(hiddenpicTick, 1000);
   }
@@ -7899,18 +7932,20 @@
     if(!s || !s.running) return;
     const canvasEl = document.getElementById('hiddenpic-canvas');
     const rect = canvasEl.getBoundingClientRect();
-    const scaleX = HIDDENPIC_SIZE/rect.width, scaleY = HIDDENPIC_SIZE/rect.height;
+    const scaleX = s.canvasW/rect.width, scaleY = s.canvasH/rect.height;
     const x = (e.clientX-rect.left)*scaleX, y = (e.clientY-rect.top)*scaleY;
     let hit = false;
-    for(let i=0;i<s.items.length;i++){
-      const it = s.items[i];
-      if(!it.isTarget || it.found) continue;
-      const dx=x-it.x, dy=y-it.y;
-      const r = it.size*0.9 + 8;
+    for(let i=0;i<s.targets.length;i++){
+      const t = s.targets[i];
+      if(t.found) continue;
+      const tx = t.x*s.canvasW, ty = t.y*s.canvasH;
+      const dx=x-tx, dy=y-ty;
+      const r = HIDDENPIC_ICON_SIZE*1.3;
       if(dx*dx+dy*dy <= r*r){
-        it.found = true;
+        t.found = true;
         s.foundCount++;
         hit = true;
+        updateHiddenpicTargetSlot(i, true);
         break;
       }
     }
