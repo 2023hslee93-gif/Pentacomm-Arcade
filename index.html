@@ -160,6 +160,45 @@
 
   .cabinet.disabled{ opacity:.4; cursor:default; }
   .cabinet.disabled .cabinet-screen{ font-size:22px; }
+  .cabinet-maint-badge{
+    position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.8); color:var(--yellow);
+    font-size:10px; font-weight:700; padding:3px 7px; border-radius:6px; letter-spacing:.3px;
+    border:1px solid rgba(255,210,63,0.4); pointer-events:none;
+  }
+
+  /* ---------- admin ---------- */
+  .admin-login-box.hidden, .admin-panel.hidden{ display:none; }
+  .admin-stage{ max-width:460px; margin:0 auto; width:100%; }
+  .admin-login-box{ display:flex; flex-direction:column; gap:12px; max-width:300px; margin:40px auto; }
+  .admin-login-box h2{ font-size:14px; color:var(--text); text-align:center; margin-bottom:6px; }
+  .admin-login-box input{
+    background:var(--card); border:1px solid var(--border); border-radius:8px;
+    padding:10px 12px; color:var(--text); font-family:inherit; font-size:14px;
+  }
+  .admin-login-msg{ font-size:12px; color:var(--red); min-height:16px; text-align:center; }
+  .admin-panel-header{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:6px; font-size:13px; color:var(--text-dim);
+  }
+  .admin-panel-sub{ font-size:12px; color:var(--text-dim); margin-bottom:16px; }
+  .admin-game-list{ display:flex; flex-direction:column; gap:8px; }
+  .admin-game-row{
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 14px;
+  }
+  .admin-game-row .agr-label{ font-size:13px; }
+  .admin-toggle{ position:relative; width:42px; height:24px; flex-shrink:0; display:block; }
+  .admin-toggle input{ opacity:0; width:0; height:0; position:absolute; }
+  .admin-toggle-track{
+    position:absolute; inset:0; background:var(--border); border-radius:12px;
+    cursor:pointer; transition:background .15s;
+  }
+  .admin-toggle-track::before{
+    content:''; position:absolute; width:18px; height:18px; left:3px; top:3px;
+    background:#fff; border-radius:50%; transition:transform .15s;
+  }
+  .admin-toggle input:checked + .admin-toggle-track{ background:var(--green); }
+  .admin-toggle input:checked + .admin-toggle-track::before{ transform:translateX(18px); }
 
   .hub-footer{ text-align:center; color:var(--text-dim); font-size:12px; margin-top:36px; }
 
@@ -818,6 +857,7 @@
       <span id="player-team-display" class="team-badge"></span>
       <button class="link-btn" id="change-nickname-btn">닉네임/팀 변경</button>
       <button class="link-btn" id="announce-open-btn">📢 업데이트 내역</button>
+      <button class="link-btn" id="admin-open-btn">⚙️ 관리자</button>
     </div>
     <header class="hub-header">
       <h1 class="logo pixel">NEON<span>ARCADE</span></h1>
@@ -1696,6 +1736,30 @@
     <p class="controls-hint">위에 표시된 물건들이 사진 속 어딘가에 하나씩 숨어있어요 · 자세히 보고 클릭/탭하세요 · 모두 찾으면 클리어</p>
   </section>
 
+  <section id="screen-admin" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel"><span>관리자 모드</span></div>
+    </div>
+    <div class="game-stage admin-stage">
+      <div class="admin-login-box" id="admin-login-box">
+        <h2 class="pixel">관리자 로그인</h2>
+        <input type="email" id="admin-email" placeholder="이메일" autocomplete="username">
+        <input type="password" id="admin-password" placeholder="비밀번호" autocomplete="current-password">
+        <button class="start-btn" id="admin-login-btn">로그인</button>
+        <p class="admin-login-msg" id="admin-login-msg"></p>
+      </div>
+      <div class="admin-panel hidden" id="admin-panel">
+        <div class="admin-panel-header">
+          <span id="admin-user-email"></span>
+          <button class="link-btn" id="admin-logout-btn">로그아웃</button>
+        </div>
+        <p class="admin-panel-sub">게임을 끄면 오락실 화면에서 회색 처리되고 '점검중' 표시가 붙으며, 유저가 클릭해도 실행되지 않습니다.</p>
+        <div class="admin-game-list" id="admin-game-list"></div>
+      </div>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -1774,6 +1838,41 @@
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
   function gameColor(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.color : 'var(--text-dim)'; }
+
+  /* ============ 게임 ON/OFF 설정 (관리자 모드) ============
+     game_settings 테이블은 누구나 읽을 수 있고, 로그인한 관리자만 쓸 수 있다(RLS).
+     행이 없는 게임은 기본적으로 켜져있는 것으로 취급한다. */
+  let gameSettingsMap = {};
+  async function fetchGameSettings(){
+    try{
+      const { data, error } = await sb.from('game_settings').select('game_id, enabled');
+      if(error) throw error;
+      const map = {};
+      (data || []).forEach(function(r){ map[r.game_id] = r.enabled; });
+      gameSettingsMap = map;
+    }catch(e){
+      gameSettingsMap = {};
+    }
+  }
+  function applyGameSettingsToHub(){
+    GAMES.forEach(function(g){
+      const btn = document.querySelector('.cabinet[data-game="'+g.id+'"]');
+      if(!btn) return;
+      const enabled = gameSettingsMap[g.id] !== false;
+      btn.classList.toggle('disabled', !enabled);
+      let badge = btn.querySelector('.cabinet-maint-badge');
+      if(!enabled){
+        if(!badge){
+          badge = document.createElement('div');
+          badge.className = 'cabinet-maint-badge';
+          badge.textContent = '점검중';
+          btn.appendChild(badge);
+        }
+      }else if(badge){
+        badge.remove();
+      }
+    });
+  }
   const TEAMS = ['캠페인본부','플래닝본부','스튜디오 새폴더','경영기획팀'];
   const TEAM_COLORS = {
     '캠페인본부':'var(--cyan)',
@@ -2280,6 +2379,8 @@
   /* ============ screen management ============ */
   let currentScreen = 'hub';
   function goTo(id){
+    // 관리자가 꺼둔 게임은 (버튼이 가려져 있어도) 직접 호출될 경우를 대비해 한 번 더 막는다
+    if(GAME_IDS.indexOf(id) !== -1 && gameSettingsMap[id] === false) return;
     if(currentScreen === 'snake' && snakeState){ stopSnakeLoop(); }
     if(currentScreen === 'tetris' && tetrisState){ stopTetrisLoop(); }
     if(currentScreen === 'shisen' && shisenState){
@@ -2368,6 +2469,7 @@
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
     if(id === 'hub'){
+      fetchGameSettings().then(applyGameSettingsToHub);
       runStorageHealthCheck();
       renderTeamBattle();
       renderRoster();
@@ -2401,6 +2503,7 @@
     if(id === 'shikaku') prepareShikaku();
     if(id === 'spotdiff') prepareSpotdiff();
     if(id === 'hiddenpic') prepareHiddenpic();
+    if(id === 'admin') prepareAdmin();
   }
 
   async function openGameInfoModal(gameId){
@@ -2434,7 +2537,10 @@
   });
 
   document.querySelectorAll('.cabinet[data-game]').forEach(function(btn){
-    btn.addEventListener('click', function(){ openGameInfoModal(btn.dataset.game); });
+    btn.addEventListener('click', function(){
+      if(btn.classList.contains('disabled')) return;
+      openGameInfoModal(btn.dataset.game);
+    });
   });
   document.querySelectorAll('[data-back]').forEach(function(btn){
     btn.addEventListener('click', function(){ goTo('hub'); });
@@ -7975,6 +8081,106 @@
   document.getElementById('hiddenpic-start-medium').addEventListener('click', function(){ startHiddenpicWithDifficulty('medium'); });
   document.getElementById('hiddenpic-start-hard').addEventListener('click', function(){ startHiddenpicWithDifficulty('hard'); });
 
+  /* ============================================================
+     관리자 모드 — Supabase Auth 로그인 후 게임별 ON/OFF 토글
+     (game_settings 테이블 쓰기는 RLS로 로그인한 사용자만 허용됨)
+  ============================================================= */
+  let adminAuthUser = null;
+
+  async function prepareAdmin(){
+    document.getElementById('admin-login-msg').textContent = '';
+    document.getElementById('admin-email').value = '';
+    document.getElementById('admin-password').value = '';
+    let session = null;
+    try{
+      const { data } = await sb.auth.getSession();
+      session = data ? data.session : null;
+    }catch(e){ session = null; }
+    if(session && session.user){
+      adminAuthUser = session.user;
+      await showAdminPanel();
+    }else{
+      adminAuthUser = null;
+      document.getElementById('admin-login-box').classList.remove('hidden');
+      document.getElementById('admin-panel').classList.add('hidden');
+    }
+  }
+
+  async function adminLogin(){
+    const email = document.getElementById('admin-email').value.trim();
+    const password = document.getElementById('admin-password').value;
+    const msgEl = document.getElementById('admin-login-msg');
+    if(!email || !password){ msgEl.textContent = '이메일과 비밀번호를 입력하세요.'; return; }
+    msgEl.textContent = '로그인 중...';
+    try{
+      const { data, error } = await sb.auth.signInWithPassword({ email: email, password: password });
+      if(error){ msgEl.textContent = '로그인 실패: 이메일/비밀번호를 확인하세요.'; return; }
+      adminAuthUser = data.user;
+      msgEl.textContent = '';
+      await showAdminPanel();
+    }catch(e){
+      msgEl.textContent = '로그인 중 오류가 발생했습니다.';
+    }
+  }
+
+  async function adminLogout(){
+    try{ await sb.auth.signOut(); }catch(e){ /* ignore */ }
+    adminAuthUser = null;
+    document.getElementById('admin-login-box').classList.remove('hidden');
+    document.getElementById('admin-panel').classList.add('hidden');
+  }
+
+  async function showAdminPanel(){
+    document.getElementById('admin-login-box').classList.add('hidden');
+    document.getElementById('admin-panel').classList.remove('hidden');
+    document.getElementById('admin-user-email').textContent = adminAuthUser ? adminAuthUser.email : '';
+    await fetchGameSettings();
+    renderAdminGameList();
+  }
+
+  function renderAdminGameList(){
+    const list = document.getElementById('admin-game-list');
+    list.innerHTML = '';
+    GAMES.forEach(function(g){
+      const enabled = gameSettingsMap[g.id] !== false;
+      const row = document.createElement('div');
+      row.className = 'admin-game-row';
+      row.innerHTML =
+        '<span class="agr-label">' + g.icon + ' ' + g.label + '</span>' +
+        '<label class="admin-toggle">' +
+          '<input type="checkbox" data-game-id="' + g.id + '"' + (enabled ? ' checked' : '') + '>' +
+          '<span class="admin-toggle-track"></span>' +
+        '</label>';
+      list.appendChild(row);
+    });
+    list.querySelectorAll('input[type="checkbox"]').forEach(function(input){
+      input.addEventListener('change', async function(){
+        const gameId = input.dataset.gameId;
+        const enabled = input.checked;
+        input.disabled = true;
+        try{
+          const { error } = await sb.from('game_settings').upsert({
+            game_id: gameId, enabled: enabled, updated_at: new Date().toISOString(),
+            updated_by: adminAuthUser ? adminAuthUser.email : null
+          });
+          if(error) throw error;
+          gameSettingsMap[gameId] = enabled;
+        }catch(e){
+          input.checked = !enabled;
+          alert('저장하지 못했습니다. 로그인 상태와 권한을 확인해주세요.');
+        }
+        input.disabled = false;
+      });
+    });
+  }
+
+  document.getElementById('admin-open-btn').addEventListener('click', function(){ goTo('admin'); });
+  document.getElementById('admin-login-btn').addEventListener('click', adminLogin);
+  document.getElementById('admin-logout-btn').addEventListener('click', adminLogout);
+  document.getElementById('admin-password').addEventListener('keyup', function(e){
+    if(e.key === 'Enter') adminLogin();
+  });
+
   /* ============ global key listener ============ */
   window.addEventListener('keyup', function(e){
     if(currentScreen==='breakout' && breakoutState && (e.key==='ArrowLeft'||e.key==='ArrowRight')){
@@ -8031,6 +8237,7 @@
     initCabinetLeaderSlots();
     renderCabinetLeaders();
     checkAnnouncementsOnLoad();
+    fetchGameSettings().then(applyGameSettingsToHub);
   });
 })();
 </script>
