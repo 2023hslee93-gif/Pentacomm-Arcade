@@ -1680,7 +1680,7 @@
       </div>
       <div class="overlay" id="hiddenpic-overlay">
         <div class="overlay-title pixel">숨은그림찾기</div>
-        <div class="overlay-msg">난이도를 선택하세요 · 복잡한 그림 속에 숨어있는 아이템을 모두 찾으세요</div>
+        <div class="overlay-msg">난이도를 선택하세요 · 빽빽한 그림 속에 색까지 비슷하게 숨어있는 아이템을 모두 찾으세요</div>
         <div class="hiddenpic-diff-row">
           <button class="start-btn" id="hiddenpic-start-easy">쉬움</button>
           <button class="start-btn" id="hiddenpic-start-medium">보통</button>
@@ -1688,7 +1688,7 @@
         </div>
       </div>
     </div>
-    <p class="controls-hint">위에 표시된 아이템을 그림 속에서 찾아 클릭/탭하세요 · 모두 찾으면 클리어</p>
+    <p class="controls-hint">위에 표시된 아이템이 비슷한 색의 다른 물건들 틈에 겹쳐 숨어있어요 · 자세히 보고 클릭/탭하세요 · 모두 찾으면 클리어</p>
   </section>
 
 </div>
@@ -7475,9 +7475,15 @@
      SPOT THE DIFFERENCE (틀린그림찾기)
   ============================================================= */
   const SPOTDIFF_SIZE = 260;
-  const SPOTDIFF_GRID = 5;
-  const SPOTDIFF_CELL = SPOTDIFF_SIZE / SPOTDIFF_GRID;
-  const SPOTDIFF_EMOJI = ['⭐','🔺','🔵','🟩','🍎','🎈','🌙','❤️','🍀','⚡','🎵','☀️','🍉','🎲','🦋','🐠','🍩','🎯'];
+  // 격자에 아이콘을 하나씩 깔끔하게 배치하던 방식 대신, 숨은그림찾기처럼
+  // 겹치고 빽빽한 "한 장의 그림"처럼 보이도록 테마별 배경색 + 다양한 아이템을 섞어서 채운다.
+  const SPOTDIFF_SCENES = [
+    { bg:'#13201a', emojis:['🌳','🌿','🍂','🍁','🌼','🦋','🐦','🍄','🌾','🐝'] },
+    { bg:'#10131f', emojis:['⭐','🌙','☁️','✨','🪐','🚀','👾','🛰️','💫'] },
+    { bg:'#1f1712', emojis:['🍪','🧁','🍩','🍰','🎂','🍓','🍒','☕','🍫'] },
+    { bg:'#0f1a22', emojis:['🐠','🐡','🦀','🐙','🪸','🫧','🌊','⭐','🐚'] },
+    { bg:'#1a1430', emojis:['🏙️','🚗','🚦','🏠','🌳','☁️','✈️','🎈'] }
+  ];
   const SPOTDIFF_DIFFICULTY = {
     easy:   { label:'쉬움',   diffCount:4, base:1800, timeRate:9,  missPenalty:40 },
     medium: { label:'보통',   diffCount:6, base:2600, timeRate:10, missPenalty:50 },
@@ -7485,22 +7491,29 @@
   };
   let spotdiffCtxA, spotdiffCtxB, spotdiffState;
 
+  function generateSpotDiffTexture(count){
+    const dots = [];
+    for(let i=0;i<count;i++){
+      dots.push({ x: Math.random()*SPOTDIFF_SIZE, y: Math.random()*SPOTDIFF_SIZE, r: 1+Math.random()*2.2, alpha: 0.04+Math.random()*0.08 });
+    }
+    return dots;
+  }
+
   function generateSpotDiff(diffCount){
-    const cells = [];
-    for(let r=0;r<SPOTDIFF_GRID;r++){ for(let c=0;c<SPOTDIFF_GRID;c++){ cells.push([r,c]); } }
-    for(let i=cells.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=cells[i]; cells[i]=cells[j]; cells[j]=t; }
-    const itemCount = Math.min(cells.length, 18);
-    const chosen = cells.slice(0, itemCount);
-    const baseItems = chosen.map(function(cell){
-      const cx = cell[1]*SPOTDIFF_CELL + SPOTDIFF_CELL/2 + (Math.random()*14-7);
-      const cy = cell[0]*SPOTDIFF_CELL + SPOTDIFF_CELL/2 + (Math.random()*14-7);
-      return {
-        x: cx, y: cy,
-        emoji: SPOTDIFF_EMOJI[Math.floor(Math.random()*SPOTDIFF_EMOJI.length)],
-        size: 24 + Math.random()*10,
-        rot: (Math.random()*30-15) * Math.PI/180
-      };
-    });
+    const scene = SPOTDIFF_SCENES[Math.floor(Math.random()*SPOTDIFF_SCENES.length)];
+    const margin = 16;
+    const itemCount = 34;
+    const baseItems = [];
+    for(let i=0;i<itemCount;i++){
+      baseItems.push({
+        x: margin + Math.random()*(SPOTDIFF_SIZE-margin*2),
+        y: margin + Math.random()*(SPOTDIFF_SIZE-margin*2),
+        emoji: scene.emojis[Math.floor(Math.random()*scene.emojis.length)],
+        size: 18 + Math.random()*12,
+        rot: Math.random()*Math.PI*2,
+        alpha: 0.75 + Math.random()*0.25
+      });
+    }
     const original = baseItems.map(function(it){ return Object.assign({}, it); });
     const modified = baseItems.map(function(it){ return Object.assign({}, it); });
     const idxPool = original.map(function(_,i){ return i; });
@@ -7513,10 +7526,10 @@
       const orig = original[i];
       const mod = modified[i];
       if(op === 'move'){
-        let nx = orig.x + (Math.random()<0.5?-1:1)*(18+Math.random()*10);
-        let ny = orig.y + (Math.random()<0.5?-1:1)*(18+Math.random()*10);
-        nx = Math.max(18, Math.min(SPOTDIFF_SIZE-18, nx));
-        ny = Math.max(18, Math.min(SPOTDIFF_SIZE-18, ny));
+        let nx = orig.x + (Math.random()<0.5?-1:1)*(16+Math.random()*10);
+        let ny = orig.y + (Math.random()<0.5?-1:1)*(16+Math.random()*10);
+        nx = Math.max(16, Math.min(SPOTDIFF_SIZE-16, nx));
+        ny = Math.max(16, Math.min(SPOTDIFF_SIZE-16, ny));
         mod.x = nx; mod.y = ny;
       }else if(op === 'scale'){
         mod.size = orig.size * (Math.random()<0.5 ? 0.55 : 1.6);
@@ -7525,7 +7538,7 @@
       }else if(op === 'swap'){
         let newEmoji;
         let guard = 0;
-        do{ newEmoji = SPOTDIFF_EMOJI[Math.floor(Math.random()*SPOTDIFF_EMOJI.length)]; guard++; }while(newEmoji === orig.emoji && guard < 20);
+        do{ newEmoji = scene.emojis[Math.floor(Math.random()*scene.emojis.length)]; guard++; }while(newEmoji === orig.emoji && guard < 20);
         mod.emoji = newEmoji;
       }else{
         mod.removed = true;
@@ -7535,16 +7548,28 @@
       const zr = Math.max(orig.size, mod.size)/2 + spread + 12;
       return { x:zx, y:zy, r:zr, found:false };
     });
-    return { original:original, modified:modified, diffs:diffs };
+    return { original:original, modified:modified, diffs:diffs, bg:scene.bg, texture: generateSpotDiffTexture(80) };
   }
 
-  function drawSpotDiffScene(ctx, list){
+  function drawSpotDiffScene(ctx, list, bg, texture){
     ctx.clearRect(0,0,SPOTDIFF_SIZE,SPOTDIFF_SIZE);
-    ctx.fillStyle = '#12121c';
+    ctx.fillStyle = bg || '#12121c';
     ctx.fillRect(0,0,SPOTDIFF_SIZE,SPOTDIFF_SIZE);
+    if(texture){
+      texture.forEach(function(d){
+        ctx.save();
+        ctx.globalAlpha = d.alpha;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
     list.forEach(function(it){
       if(it.removed) return;
       ctx.save();
+      ctx.globalAlpha = it.alpha != null ? it.alpha : 1;
       ctx.translate(it.x, it.y);
       ctx.rotate(it.rot);
       ctx.font = Math.round(it.size) + 'px sans-serif';
@@ -7571,8 +7596,8 @@
   function redrawSpotDiff(){
     const s = spotdiffState;
     if(!s) return;
-    drawSpotDiffScene(spotdiffCtxA, s.original);
-    drawSpotDiffScene(spotdiffCtxB, s.modified);
+    drawSpotDiffScene(spotdiffCtxA, s.original, s.bg, s.texture);
+    drawSpotDiffScene(spotdiffCtxB, s.modified, s.bg, s.texture);
     drawSpotDiffMarkers(spotdiffCtxA, s.diffs);
     drawSpotDiffMarkers(spotdiffCtxB, s.diffs);
   }
@@ -7596,6 +7621,7 @@
     spotdiffState = {
       difficulty: diffKey,
       original: puzzle.original, modified: puzzle.modified, diffs: puzzle.diffs,
+      bg: puzzle.bg, texture: puzzle.texture,
       foundCount: 0, misses: 0,
       startTime: performance.now(), elapsed: 0, timerId: null,
       running: true, over: false
@@ -7668,60 +7694,98 @@
      HIDDEN OBJECT (숨은그림찾기)
   ============================================================= */
   const HIDDENPIC_SIZE = 380;
+  // 데코이와 타겟이 같은 색/질감 계열이어야 진짜로 "숨어" 보인다 (전혀 다른 아이콘이면 바로 눈에 띄어버림)
   const HIDDENPIC_THEMES = [
-    { decoys:['🌿','🍂','🌱','🪨','🍁','🌾','🍃','🌳'], targets:['🍄','🦋','🐞'] },
-    { decoys:['⭐','✨','☁️','🌙','💫','🪐','🌠'], targets:['🚀','👽','🛸'] },
-    { decoys:['🔧','⚙️','🔩','🪛','🧰','🔗','🪚'], targets:['🔑','💎','🪙'] },
-    { decoys:['🍬','🍭','🧁','🍩','🍪','🎂','🍰'], targets:['🍒','🍓','🍯'] },
-    { decoys:['🐟','🪸','🫧','🌊','🦀','🐚'], targets:['🐠','🐙','⭐'] }
+    { bg:'#13201a', decoys:['🍂','🍃','🌿','🌾','🍁','🥬'], targets:['🐸','🦎','🐛'] },
+    { bg:'#10131f', decoys:['⭐','✨','💫','☁️','🌙'], targets:['🌟','🛸'] },
+    { bg:'#1a1814', decoys:['🔧','🔩','⚙️','🪛','🧰','🔗'], targets:['⛓️','🗝️'] },
+    { bg:'#1f1712', decoys:['🍪','🧁','🍩','🍰','🎂'], targets:['🍫','🥮'] },
+    { bg:'#0f1a22', decoys:['🐟','🫧','🌊','🪸','🦀'], targets:['🐠','🐡'] }
   ];
   const HIDDENPIC_DIFFICULTY = {
-    easy:   { label:'쉬움',   decoyCount:34, targetCount:4, base:1800, timeRate:7,  missPenalty:25 },
-    medium: { label:'보통',   decoyCount:48, targetCount:6, base:2600, timeRate:8,  missPenalty:30 },
-    hard:   { label:'어려움', decoyCount:64, targetCount:8, base:3600, timeRate:9,  missPenalty:35 }
+    easy:   { label:'쉬움',   decoyCount:45, targetCount:4, base:2200, timeRate:5, missPenalty:20 },
+    medium: { label:'보통',   decoyCount:65, targetCount:6, base:3200, timeRate:6, missPenalty:25 },
+    hard:   { label:'어려움', decoyCount:85, targetCount:8, base:4400, timeRate:7, missPenalty:30 }
   };
   let hiddenpicCtx, hiddenpicState;
 
+  function generateHiddenPicTexture(count){
+    const dots = [];
+    for(let i=0;i<count;i++){
+      dots.push({
+        x: Math.random()*HIDDENPIC_SIZE, y: Math.random()*HIDDENPIC_SIZE,
+        r: 1 + Math.random()*2.5, alpha: 0.04 + Math.random()*0.08
+      });
+    }
+    return dots;
+  }
+
+  // "진짜 숨기기": 아이템을 서로 떨어뜨려 놓지 않고 화면 전체를 빽빽하게 채우며,
+  // 각 타겟 바로 위에는 같은 테마의 데코이를 겹쳐 그려서 일부가 가려지도록 만든다.
   function generateHiddenPic(decoyCount, targetCount){
     const theme = HIDDENPIC_THEMES[Math.floor(Math.random()*HIDDENPIC_THEMES.length)];
     const target = theme.targets[Math.floor(Math.random()*theme.targets.length)];
-    const items = [];
-    const placed = [];
-    function tryPlace(isTarget){
-      for(let attempt=0; attempt<30; attempt++){
-        const x = 20 + Math.random()*(HIDDENPIC_SIZE-40);
-        const y = 20 + Math.random()*(HIDDENPIC_SIZE-40);
-        const minDist = isTarget ? 30 : 16;
-        let ok = true;
-        for(let i=0;i<placed.length;i++){
-          const dx = x-placed[i].x, dy = y-placed[i].y;
-          const need = isTarget || placed[i].isTarget ? 34 : minDist;
-          if(dx*dx+dy*dy < need*need){ ok=false; break; }
-        }
-        if(ok){
-          const size = 20 + Math.random()*8;
-          const rot = (Math.random()*40-20)*Math.PI/180;
-          const entry = { x:x, y:y, size:size, rot:rot, isTarget:isTarget, found:false };
-          entry.emoji = isTarget ? target : theme.decoys[Math.floor(Math.random()*theme.decoys.length)];
-          placed.push(entry);
-          items.push(entry);
-          return true;
-        }
-      }
-      return false;
+    const margin = 18;
+    function randPos(){
+      return { x: margin + Math.random()*(HIDDENPIC_SIZE-margin*2), y: margin + Math.random()*(HIDDENPIC_SIZE-margin*2) };
     }
-    for(let i=0;i<targetCount;i++) tryPlace(true);
-    for(let i=0;i<decoyCount;i++) tryPlace(false);
-    return { target:target, items:items, targetCount: placed.filter(function(p){ return p.isTarget; }).length };
+    function randSize(){ return 20 + Math.random()*10; }
+    function randRot(){ return Math.random()*Math.PI*2; }
+
+    const items = [];
+    // 1) 배경을 가득 채우는 잡다한 클러터 (서로 겹쳐도 OK — 간격을 억지로 띄우지 않는다)
+    for(let i=0;i<decoyCount;i++){
+      const p = randPos();
+      items.push({
+        x:p.x, y:p.y, size:randSize(), rot:randRot(),
+        emoji: theme.decoys[Math.floor(Math.random()*theme.decoys.length)],
+        alpha: 0.5 + Math.random()*0.45,
+        isTarget:false, found:false
+      });
+    }
+    // 2) 타겟 + 그 위에 겹쳐 그릴 위장용 데코이 (타겟을 부분적으로 가려줌)
+    let placedTargets = 0;
+    for(let t=0;t<targetCount;t++){
+      const p = randPos();
+      const size = randSize();
+      const targetObj = { x:p.x, y:p.y, size:size, rot:randRot(), emoji:target, alpha:1, isTarget:true, found:false };
+      items.push(targetObj);
+      placedTargets++;
+      const camoCount = 1 + (Math.random()<0.6 ? 1 : 0);
+      for(let c=0;c<camoCount;c++){
+        const ang = Math.random()*Math.PI*2;
+        const dist = size*0.25 + Math.random()*size*0.3;
+        items.push({
+          x: p.x + Math.cos(ang)*dist, y: p.y + Math.sin(ang)*dist,
+          size: size*(0.85+Math.random()*0.3), rot: randRot(),
+          emoji: theme.decoys[Math.floor(Math.random()*theme.decoys.length)],
+          alpha: 0.85 + Math.random()*0.15,
+          isTarget:false, found:false
+        });
+      }
+    }
+    return { target:target, bg:theme.bg, items:items, targetCount:placedTargets, texture: generateHiddenPicTexture(140) };
   }
 
   function drawHiddenPic(){
     const ctx = hiddenpicCtx, s = hiddenpicState;
     ctx.clearRect(0,0,HIDDENPIC_SIZE,HIDDENPIC_SIZE);
-    ctx.fillStyle = '#12121c';
+    ctx.fillStyle = s.bg || '#12121c';
     ctx.fillRect(0,0,HIDDENPIC_SIZE,HIDDENPIC_SIZE);
+    if(s.texture){
+      s.texture.forEach(function(d){
+        ctx.save();
+        ctx.globalAlpha = d.alpha;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
     s.items.forEach(function(it){
       ctx.save();
+      ctx.globalAlpha = it.found ? 1 : it.alpha;
       ctx.translate(it.x, it.y);
       ctx.rotate(it.rot);
       ctx.font = Math.round(it.size) + 'px sans-serif';
@@ -7731,10 +7795,11 @@
       ctx.restore();
       if(it.isTarget && it.found){
         ctx.save();
+        ctx.globalAlpha = 1;
         ctx.strokeStyle = 'rgba(61,255,122,0.9)';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(it.x, it.y, it.size*0.8, 0, Math.PI*2);
+        ctx.arc(it.x, it.y, it.size*0.9+6, 0, Math.PI*2);
         ctx.stroke();
         ctx.restore();
       }
@@ -7751,7 +7816,7 @@
     const overlay = document.getElementById('hiddenpic-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = '숨은그림찾기';
-    overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 · 복잡한 그림 속에 숨어있는 아이템을 모두 찾으세요';
+    overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 · 빽빽한 그림 속에 색까지 비슷하게 숨어있는 아이템을 모두 찾으세요';
   }
 
   function startHiddenpicWithDifficulty(diffKey){
@@ -7760,6 +7825,7 @@
     hiddenpicState = {
       difficulty: diffKey,
       items: puzzle.items, target: puzzle.target, totalTargets: puzzle.targetCount,
+      bg: puzzle.bg, texture: puzzle.texture,
       foundCount: 0, misses: 0,
       startTime: performance.now(), elapsed: 0, timerId: null,
       running: true, over: false
@@ -7796,7 +7862,7 @@
       const it = s.items[i];
       if(!it.isTarget || it.found) continue;
       const dx=x-it.x, dy=y-it.y;
-      const r = it.size*0.8 + 6;
+      const r = it.size*0.9 + 8;
       if(dx*dx+dy*dy <= r*r){
         it.found = true;
         s.foundCount++;
