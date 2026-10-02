@@ -221,6 +221,7 @@
   .lb-score{ color:var(--yellow); font-weight:700; font-family:'Press Start 2P',monospace; font-size:11px; }
   .lb-team{ font-size:10px; margin-left:4px; }
   .lb-empty{ color:var(--text-dim); font-size:12px; padding:6px; grid-column:1/-1; }
+  .rank-list li.lb-empty{ display:block; }
 
   /* ---------- team battle ---------- */
   .team-battle-panel{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:22px; margin-top:32px; }
@@ -750,6 +751,17 @@
   .game-info-desc{ font-size:12.5px; color:var(--text-dim); line-height:1.4; }
   .game-info-rankings h4{ font-size:12px; color:var(--text-dim); margin:0 0 8px; }
   .game-info-rankings .rank-list{ max-height:280px; overflow-y:auto; }
+  .hof-banner{
+    display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px;
+    background:linear-gradient(135deg, rgba(255,210,63,0.18), rgba(255,159,67,0.08));
+    border:1px solid rgba(255,210,63,0.4);
+  }
+  .hof-banner.empty{ opacity:0.55; background:rgba(255,255,255,0.04); border-color:var(--border); }
+  .hof-icon{ font-size:22px; flex-shrink:0; }
+  .hof-body{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .hof-label{ font-size:10.5px; color:var(--text-dim); letter-spacing:0.02em; }
+  .hof-text{ font-size:13.5px; font-weight:700; color:var(--yellow); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .hof-banner.empty .hof-text{ color:var(--text-dim); font-weight:500; }
   #team-select{
     width:100%; padding:10px 12px; border-radius:6px; border:1px solid var(--border);
     background:var(--bg-deep); color:var(--text); font-family:inherit; font-size:14px;
@@ -820,6 +832,13 @@
       <div>
         <div class="game-info-title pixel" id="game-info-title"></div>
         <div class="game-info-desc" id="game-info-desc"></div>
+      </div>
+    </div>
+    <div class="hof-banner empty" id="game-info-hof">
+      <span class="hof-icon">👑</span>
+      <div class="hof-body">
+        <span class="hof-label">명예의 전당 (역대 최고 기록)</span>
+        <span class="hof-text" id="game-info-hof-text">불러오는 중...</span>
       </div>
     </div>
     <div class="game-info-rankings">
@@ -2065,6 +2084,16 @@
     return entries.sort(function(a,b){ return b.score - a.score; }).slice(0,10);
   }
 
+  // 명예의 전당 — scores 테이블을 초기화(Table Editor에서 전체 삭제)해도
+  // 이 테이블은 DB 트리거로만 갱신되므로 영향을 받지 않고 역대 최고 기록이 남아있는다.
+  async function fetchHallOfFame(game){
+    try{
+      const { data, error } = await sb.from('hall_of_fame').select('nickname, team, score, achieved_at').eq('game', game).maybeSingle();
+      if(error || !data) return null;
+      return data;
+    }catch(e){ return null; }
+  }
+
   function topEntry(entries){
     if(entries.length === 0) return null;
     let best = entries[0];
@@ -2517,10 +2546,21 @@
     const descEl = cabinetBtn ? cabinetBtn.querySelector('.cabinet-sub') : null;
     document.getElementById('game-info-desc').textContent = descEl ? descEl.textContent : '';
     document.getElementById('game-info-ranklist').innerHTML = '<li class="lb-empty">불러오는 중...</li>';
+    const hofEl = document.getElementById('game-info-hof');
+    document.getElementById('game-info-hof-text').textContent = '불러오는 중...';
+    hofEl.classList.add('empty');
     modal.classList.remove('hidden');
-    const board = await fetchLeaderboard(gameId);
+    const [board, hof] = await Promise.all([fetchLeaderboard(gameId), fetchHallOfFame(gameId)]);
     if(modal.dataset.currentGame === gameId){
       document.getElementById('game-info-ranklist').innerHTML = renderBoardHtml(board);
+      const hofTextEl = document.getElementById('game-info-hof-text');
+      if(hof){
+        hofTextEl.textContent = hof.nickname + ' · ' + hof.score + '점';
+        hofEl.classList.remove('empty');
+      }else{
+        hofTextEl.textContent = '아직 기록이 없어요';
+        hofEl.classList.add('empty');
+      }
     }
   }
   function closeGameInfoModal(){
@@ -5793,6 +5833,7 @@
   const CATCHMIND_CANVAS_SIZE = 320;
   const CATCHMIND_ROUND_SECONDS = 75;
   const CATCHMIND_REVEAL_SECONDS = 4;
+  const CATCHMIND_CORRECT_REVEAL_DELAY = 3; // 첫 정답자가 나온 뒤 이 시간(초) 후 정답 공개 + 라운드 종료
   const CATCHMIND_GUESS_POINTS = [100, 70, 50];
   const CATCHMIND_GUESS_DEFAULT = 30;
   const CATCHMIND_DRAWER_BONUS = 20;
@@ -5887,7 +5928,11 @@
       statusEl.textContent = '함께할 사람을 기다리는 중이에요 (최소 2명 필요)';
       wordEl.textContent = '';
     }else if(room.status === 'drawing'){
-      statusEl.textContent = amDrawer ? '내가 그리는 중이에요!' : (room.drawer_nickname||'??') + '님이 그리는 중';
+      if(room.first_correct_at){
+        statusEl.textContent = '🎉 정답자가 나왔어요! 곧 정답이 공개됩니다';
+      }else{
+        statusEl.textContent = amDrawer ? '내가 그리는 중이에요!' : (room.drawer_nickname||'??') + '님이 그리는 중';
+      }
       if(amDrawer){
         wordEl.textContent = room.word || '';
       }else{
@@ -6022,6 +6067,7 @@
           drawer_id: drawer.playerId, drawer_nickname: drawer.nickname,
           word: word, round_number: expectedRound+1, round_started_at: new Date().toISOString(),
           guessed_correctly: [], status: 'drawing', canvas_snapshot: null,
+          first_correct_at: null,
           last_drawer_id: drawer.playerId, updated_at: new Date().toISOString()
         })
         .eq('id','main').eq('round_number', expectedRound).eq('status', expectedStatus)
@@ -6063,9 +6109,17 @@
       return;
     }
     if(catchmindRoom.status === 'drawing'){
+      if(onlineCount < 2){ await attemptCatchmindGoWaiting(); return; }
+      // 첫 정답자가 나온 뒤에는 전체 라운드 타이머와 상관없이 짧은 유예 시간 뒤 바로 정답 공개로 넘어간다
+      if(catchmindRoom.first_correct_at){
+        const sinceCorrect = (Date.now() - new Date(catchmindRoom.first_correct_at).getTime())/1000;
+        const remainingCorrect = Math.max(0, CATCHMIND_CORRECT_REVEAL_DELAY - sinceCorrect);
+        document.getElementById('catchmind-timer').textContent = '정답 공개까지 ' + Math.ceil(remainingCorrect) + '초';
+        if(remainingCorrect <= 0) await attemptCatchmindReveal();
+        return;
+      }
       const remaining = Math.max(0, CATCHMIND_ROUND_SECONDS - elapsed);
       document.getElementById('catchmind-timer').textContent = Math.ceil(remaining) + '초';
-      if(onlineCount < 2){ await attemptCatchmindGoWaiting(); return; }
       if(remaining <= 0) await attemptCatchmindReveal();
       return;
     }
@@ -6177,15 +6231,19 @@
     const idx = newList.length;
     const points = idx < CATCHMIND_GUESS_POINTS.length ? CATCHMIND_GUESS_POINTS[idx] : CATCHMIND_GUESS_DEFAULT;
     newList.push({ player_id: playerId, nickname: nickname||'??', points: points });
+    const updatePayload = { guessed_correctly: newList, updated_at: new Date().toISOString() };
+    // 첫 정답자가 나온 순간을 기록해둔다 — 이 시각 기준으로 잠시 뒤 라운드를 자동 종료한다
+    const isFirstCorrect = idx === 0;
+    if(isFirstCorrect) updatePayload.first_correct_at = new Date().toISOString();
     try{
       const { data } = await sb.from('catchmind_room')
-        .update({ guessed_correctly: newList, updated_at: new Date().toISOString() })
+        .update(updatePayload)
         .eq('id','main').eq('round_number', room.round_number).eq('status','drawing')
         .select();
       if(data && data.length>0){
         applyCatchmindRoomState(data[0]);
         await addCatchmindScore(points);
-        if(catchmindLiveChannel) catchmindLiveChannel.send({ type:'broadcast', event:'chat', payload:{ kind:'correct', nickname: nickname||'??', points: points } });
+        if(catchmindLiveChannel) catchmindLiveChannel.send({ type:'broadcast', event:'chat', payload:{ kind:'correct', nickname: nickname||'??', points: points, first: isFirstCorrect } });
       }
     }catch(e){}
   }
@@ -6412,10 +6470,14 @@
     const myTurn = m.current_turn === fortressMyNum;
     document.getElementById('fortress-turn-label').textContent = m.status==='playing' ? (myTurn ? '내 차례' : '상대 차례') : '종료';
     document.getElementById('fortress-controls').classList.toggle('disabled', !myTurn || m.status!=='playing' || fortressAnimating);
-    drawFortressScene(null);
+    if(myTurn && m.status==='playing' && !fortressAnimating){
+      drawFortressTrajectoryPreview();
+    }else{
+      drawFortressScene(null);
+    }
   }
 
-  function drawFortressScene(projectilePoint){
+  function drawFortressScene(projectilePoint, previewPoints){
     const ctx = fortressCtx, m = fortressMatch;
     if(!ctx || !m) return;
     ctx.fillStyle = '#0d1b2a';
@@ -6438,6 +6500,25 @@
     }
     drawTank(m.player1_x, '#00E5FF');
     drawTank(m.player2_x, '#FF2E7E');
+    // 예상 포물선 미리보기 — 각도/파워 슬라이더를 조정하는 동안 점선으로 표시
+    if(previewPoints && previewPoints.length){
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      for(let i=0;i<previewPoints.length;i+=4){
+        const pt = previewPoints[i];
+        if(pt.x<-4||pt.x>FORTRESS_W+4||pt.y<-4||pt.y>FORTRESS_H+4) continue;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 1.6, 0, Math.PI*2);
+        ctx.fill();
+      }
+      const last = previewPoints[previewPoints.length-1];
+      if(last && last.x>=-4 && last.x<=FORTRESS_W+4 && last.y>=-4 && last.y<=FORTRESS_H+4){
+        ctx.strokeStyle = 'rgba(255,210,63,0.9)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(last.x, last.y, 6, 0, Math.PI*2);
+        ctx.stroke();
+      }
+    }
     if(projectilePoint){
       ctx.fillStyle = '#FFD23F';
       ctx.beginPath();
@@ -6447,6 +6528,34 @@
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.font = '11px sans-serif';
     ctx.fillText('바람 ' + (m.wind>0?'→':m.wind<0?'←':'-') + ' ' + Math.abs(m.wind||0).toFixed(1), 10, 16);
+  }
+
+  // 현재 슬라이더 값(각도/파워)으로 쏠 경우의 예상 탄도를 계산해 점선으로 보여준다
+  function fortressCurrentShotParams(){
+    const m = fortressMatch;
+    if(!m) return null;
+    const angleEl = document.getElementById('fortress-angle');
+    const powerEl = document.getElementById('fortress-power');
+    if(!angleEl || !powerEl) return null;
+    const angle = Number(angleEl.value);
+    const power = Number(powerEl.value);
+    const facingRight = fortressMyNum === 1;
+    const startX = fortressMyNum===1 ? m.player1_x : m.player2_x;
+    const startY = fortressGroundY(m.terrain, startX) - 10;
+    const targetX = fortressMyNum===1 ? m.player2_x : m.player1_x;
+    const targetY = fortressGroundY(m.terrain, targetX);
+    return { angle, power, facingRight, startX, startY, targetX, targetY };
+  }
+  function drawFortressTrajectoryPreview(){
+    const m = fortressMatch;
+    if(!m || m.status !== 'playing' || m.current_turn !== fortressMyNum || fortressAnimating){
+      drawFortressScene(null);
+      return;
+    }
+    const p = fortressCurrentShotParams();
+    if(!p){ drawFortressScene(null); return; }
+    const result = fortressSimulateShot(m.terrain, p.startX, p.startY, p.angle, p.power, p.facingRight, m.wind, p.targetX, p.targetY);
+    drawFortressScene(null, result.points);
   }
 
   function animateFortressShot(shot, row){
@@ -6459,8 +6568,7 @@
     const step = Math.max(1, Math.floor(points.length/90));
     function tick(){
       if(i >= points.length){
-        fortressAnimating = false;
-        renderFortressMatch();
+        fortressImpactEffect(result);
         return;
       }
       drawFortressScene(points[i]);
@@ -6468,6 +6576,54 @@
       requestAnimationFrame(tick);
     }
     tick();
+  }
+
+  // 타격 순간 피드백 — 폭발 이펙트 + 화면 흔들림 + HIT/MISS 표시로 맞았는지 확실히 보여준다
+  function fortressImpactEffect(result){
+    const ctx = fortressCtx;
+    const hit = !!result.hit;
+    const drawX = Math.max(8, Math.min(FORTRESS_W-8, result.landX));
+    const drawY = Math.max(8, Math.min(FORTRESS_H-8, result.landY));
+    const startTime = performance.now();
+    const duration = hit ? 550 : 400;
+    function frame(now){
+      const t = Math.min(1, (now-startTime)/duration);
+      const shakeMag = hit ? (1-t)*6 : (1-t)*2;
+      const dx = (Math.random()*2-1)*shakeMag;
+      const dy = (Math.random()*2-1)*shakeMag;
+      if(ctx){
+        ctx.save();
+        ctx.translate(dx, dy);
+        drawFortressScene(null);
+        const radius = hit ? 6 + t*22 : 4 + t*9;
+        const alpha = 1 - t;
+        ctx.beginPath();
+        ctx.fillStyle = hit ? 'rgba(255,107,53,'+(alpha*0.85)+')' : 'rgba(200,200,200,'+(alpha*0.55)+')';
+        ctx.arc(drawX, drawY, radius, 0, Math.PI*2);
+        ctx.fill();
+        if(hit){
+          ctx.beginPath();
+          ctx.fillStyle = 'rgba(255,220,100,'+alpha+')';
+          ctx.arc(drawX, drawY, radius*0.5, 0, Math.PI*2);
+          ctx.fill();
+        }
+        ctx.restore();
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillStyle = hit ? '#FF6B35' : 'rgba(255,255,255,0.85)';
+        ctx.fillText(hit ? 'HIT!' : 'MISS', drawX, Math.max(14, drawY-26));
+        ctx.restore();
+      }
+      if(t < 1){
+        requestAnimationFrame(frame);
+      }else{
+        fortressAnimating = false;
+        renderFortressMatch();
+      }
+    }
+    requestAnimationFrame(frame);
   }
 
   async function fireFortressShot(){
@@ -6511,9 +6667,11 @@
 
   document.getElementById('fortress-angle').addEventListener('input', function(){
     document.getElementById('fortress-angle-val').textContent = this.value;
+    drawFortressTrajectoryPreview();
   });
   document.getElementById('fortress-power').addEventListener('input', function(){
     document.getElementById('fortress-power-val').textContent = this.value;
+    drawFortressTrajectoryPreview();
   });
   document.getElementById('fortress-fire').addEventListener('click', fireFortressShot);
 
