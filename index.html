@@ -637,6 +637,22 @@
   .shikaku-drag-preview.visible{ display:block; }
   .shikaku-drag-preview.invalid{ border-color:var(--red); background:rgba(255,71,87,0.22); }
 
+  /* ---------- spot the difference ---------- */
+  .spotdiff-wrap{ display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; }
+  .spotdiff-canvases{ display:flex; justify-content:center; gap:14px; flex-wrap:wrap; }
+  .spotdiff-canvases canvas{ width:260px; height:auto; cursor:crosshair; }
+  .spotdiff-diff-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+
+  /* ---------- hidden object ---------- */
+  .hiddenpic-wrap{ display:flex; flex-direction:column; align-items:center; gap:12px; width:100%; }
+  .hiddenpic-target{
+    display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:10px 16px; font-size:13px; color:var(--text);
+  }
+  .hiddenpic-target-icon{ font-size:28px; line-height:1; }
+  .hiddenpic-canvas-wrap canvas{ width:100%; max-width:380px; height:auto; cursor:crosshair; }
+  .hiddenpic-diff-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+
   /* ---------- nickname modal ---------- */
   .nickname-modal{ position:fixed; inset:0; z-index:70; background:rgba(6,6,11,0.9); display:flex; align-items:center; justify-content:center; padding:20px; }
   .nickname-modal.hidden{ display:none; }
@@ -975,6 +991,18 @@
         <div class="cabinet-screen" style="font-size:40px;">🟩</div>
         <div class="cabinet-label pixel">SHIKAKU</div>
         <div class="cabinet-sub">드래그로 직사각형을 그려서 숫자만큼의 칸을 채우세요</div>
+      </button>
+
+      <button class="cabinet" data-game="spotdiff" style="--accent:var(--pink)">
+        <div class="cabinet-screen" style="font-size:40px;">🔍</div>
+        <div class="cabinet-label pixel">틀린그림찾기</div>
+        <div class="cabinet-sub">두 그림을 비교해서 다른 부분을 모두 찾으세요</div>
+      </button>
+
+      <button class="cabinet" data-game="hiddenpic" style="--accent:var(--orange)">
+        <div class="cabinet-screen" style="font-size:40px;">🧐</div>
+        <div class="cabinet-label pixel">숨은그림찾기</div>
+        <div class="cabinet-sub">복잡한 그림 속에 숨은 아이템을 모두 찾으세요</div>
       </button>
     </div>
 
@@ -1384,7 +1412,7 @@
         <button class="start-btn" id="bubble-start">시작하기</button>
       </div>
     </div>
-    <p class="controls-hint">마우스/손가락으로 조준 후 클릭/탭해서 발사</p>
+    <p class="controls-hint">마우스/손가락으로 조준 후 클릭/탭해서 발사 · 빨간 점선 아래까지 구슬이 쌓이면 게임 오버</p>
   </section>
 
   <!-- SUDOKU -->
@@ -1601,6 +1629,68 @@
     <p class="controls-hint">빈 칸에서 드래그해서 직사각형을 그리세요 · 안에 숫자가 정확히 하나, 그 숫자 = 칸 수여야 해요 · 빈칸 없이 모두 채우면 클리어 · 만든 조각을 탭하면 취소돼요</p>
   </section>
 
+  <!-- SPOT THE DIFFERENCE -->
+  <section id="screen-spotdiff" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>TIME<b id="spotdiff-time">00:00</b></span>
+        <span>찾음<b id="spotdiff-found">0/0</b></span>
+        <span>BEST<b id="spotdiff-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="spotdiff-wrap">
+        <div class="spotdiff-canvases">
+          <canvas id="spotdiff-canvas-a" width="260" height="260"></canvas>
+          <canvas id="spotdiff-canvas-b" width="260" height="260"></canvas>
+        </div>
+      </div>
+      <div class="overlay" id="spotdiff-overlay">
+        <div class="overlay-title pixel">틀린그림찾기</div>
+        <div class="overlay-msg">난이도를 선택하세요 · 두 그림에서 다른 부분을 모두 찾아서 클릭하세요</div>
+        <div class="spotdiff-diff-row">
+          <button class="start-btn" id="spotdiff-start-easy">쉬움</button>
+          <button class="start-btn" id="spotdiff-start-medium">보통</button>
+          <button class="start-btn" id="spotdiff-start-hard">어려움</button>
+        </div>
+      </div>
+    </div>
+    <p class="controls-hint">두 그림 중 아무 곳이나 클릭/탭해서 다른 부분을 찾으세요 · 모두 찾으면 클리어</p>
+  </section>
+
+  <!-- HIDDEN OBJECT -->
+  <section id="screen-hiddenpic" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>TIME<b id="hiddenpic-time">00:00</b></span>
+        <span>찾음<b id="hiddenpic-found">0/0</b></span>
+        <span>BEST<b id="hiddenpic-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="hiddenpic-wrap">
+        <div class="hiddenpic-target" id="hiddenpic-target-bar">
+          <span>찾을 것:</span><span class="hiddenpic-target-icon" id="hiddenpic-target-icon">❓</span>
+        </div>
+        <div class="hiddenpic-canvas-wrap">
+          <canvas id="hiddenpic-canvas" width="380" height="380"></canvas>
+        </div>
+      </div>
+      <div class="overlay" id="hiddenpic-overlay">
+        <div class="overlay-title pixel">숨은그림찾기</div>
+        <div class="overlay-msg">난이도를 선택하세요 · 복잡한 그림 속에 숨어있는 아이템을 모두 찾으세요</div>
+        <div class="hiddenpic-diff-row">
+          <button class="start-btn" id="hiddenpic-start-easy">쉬움</button>
+          <button class="start-btn" id="hiddenpic-start-medium">보통</button>
+          <button class="start-btn" id="hiddenpic-start-hard">어려움</button>
+        </div>
+      </div>
+    </div>
+    <p class="controls-hint">위에 표시된 아이템을 그림 속에서 찾아 클릭/탭하세요 · 모두 찾으면 클리어</p>
+  </section>
+
 </div>
 
 <script>
@@ -1672,7 +1762,9 @@
     { id:'catchmind', label:'캐치마인드', icon:'🎨', color:'var(--cyan)' },
     { id:'fortress', label:'포트리스', icon:'💣', color:'var(--orange)' },
     { id:'numtap', label:'NUMTAP', icon:'🎯', color:'var(--yellow)' },
-    { id:'shikaku', label:'SHIKAKU', icon:'🟩', color:'var(--green)' }
+    { id:'shikaku', label:'SHIKAKU', icon:'🟩', color:'var(--green)' },
+    { id:'spotdiff', label:'틀린그림찾기', icon:'🔍', color:'var(--pink)' },
+    { id:'hiddenpic', label:'숨은그림찾기', icon:'🧐', color:'var(--orange)' }
   ];
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
@@ -2265,6 +2357,8 @@
     }
     if(currentScreen === 'numtap' && numtapState){ stopNumtapTimers(); }
     if(currentScreen === 'shikaku' && shikakuState){ stopShikakuTimer(); }
+    if(currentScreen === 'spotdiff' && spotdiffState){ stopSpotdiffTimer(); }
+    if(currentScreen === 'hiddenpic' && hiddenpicState){ stopHiddenpicTimer(); }
     currentScreen = id;
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
@@ -2300,6 +2394,8 @@
     if(id === 'tenten') prepareTenTen();
     if(id === 'numtap') prepareNumtap();
     if(id === 'shikaku') prepareShikaku();
+    if(id === 'spotdiff') prepareSpotdiff();
+    if(id === 'hiddenpic') prepareHiddenpic();
   }
 
   async function openGameInfoModal(gameId){
@@ -4888,7 +4984,7 @@
     const overlay = document.getElementById('bubble-overlay');
     overlay.classList.remove('hidden');
     overlay.querySelector('.overlay-title').textContent = 'BUBBLE SHOOTER';
-    overlay.querySelector('.overlay-msg').textContent = '조준해서 같은 색 구슬 3개 이상을 맞추세요 · 빠르게 클리어할수록 보너스 점수!';
+    overlay.querySelector('.overlay-msg').textContent = '조준해서 같은 색 구슬 3개 이상을 맞추세요 · 빨간 점선 아래까지 쌓이면 게임 오버!';
   }
 
   function fireBubble(){
@@ -4963,10 +5059,23 @@
     }
   }
 
+  function bubbleDangerRow(){ return BUBBLE_ROWS - 2; }
+
   function checkBubbleWin(){
     const s = bubbleState;
     const anyLeft = s.grid.some(function(row){ return row.some(function(v){ return v; }); });
-    if(!anyLeft) finishBubble();
+    if(!anyLeft) finishBubble(true);
+  }
+
+  function checkBubbleOverflow(){
+    const s = bubbleState;
+    const dangerRow = bubbleDangerRow();
+    for(let r=dangerRow;r<s.rows;r++){
+      for(let c=0;c<bubbleRowCols(r);c++){
+        if(s.grid[r][c]) return true;
+      }
+    }
+    return false;
   }
 
   function snapBubble(f){
@@ -4981,10 +5090,18 @@
         if(d<bestDist){ bestDist=d; bestR=r; bestC=c; }
       }
     }
+    if(bestDist === Infinity){
+      finishBubble(false);
+      return;
+    }
     s.grid[bestR][bestC] = f.color;
     const cleared = resolveBubbleMatch(bestR, bestC);
     if(cleared > 0) dropFloatingBubbles();
     s.currentColor = BUBBLE_COLORS[Math.floor(Math.random()*BUBBLE_COLORS.length)];
+    if(checkBubbleOverflow()){
+      finishBubble(false);
+      return;
+    }
     checkBubbleWin();
   }
 
@@ -5015,6 +5132,14 @@
     const ctx = bubbleCtx, s = bubbleState;
     ctx.fillStyle = '#101020';
     ctx.fillRect(0,0,BUBBLE_W,BUBBLE_H);
+    const dangerY = bubbleDangerRow()*BUBBLE_ROW_H;
+    ctx.strokeStyle = 'rgba(255,71,87,0.5)';
+    ctx.setLineDash([6,5]);
+    ctx.beginPath();
+    ctx.moveTo(0, dangerY);
+    ctx.lineTo(BUBBLE_W, dangerY);
+    ctx.stroke();
+    ctx.setLineDash([]);
     for(let r=0;r<s.rows;r++){
       for(let c=0;c<bubbleRowCols(r);c++){
         const color = s.grid[r][c];
@@ -5078,22 +5203,29 @@
     drawBubble();
     if(s.running) s.rafId = requestAnimationFrame(bubbleLoop);
   }
-  function finishBubble(){
+  function finishBubble(won){
     const s = bubbleState;
+    if(s.over) return;
     s.running=false; s.over=true;
     if(s.rafId) cancelAnimationFrame(s.rafId);
     if(s.timeDisplayId){ clearInterval(s.timeDisplayId); s.timeDisplayId=null; }
     s.elapsed = Math.floor((performance.now()-s.startTime)/1000);
-    let timeBonus;
-    if(s.elapsed <= 25) timeBonus = 800;
-    else if(s.elapsed >= 150) timeBonus = 0;
-    else timeBonus = Math.round(800*(1-(s.elapsed-25)/125));
-    s.score += timeBonus;
-    document.getElementById('bubble-score').textContent = s.score;
     const overlay = document.getElementById('bubble-overlay');
     overlay.classList.remove('hidden');
-    overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
-    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' (스피드 보너스 +' + timeBonus + ') · 다시 시작하려면 버튼을 누르세요';
+    if(won){
+      let timeBonus;
+      if(s.elapsed <= 25) timeBonus = 800;
+      else if(s.elapsed >= 150) timeBonus = 0;
+      else timeBonus = Math.round(800*(1-(s.elapsed-25)/125));
+      s.score += timeBonus;
+      document.getElementById('bubble-score').textContent = s.score;
+      overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
+      overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' (스피드 보너스 +' + timeBonus + ') · 다시 시작하려면 버튼을 누르세요';
+    }else{
+      overlay.querySelector('.overlay-title').textContent = 'GAME OVER';
+      overlay.querySelector('.overlay-msg').textContent = '구슬이 너무 많이 쌓였어요 · 점수 ' + s.score + ' · 다시 시작하려면 버튼을 누르세요';
+    }
+    drawBubble();
     finalizeScore('bubble', s.score, overlay);
   }
   document.getElementById('bubble-start').addEventListener('click', function(){
@@ -7339,6 +7471,365 @@
   document.getElementById('shikaku-start-medium').addEventListener('click', function(){ startShikakuWithDifficulty('medium'); });
   document.getElementById('shikaku-start-hard').addEventListener('click', function(){ startShikakuWithDifficulty('hard'); });
 
+  /* ============================================================
+     SPOT THE DIFFERENCE (틀린그림찾기)
+  ============================================================= */
+  const SPOTDIFF_SIZE = 260;
+  const SPOTDIFF_GRID = 5;
+  const SPOTDIFF_CELL = SPOTDIFF_SIZE / SPOTDIFF_GRID;
+  const SPOTDIFF_EMOJI = ['⭐','🔺','🔵','🟩','🍎','🎈','🌙','❤️','🍀','⚡','🎵','☀️','🍉','🎲','🦋','🐠','🍩','🎯'];
+  const SPOTDIFF_DIFFICULTY = {
+    easy:   { label:'쉬움',   diffCount:4, base:1800, timeRate:9,  missPenalty:40 },
+    medium: { label:'보통',   diffCount:6, base:2600, timeRate:10, missPenalty:50 },
+    hard:   { label:'어려움', diffCount:8, base:3600, timeRate:12, missPenalty:60 }
+  };
+  let spotdiffCtxA, spotdiffCtxB, spotdiffState;
+
+  function generateSpotDiff(diffCount){
+    const cells = [];
+    for(let r=0;r<SPOTDIFF_GRID;r++){ for(let c=0;c<SPOTDIFF_GRID;c++){ cells.push([r,c]); } }
+    for(let i=cells.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=cells[i]; cells[i]=cells[j]; cells[j]=t; }
+    const itemCount = Math.min(cells.length, 18);
+    const chosen = cells.slice(0, itemCount);
+    const baseItems = chosen.map(function(cell){
+      const cx = cell[1]*SPOTDIFF_CELL + SPOTDIFF_CELL/2 + (Math.random()*14-7);
+      const cy = cell[0]*SPOTDIFF_CELL + SPOTDIFF_CELL/2 + (Math.random()*14-7);
+      return {
+        x: cx, y: cy,
+        emoji: SPOTDIFF_EMOJI[Math.floor(Math.random()*SPOTDIFF_EMOJI.length)],
+        size: 24 + Math.random()*10,
+        rot: (Math.random()*30-15) * Math.PI/180
+      };
+    });
+    const original = baseItems.map(function(it){ return Object.assign({}, it); });
+    const modified = baseItems.map(function(it){ return Object.assign({}, it); });
+    const idxPool = original.map(function(_,i){ return i; });
+    for(let i=idxPool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=idxPool[i]; idxPool[i]=idxPool[j]; idxPool[j]=t; }
+    const count = Math.min(diffCount, idxPool.length);
+    const diffIdx = idxPool.slice(0, count);
+    const ops = ['move','scale','rotate','swap','remove'];
+    const diffs = diffIdx.map(function(i, k){
+      const op = ops[k % ops.length];
+      const orig = original[i];
+      const mod = modified[i];
+      if(op === 'move'){
+        let nx = orig.x + (Math.random()<0.5?-1:1)*(18+Math.random()*10);
+        let ny = orig.y + (Math.random()<0.5?-1:1)*(18+Math.random()*10);
+        nx = Math.max(18, Math.min(SPOTDIFF_SIZE-18, nx));
+        ny = Math.max(18, Math.min(SPOTDIFF_SIZE-18, ny));
+        mod.x = nx; mod.y = ny;
+      }else if(op === 'scale'){
+        mod.size = orig.size * (Math.random()<0.5 ? 0.55 : 1.6);
+      }else if(op === 'rotate'){
+        mod.rot = orig.rot + Math.PI/2 + Math.random()*0.6;
+      }else if(op === 'swap'){
+        let newEmoji;
+        let guard = 0;
+        do{ newEmoji = SPOTDIFF_EMOJI[Math.floor(Math.random()*SPOTDIFF_EMOJI.length)]; guard++; }while(newEmoji === orig.emoji && guard < 20);
+        mod.emoji = newEmoji;
+      }else{
+        mod.removed = true;
+      }
+      const spread = Math.hypot(mod.x-orig.x, mod.y-orig.y)/2;
+      const zx = (orig.x+mod.x)/2, zy = (orig.y+mod.y)/2;
+      const zr = Math.max(orig.size, mod.size)/2 + spread + 12;
+      return { x:zx, y:zy, r:zr, found:false };
+    });
+    return { original:original, modified:modified, diffs:diffs };
+  }
+
+  function drawSpotDiffScene(ctx, list){
+    ctx.clearRect(0,0,SPOTDIFF_SIZE,SPOTDIFF_SIZE);
+    ctx.fillStyle = '#12121c';
+    ctx.fillRect(0,0,SPOTDIFF_SIZE,SPOTDIFF_SIZE);
+    list.forEach(function(it){
+      if(it.removed) return;
+      ctx.save();
+      ctx.translate(it.x, it.y);
+      ctx.rotate(it.rot);
+      ctx.font = Math.round(it.size) + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(it.emoji, 0, 0);
+      ctx.restore();
+    });
+  }
+
+  function drawSpotDiffMarkers(ctx, diffs){
+    diffs.forEach(function(d){
+      if(!d.found) return;
+      ctx.save();
+      ctx.strokeStyle = 'rgba(61,255,122,0.9)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.restore();
+    });
+  }
+
+  function redrawSpotDiff(){
+    const s = spotdiffState;
+    if(!s) return;
+    drawSpotDiffScene(spotdiffCtxA, s.original);
+    drawSpotDiffScene(spotdiffCtxB, s.modified);
+    drawSpotDiffMarkers(spotdiffCtxA, s.diffs);
+    drawSpotDiffMarkers(spotdiffCtxB, s.diffs);
+  }
+
+  function prepareSpotdiff(){
+    spotdiffState = { difficulty:null, running:false, over:false };
+    if(spotdiffCtxA) spotdiffCtxA.clearRect(0,0,SPOTDIFF_SIZE,SPOTDIFF_SIZE);
+    if(spotdiffCtxB) spotdiffCtxB.clearRect(0,0,SPOTDIFF_SIZE,SPOTDIFF_SIZE);
+    document.getElementById('spotdiff-time').textContent = '00:00';
+    document.getElementById('spotdiff-found').textContent = '0/0';
+    loadMyBest('spotdiff');
+    const overlay = document.getElementById('spotdiff-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = '틀린그림찾기';
+    overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 · 두 그림에서 다른 부분을 모두 찾아서 클릭하세요';
+  }
+
+  function startSpotdiffWithDifficulty(diffKey){
+    const diff = SPOTDIFF_DIFFICULTY[diffKey];
+    const puzzle = generateSpotDiff(diff.diffCount);
+    spotdiffState = {
+      difficulty: diffKey,
+      original: puzzle.original, modified: puzzle.modified, diffs: puzzle.diffs,
+      foundCount: 0, misses: 0,
+      startTime: performance.now(), elapsed: 0, timerId: null,
+      running: true, over: false
+    };
+    document.getElementById('spotdiff-overlay').classList.add('hidden');
+    document.getElementById('spotdiff-found').textContent = '0/'+spotdiffState.diffs.length;
+    document.getElementById('spotdiff-time').textContent = '00:00';
+    redrawSpotDiff();
+    spotdiffState.timerId = setInterval(spotdiffTick, 1000);
+  }
+
+  function spotdiffTick(){
+    const s = spotdiffState;
+    if(!s || !s.running) return;
+    s.elapsed = Math.floor((performance.now()-s.startTime)/1000);
+    const mm = String(Math.floor(s.elapsed/60)).padStart(2,'0');
+    const ss = String(s.elapsed%60).padStart(2,'0');
+    document.getElementById('spotdiff-time').textContent = mm+':'+ss;
+  }
+  function stopSpotdiffTimer(){
+    if(spotdiffState && spotdiffState.timerId){ clearInterval(spotdiffState.timerId); spotdiffState.timerId=null; }
+  }
+
+  function spotdiffHandleClick(e, canvasEl){
+    const s = spotdiffState;
+    if(!s || !s.running) return;
+    const rect = canvasEl.getBoundingClientRect();
+    const scaleX = SPOTDIFF_SIZE/rect.width, scaleY = SPOTDIFF_SIZE/rect.height;
+    const x = (e.clientX-rect.left)*scaleX, y = (e.clientY-rect.top)*scaleY;
+    let hit = false;
+    for(let i=0;i<s.diffs.length;i++){
+      const d = s.diffs[i];
+      if(d.found) continue;
+      const dx=x-d.x, dy=y-d.y;
+      if(dx*dx+dy*dy <= d.r*d.r){
+        d.found = true;
+        s.foundCount++;
+        hit = true;
+        break;
+      }
+    }
+    if(!hit) s.misses++;
+    redrawSpotDiff();
+    document.getElementById('spotdiff-found').textContent = s.foundCount+'/'+s.diffs.length;
+    if(s.foundCount === s.diffs.length) finishSpotdiff();
+  }
+
+  function finishSpotdiff(){
+    const s = spotdiffState;
+    if(!s || s.over) return;
+    s.running = false; s.over = true;
+    stopSpotdiffTimer();
+    const diff = SPOTDIFF_DIFFICULTY[s.difficulty];
+    const elapsedExact = (performance.now() - s.startTime) / 1000;
+    const score = Math.max(100, Math.round(diff.base - elapsedExact*diff.timeRate - s.misses*diff.missPenalty));
+    const overlay = document.getElementById('spotdiff-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
+    overlay.querySelector('.overlay-msg').textContent = '['+diff.label+'] 점수 ' + score + ' · 난이도를 선택해서 다시 시작하세요';
+    finalizeScore('spotdiff', score, overlay);
+  }
+
+  document.getElementById('spotdiff-canvas-a').addEventListener('pointerdown', function(e){ spotdiffHandleClick(e, this); });
+  document.getElementById('spotdiff-canvas-b').addEventListener('pointerdown', function(e){ spotdiffHandleClick(e, this); });
+  document.getElementById('spotdiff-start-easy').addEventListener('click', function(){ startSpotdiffWithDifficulty('easy'); });
+  document.getElementById('spotdiff-start-medium').addEventListener('click', function(){ startSpotdiffWithDifficulty('medium'); });
+  document.getElementById('spotdiff-start-hard').addEventListener('click', function(){ startSpotdiffWithDifficulty('hard'); });
+
+  /* ============================================================
+     HIDDEN OBJECT (숨은그림찾기)
+  ============================================================= */
+  const HIDDENPIC_SIZE = 380;
+  const HIDDENPIC_THEMES = [
+    { decoys:['🌿','🍂','🌱','🪨','🍁','🌾','🍃','🌳'], targets:['🍄','🦋','🐞'] },
+    { decoys:['⭐','✨','☁️','🌙','💫','🪐','🌠'], targets:['🚀','👽','🛸'] },
+    { decoys:['🔧','⚙️','🔩','🪛','🧰','🔗','🪚'], targets:['🔑','💎','🪙'] },
+    { decoys:['🍬','🍭','🧁','🍩','🍪','🎂','🍰'], targets:['🍒','🍓','🍯'] },
+    { decoys:['🐟','🪸','🫧','🌊','🦀','🐚'], targets:['🐠','🐙','⭐'] }
+  ];
+  const HIDDENPIC_DIFFICULTY = {
+    easy:   { label:'쉬움',   decoyCount:34, targetCount:4, base:1800, timeRate:7,  missPenalty:25 },
+    medium: { label:'보통',   decoyCount:48, targetCount:6, base:2600, timeRate:8,  missPenalty:30 },
+    hard:   { label:'어려움', decoyCount:64, targetCount:8, base:3600, timeRate:9,  missPenalty:35 }
+  };
+  let hiddenpicCtx, hiddenpicState;
+
+  function generateHiddenPic(decoyCount, targetCount){
+    const theme = HIDDENPIC_THEMES[Math.floor(Math.random()*HIDDENPIC_THEMES.length)];
+    const target = theme.targets[Math.floor(Math.random()*theme.targets.length)];
+    const items = [];
+    const placed = [];
+    function tryPlace(isTarget){
+      for(let attempt=0; attempt<30; attempt++){
+        const x = 20 + Math.random()*(HIDDENPIC_SIZE-40);
+        const y = 20 + Math.random()*(HIDDENPIC_SIZE-40);
+        const minDist = isTarget ? 30 : 16;
+        let ok = true;
+        for(let i=0;i<placed.length;i++){
+          const dx = x-placed[i].x, dy = y-placed[i].y;
+          const need = isTarget || placed[i].isTarget ? 34 : minDist;
+          if(dx*dx+dy*dy < need*need){ ok=false; break; }
+        }
+        if(ok){
+          const size = 20 + Math.random()*8;
+          const rot = (Math.random()*40-20)*Math.PI/180;
+          const entry = { x:x, y:y, size:size, rot:rot, isTarget:isTarget, found:false };
+          entry.emoji = isTarget ? target : theme.decoys[Math.floor(Math.random()*theme.decoys.length)];
+          placed.push(entry);
+          items.push(entry);
+          return true;
+        }
+      }
+      return false;
+    }
+    for(let i=0;i<targetCount;i++) tryPlace(true);
+    for(let i=0;i<decoyCount;i++) tryPlace(false);
+    return { target:target, items:items, targetCount: placed.filter(function(p){ return p.isTarget; }).length };
+  }
+
+  function drawHiddenPic(){
+    const ctx = hiddenpicCtx, s = hiddenpicState;
+    ctx.clearRect(0,0,HIDDENPIC_SIZE,HIDDENPIC_SIZE);
+    ctx.fillStyle = '#12121c';
+    ctx.fillRect(0,0,HIDDENPIC_SIZE,HIDDENPIC_SIZE);
+    s.items.forEach(function(it){
+      ctx.save();
+      ctx.translate(it.x, it.y);
+      ctx.rotate(it.rot);
+      ctx.font = Math.round(it.size) + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(it.emoji, 0, 0);
+      ctx.restore();
+      if(it.isTarget && it.found){
+        ctx.save();
+        ctx.strokeStyle = 'rgba(61,255,122,0.9)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(it.x, it.y, it.size*0.8, 0, Math.PI*2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    });
+  }
+
+  function prepareHiddenpic(){
+    hiddenpicState = { difficulty:null, running:false, over:false };
+    if(hiddenpicCtx) hiddenpicCtx.clearRect(0,0,HIDDENPIC_SIZE,HIDDENPIC_SIZE);
+    document.getElementById('hiddenpic-time').textContent = '00:00';
+    document.getElementById('hiddenpic-found').textContent = '0/0';
+    document.getElementById('hiddenpic-target-icon').textContent = '❓';
+    loadMyBest('hiddenpic');
+    const overlay = document.getElementById('hiddenpic-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = '숨은그림찾기';
+    overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 · 복잡한 그림 속에 숨어있는 아이템을 모두 찾으세요';
+  }
+
+  function startHiddenpicWithDifficulty(diffKey){
+    const diff = HIDDENPIC_DIFFICULTY[diffKey];
+    const puzzle = generateHiddenPic(diff.decoyCount, diff.targetCount);
+    hiddenpicState = {
+      difficulty: diffKey,
+      items: puzzle.items, target: puzzle.target, totalTargets: puzzle.targetCount,
+      foundCount: 0, misses: 0,
+      startTime: performance.now(), elapsed: 0, timerId: null,
+      running: true, over: false
+    };
+    document.getElementById('hiddenpic-overlay').classList.add('hidden');
+    document.getElementById('hiddenpic-target-icon').textContent = puzzle.target;
+    document.getElementById('hiddenpic-found').textContent = '0/'+puzzle.targetCount;
+    document.getElementById('hiddenpic-time').textContent = '00:00';
+    drawHiddenPic();
+    hiddenpicState.timerId = setInterval(hiddenpicTick, 1000);
+  }
+
+  function hiddenpicTick(){
+    const s = hiddenpicState;
+    if(!s || !s.running) return;
+    s.elapsed = Math.floor((performance.now()-s.startTime)/1000);
+    const mm = String(Math.floor(s.elapsed/60)).padStart(2,'0');
+    const ss = String(s.elapsed%60).padStart(2,'0');
+    document.getElementById('hiddenpic-time').textContent = mm+':'+ss;
+  }
+  function stopHiddenpicTimer(){
+    if(hiddenpicState && hiddenpicState.timerId){ clearInterval(hiddenpicState.timerId); hiddenpicState.timerId=null; }
+  }
+
+  function hiddenpicHandleClick(e){
+    const s = hiddenpicState;
+    if(!s || !s.running) return;
+    const canvasEl = document.getElementById('hiddenpic-canvas');
+    const rect = canvasEl.getBoundingClientRect();
+    const scaleX = HIDDENPIC_SIZE/rect.width, scaleY = HIDDENPIC_SIZE/rect.height;
+    const x = (e.clientX-rect.left)*scaleX, y = (e.clientY-rect.top)*scaleY;
+    let hit = false;
+    for(let i=0;i<s.items.length;i++){
+      const it = s.items[i];
+      if(!it.isTarget || it.found) continue;
+      const dx=x-it.x, dy=y-it.y;
+      const r = it.size*0.8 + 6;
+      if(dx*dx+dy*dy <= r*r){
+        it.found = true;
+        s.foundCount++;
+        hit = true;
+        break;
+      }
+    }
+    if(!hit) s.misses++;
+    drawHiddenPic();
+    document.getElementById('hiddenpic-found').textContent = s.foundCount+'/'+s.totalTargets;
+    if(s.foundCount >= s.totalTargets) finishHiddenpic();
+  }
+
+  function finishHiddenpic(){
+    const s = hiddenpicState;
+    if(!s || s.over) return;
+    s.running = false; s.over = true;
+    stopHiddenpicTimer();
+    const diff = HIDDENPIC_DIFFICULTY[s.difficulty];
+    const elapsedExact = (performance.now() - s.startTime) / 1000;
+    const score = Math.max(100, Math.round(diff.base - elapsedExact*diff.timeRate - s.misses*diff.missPenalty));
+    const overlay = document.getElementById('hiddenpic-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'CLEAR!';
+    overlay.querySelector('.overlay-msg').textContent = '['+diff.label+'] 점수 ' + score + ' · 난이도를 선택해서 다시 시작하세요';
+    finalizeScore('hiddenpic', score, overlay);
+  }
+
+  document.getElementById('hiddenpic-canvas').addEventListener('pointerdown', hiddenpicHandleClick);
+  document.getElementById('hiddenpic-start-easy').addEventListener('click', function(){ startHiddenpicWithDifficulty('easy'); });
+  document.getElementById('hiddenpic-start-medium').addEventListener('click', function(){ startHiddenpicWithDifficulty('medium'); });
+  document.getElementById('hiddenpic-start-hard').addEventListener('click', function(){ startHiddenpicWithDifficulty('hard'); });
+
   /* ============ global key listener ============ */
   window.addEventListener('keyup', function(e){
     if(currentScreen==='breakout' && breakoutState && (e.key==='ArrowLeft'||e.key==='ArrowRight')){
@@ -7384,6 +7875,9 @@
     gomokupvpCtx = document.getElementById('gomokupvp-canvas').getContext('2d');
     catchmindCtx = document.getElementById('catchmind-canvas').getContext('2d');
     fortressCtx = document.getElementById('fortress-canvas').getContext('2d');
+    spotdiffCtxA = document.getElementById('spotdiff-canvas-a').getContext('2d');
+    spotdiffCtxB = document.getElementById('spotdiff-canvas-b').getContext('2d');
+    hiddenpicCtx = document.getElementById('hiddenpic-canvas').getContext('2d');
     await runStorageHealthCheck();
     await initPlayer();
     renderTeamBattle();
