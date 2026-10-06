@@ -627,6 +627,53 @@
   }
   .catchmind-player-chip.drawing{ background:var(--yellow); color:#2a1e00; border-color:var(--yellow); font-weight:700; }
 
+
+  /* ---------- subway race (타자 대결) ---------- */
+  .subway-lobby.hidden, .subway-waiting.hidden, .subway-match.hidden{ display:none; }
+  .subway-lobby{ display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; max-width:340px; margin:0 auto; }
+  .subway-lobby select{
+    width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border);
+    background:var(--card); color:var(--text); font-size:14px;
+  }
+  .subway-waiting{ text-align:center; padding:40px 0; width:100%; }
+  .subway-match{ display:flex; flex-direction:column; align-items:center; gap:12px; width:100%; max-width:420px; margin:0 auto; position:relative; }
+  .subway-course-name{ font-size:12px; color:var(--text-dim); text-align:center; }
+  .subway-tracks{ display:flex; flex-direction:column; gap:8px; width:100%; }
+  .subway-track-row{ display:flex; align-items:center; gap:8px; }
+  .subway-track-label{ width:34px; font-size:11px; font-weight:700; flex-shrink:0; }
+  .subway-track-label.me{ color:var(--cyan); } .subway-track-label.opp{ color:var(--pink); }
+  .subway-track{ position:relative; flex:1; height:16px; border-radius:8px; background:var(--bg-deep); border:1px solid var(--border); }
+  .subway-fill{ height:100%; border-radius:8px; transition:width .2s ease; }
+  .subway-fill.me{ background:var(--cyan); } .subway-fill.opp{ background:var(--pink); }
+  .subway-train{ position:absolute; top:-5px; font-size:16px; transform:translateX(-50%); transition:left .2s ease; }
+  .subway-count{ width:54px; text-align:right; font-size:11px; color:var(--text-dim); flex-shrink:0; }
+  .subway-panel{
+    width:100%; background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:18px 14px; text-align:center; position:relative; cursor:text;
+  }
+  .subway-prev{ font-size:12px; color:var(--text-dim); min-height:16px; }
+  .subway-current{ font-size:34px; font-weight:800; margin:6px 0 4px; letter-spacing:1px; }
+  .subway-next{ font-size:12px; color:var(--text-dim); min-height:16px; margin-bottom:12px; }
+  .subway-typed{
+    min-height:40px; border-bottom:2px solid var(--cyan); font-size:24px; font-weight:700;
+    display:flex; justify-content:center; align-items:center; gap:1px;
+  }
+  .subway-typed .bad{ color:var(--red); }
+  .subway-typed .caret{ display:inline-block; width:2px; height:26px; background:var(--cyan); margin-left:1px; animation:subwayCaret 1s steps(1) infinite; }
+  @keyframes subwayCaret{ 50%{ opacity:0; } }
+  .subway-panel.shake{ animation:shakeTile .25s ease; }
+  .subway-input{
+    position:absolute; inset:0; width:100%; height:100%; opacity:0; border:0; padding:0; margin:0;
+    font-size:16px; background:transparent; color:transparent; cursor:text; -webkit-user-select:text; user-select:text;
+  }
+  .subway-time{ font-size:13px; color:var(--text-dim); }
+  .subway-countdown{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:80px; font-weight:800; color:var(--yellow); background:rgba(6,6,11,0.72); border-radius:14px; z-index:5;
+    text-shadow:0 0 18px rgba(255,210,63,0.7);
+  }
+  .subway-countdown.hidden{ display:none; }
+
   /* ---------- fortress ---------- */
   .fortress-lobby.hidden, .fortress-waiting.hidden, .fortress-match.hidden{ display:none; }
   .fortress-lobby{ display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; max-width:320px; margin:0 auto; }
@@ -1057,6 +1104,12 @@
         <div class="cabinet-sub">각도·파워 조절해서 실시간 1:1 포격전</div>
       </button>
 
+      <button class="cabinet realtime-game" data-game="subwayrace" style="--accent:var(--green)">
+        <div class="cabinet-screen" style="font-size:40px;">🚇</div>
+        <div class="cabinet-label pixel">SUBWAY RACE</div>
+        <div class="cabinet-sub">지하철 역 이름을 먼저 다 입력하면 승리! 실시간 1:1 타자 대결</div>
+      </button>
+
       <button class="cabinet" data-game="numtap" style="--accent:var(--yellow)">
         <div class="cabinet-screen" style="font-size:40px;">🎯</div>
         <div class="cabinet-label pixel">NUMTAP</div>
@@ -1071,18 +1124,18 @@
 
       <button class="cabinet" data-game="spotdiff" style="--accent:var(--pink)">
         <div class="cabinet-screen" style="font-size:40px;">🔍</div>
-        <div class="cabinet-label pixel">틀린그림찾기</div>
+        <div class="cabinet-label pixel">SPOTDIFF</div>
         <div class="cabinet-sub">두 그림을 비교해서 다른 부분을 모두 찾으세요</div>
       </button>
 
       <button class="cabinet" data-game="hiddenpic" style="--accent:var(--orange)">
         <div class="cabinet-screen" style="font-size:40px;">🧐</div>
-        <div class="cabinet-label pixel">숨은그림찾기</div>
+        <div class="cabinet-label pixel">HIDDENPIC</div>
         <div class="cabinet-sub">복잡한 그림 속에 숨은 아이템을 모두 찾으세요</div>
       </button>
       <button class="cabinet" data-game="sidesort" style="--accent:var(--pink)">
         <div class="cabinet-screen" style="font-size:40px;">🐱</div>
-        <div class="cabinet-label pixel">좌우분류</div>
+        <div class="cabinet-label pixel">SIDESORT</div>
         <div class="cabinet-sub">가운데서 내려오는 캐릭터를 알맞은 진영으로 보내세요</div>
       </button>
     </div>
@@ -1662,6 +1715,52 @@
     <p class="controls-hint">각도·파워를 조절하고 발사! 턴당 20초 · 바람에 따라 궤적이 살짝 휘어요</p>
   </section>
 
+  <!-- SUBWAY RACE -->
+  <section id="screen-subwayrace" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span id="subwayrace-label">로비</span>
+        <span>누적승<b id="subwayrace-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="subway-lobby" id="subway-lobby">
+        <select id="subway-course" aria-label="노선 선택"></select>
+        <button class="start-btn" id="subway-create">방 만들기</button>
+        <div class="fortress-room-list" id="subway-room-list"></div>
+      </div>
+      <div class="subway-waiting hidden" id="subway-waiting">
+        <div class="pixel" style="margin-bottom:14px;">상대를 기다리는 중...</div>
+        <button class="start-btn" id="subway-cancel">취소</button>
+      </div>
+      <div class="subway-match hidden" id="subway-match">
+        <div class="fortress-vs" id="subway-vs"></div>
+        <div class="subway-course-name" id="subway-course-name"></div>
+        <div class="subway-tracks">
+          <div class="subway-track-row"><span class="subway-track-label me">나</span><div class="subway-track"><div class="subway-fill me" id="subway-fill-me" style="width:0%"></div><span class="subway-train" id="subway-train-me" style="left:0%">🚇</span></div><span class="subway-count" id="subway-count-me">0/0</span></div>
+          <div class="subway-track-row"><span class="subway-track-label opp">상대</span><div class="subway-track"><div class="subway-fill opp" id="subway-fill-opp" style="width:0%"></div><span class="subway-train" id="subway-train-opp" style="left:0%">🚇</span></div><span class="subway-count" id="subway-count-opp">0/0</span></div>
+        </div>
+        <div class="subway-panel" id="subway-panel">
+          <div class="subway-prev" id="subway-prev"></div>
+          <div class="subway-current" id="subway-current">-</div>
+          <div class="subway-next" id="subway-next"></div>
+          <div class="subway-typed" id="subway-typed"><span class="caret"></span></div>
+          <input type="text" class="subway-input" id="subway-input" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="역 이름 입력" />
+          <div class="subway-countdown hidden" id="subway-countdown">3</div>
+        </div>
+        <div class="subway-time pixel" id="subway-time">0.0s</div>
+        <button class="mini-btn" id="subway-leave">나가기</button>
+      </div>
+      <div class="overlay hidden" id="subway-overlay">
+        <div class="overlay-title pixel" id="subway-overlay-title">결과</div>
+        <div class="overlay-msg" id="subway-overlay-msg"></div>
+        <button class="start-btn" id="subway-back-lobby">로비로</button>
+      </div>
+    </div>
+    <p class="controls-hint">화면에 나온 역 이름을 순서대로 입력하세요 (역 이름만, 예: 강남) · 먼저 끝까지 도착하면 승리! · 틀리면 Esc/Enter로 지우기</p>
+  </section>
+
   <!-- NUMTAP -->
   <section id="screen-numtap" class="screen">
     <div class="game-topbar">
@@ -1728,7 +1827,7 @@
         </div>
       </div>
       <div class="overlay" id="spotdiff-overlay">
-        <div class="overlay-title pixel">틀린그림찾기</div>
+        <div class="overlay-title pixel">SPOTDIFF</div>
         <div class="overlay-msg">난이도를 선택하세요 · 두 그림에서 다른 부분을 모두 찾아서 클릭하세요</div>
         <div class="spotdiff-diff-row">
           <button class="start-btn" id="spotdiff-start-easy">쉬움</button>
@@ -1761,7 +1860,7 @@
         </div>
       </div>
       <div class="overlay" id="hiddenpic-overlay">
-        <div class="overlay-title pixel">숨은그림찾기</div>
+        <div class="overlay-title pixel">HIDDENPIC</div>
         <div class="overlay-msg">난이도를 선택하세요 · 사진 속에 숨어있는 서로 다른 물건들을 모두 찾으세요</div>
         <div class="hiddenpic-diff-row">
           <button class="start-btn" id="hiddenpic-start-easy">쉬움</button>
@@ -1785,7 +1884,7 @@
     <div class="game-stage">
       <canvas id="sidesort-canvas" width="360" height="520"></canvas>
       <div class="overlay" id="sidesort-overlay">
-        <div class="overlay-title pixel">좌우분류</div>
+        <div class="overlay-title pixel">SIDESORT</div>
         <div class="overlay-msg">내려오는 캐릭터를 같은 캐릭터가 있는 쪽(←/→)으로 보내세요</div>
         <button class="start-btn" id="sidesort-start">시작하기</button>
       </div>
@@ -1889,9 +1988,10 @@
     { id:'fortress', label:'포트리스', icon:'💣', color:'var(--orange)' },
     { id:'numtap', label:'NUMTAP', icon:'🎯', color:'var(--yellow)' },
     { id:'shikaku', label:'SHIKAKU', icon:'🟩', color:'var(--green)' },
-    { id:'spotdiff', label:'틀린그림찾기', icon:'🔍', color:'var(--pink)' },
-    { id:'hiddenpic', label:'숨은그림찾기', icon:'🧐', color:'var(--orange)' },
-    { id:'sidesort', label:'좌우분류', icon:'🐱', color:'var(--pink)' }
+    { id:'spotdiff', label:'SPOTDIFF', icon:'🔍', color:'var(--pink)' },
+    { id:'hiddenpic', label:'HIDDENPIC', icon:'🧐', color:'var(--orange)' },
+    { id:'sidesort', label:'SIDESORT', icon:'🐱', color:'var(--pink)' },
+    { id:'subwayrace', label:'SUBWAY RACE', icon:'🚇', color:'var(--green)' }
   ];
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
@@ -2514,6 +2614,9 @@
     if(currentScreen === 'fortress'){
       cleanupFortress();
     }
+    if(currentScreen === 'subwayrace'){
+      cleanupSubway();
+    }
     if(currentScreen === 'sudoku' && sudokuState){
       stopSudokuTimer();
       if(!sudokuState.over && sudokuState.given){
@@ -2573,6 +2676,7 @@
     if(id === 'spotdiff') prepareSpotdiff();
     if(id === 'hiddenpic') prepareHiddenpic();
     if(id === 'sidesort') prepareSidesort();
+    if(id === 'subwayrace') prepareSubway();
     if(id === 'admin') prepareAdmin();
   }
 
@@ -7975,7 +8079,7 @@
     loadMyBest('spotdiff');
     const overlay = document.getElementById('spotdiff-overlay');
     overlay.classList.remove('hidden');
-    overlay.querySelector('.overlay-title').textContent = '틀린그림찾기';
+    overlay.querySelector('.overlay-title').textContent = 'SPOTDIFF';
     overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 · 두 그림에서 다른 부분을 모두 찾아서 클릭하세요';
   }
 
@@ -8196,7 +8300,7 @@
     loadMyBest('hiddenpic');
     const overlay = document.getElementById('hiddenpic-overlay');
     overlay.classList.remove('hidden');
-    overlay.querySelector('.overlay-title').textContent = '숨은그림찾기';
+    overlay.querySelector('.overlay-title').textContent = 'HIDDENPIC';
     overlay.querySelector('.overlay-msg').textContent = '난이도를 선택하세요 · 사진 속에 숨어있는 서로 다른 물건들을 모두 찾으세요';
   }
 
@@ -8555,7 +8659,7 @@
     drawSidesort();
     const overlay = document.getElementById('sidesort-overlay');
     overlay.classList.remove('hidden');
-    overlay.querySelector('.overlay-title').textContent = '좌우분류';
+    overlay.querySelector('.overlay-title').textContent = 'SIDESORT';
     overlay.querySelector('.overlay-msg').textContent = '내려오는 캐릭터를 같은 캐릭터가 있는 쪽(←/→)으로 보내세요';
   }
 
@@ -8709,6 +8813,353 @@
     else if(e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D'){ e.preventDefault(); sidesortSend('R'); }
   }
 
+
+
+  /* ============================================================
+     SUBWAY RACE (실시간 1:1 지하철 역 이름 타자 대결, Supabase Realtime)
+  ============================================================= */
+  const SUBWAY_COURSES = {
+    short: { label:'2호선 성수→사당 (16역)', stations:['성수','건대입구','구의','강변','잠실나루','잠실','잠실새내','종합운동장','삼성','선릉','역삼','강남','교대','서초','방배','사당'] },
+    line2: { label:'2호선 순환 (43역)', stations:['시청','을지로입구','을지로3가','을지로4가','동대문역사문화공원','신당','상왕십리','왕십리','한양대','뚝섬','성수','건대입구','구의','강변','잠실나루','잠실','잠실새내','종합운동장','삼성','선릉','역삼','강남','교대','서초','방배','사당','낙성대','서울대입구','봉천','신림','신대방','구로디지털단지','대림','신도림','문래','영등포구청','당산','합정','홍대입구','신촌','이대','아현','충정로'] },
+    line3: { label:'3호선 대화→오금 (44역)', stations:['대화','주엽','정발산','마두','백석','대곡','화정','원당','원흥','삼송','지축','구파발','연신내','불광','녹번','홍제','무악재','독립문','경복궁','안국','종로3가','을지로3가','충무로','동대입구','약수','금호','옥수','압구정','신사','잠원','고속터미널','교대','남부터미널','양재','매봉','도곡','대치','학여울','대청','일원','수서','가락시장','경찰병원','오금'] }
+  };
+  const SUBWAY_MAX_SECONDS = 240;
+  let subwayChannel = null, subwayMatch = null, subwayMyNum = null;
+  let subwayRace = null;      // { stations, idx, base, startPerf, running, over, timer, cdTimer }
+  let subwayEnded = false;
+
+  function subwayCourseOf(key){ return SUBWAY_COURSES[key] || SUBWAY_COURSES.short; }
+  function generateSubwayRoomCode(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = ''; for(let i=0;i<5;i++) code += chars[Math.floor(Math.random()*chars.length)];
+    return code;
+  }
+  function subwayRemoveChannel(){ if(subwayChannel){ sb.removeChannel(subwayChannel); subwayChannel = null; } }
+  function subwayStopTimers(){
+    if(subwayRace){
+      subwayRace.running = false;
+      if(subwayRace.timer){ clearInterval(subwayRace.timer); subwayRace.timer = null; }
+      if(subwayRace.cdTimer){ clearInterval(subwayRace.cdTimer); subwayRace.cdTimer = null; }
+    }
+  }
+  function subwayShowView(view){
+    document.getElementById('subway-lobby').classList.toggle('hidden', view!=='lobby');
+    document.getElementById('subway-waiting').classList.toggle('hidden', view!=='waiting');
+    document.getElementById('subway-match').classList.toggle('hidden', view!=='match');
+    document.getElementById('subway-overlay').classList.add('hidden');
+    const labelMap = { lobby:'로비', waiting:'대기중', match:'대전중' };
+    document.getElementById('subwayrace-label').textContent = labelMap[view] || '';
+  }
+  function prepareSubway(){
+    subwayStopTimers(); subwayRemoveChannel();
+    subwayMatch = null; subwayMyNum = null; subwayRace = null; subwayEnded = false;
+    const sel = document.getElementById('subway-course');
+    if(!sel.options.length){
+      Object.keys(SUBWAY_COURSES).forEach(function(k){
+        const o = document.createElement('option'); o.value = k; o.textContent = SUBWAY_COURSES[k].label; sel.appendChild(o);
+      });
+    }
+    subwayShowView('lobby');
+    fetchSubwayRooms();
+    subwayRemoveChannel();
+    subwayChannel = sb.channel('subway-lobby')
+      .on('postgres_changes', { event:'*', schema:'public', table:'subway_matches' }, function(){ fetchSubwayRooms(); })
+      .subscribe();
+    loadMyBest('subwayrace');
+  }
+  async function fetchSubwayRooms(){
+    const el = document.getElementById('subway-room-list');
+    try{
+      const cutoff = new Date(Date.now() - 10*60*1000).toISOString();
+      const { data, error } = await sb.from('subway_matches')
+        .select('id, player1_id, player1_nickname, course, created_at')
+        .eq('status','waiting').gte('created_at', cutoff).order('created_at', { ascending:true });
+      if(error) throw error;
+      const rooms = (data||[]).filter(function(r){ return r.player1_id !== playerId; });
+      el.innerHTML = '';
+      if(rooms.length === 0){
+        el.innerHTML = '<div class="fortress-empty-msg">대기 중인 방이 없어요. 방을 만들어보세요!</div>';
+        return;
+      }
+      rooms.forEach(function(room){
+        const item = document.createElement('div'); item.className = 'fortress-room-item';
+        const span = document.createElement('span');
+        span.textContent = (room.player1_nickname || '익명') + ' · ' + subwayCourseOf(room.course).label;
+        const btn = document.createElement('button'); btn.type = 'button'; btn.textContent = '참가하기';
+        btn.addEventListener('click', function(){ joinSubwayRoom(room.id); });
+        item.appendChild(span); item.appendChild(btn); el.appendChild(item);
+      });
+    }catch(e){
+      el.innerHTML = '<div class="fortress-empty-msg">대기 중인 방이 없어요. 방을 만들어보세요!</div>';
+    }
+  }
+  async function createSubwayRoom(){
+    if(!playerId) return;
+    const course = document.getElementById('subway-course').value || 'short';
+    try{
+      const { data, error } = await sb.from('subway_matches').insert({
+        room_code: generateSubwayRoomCode(), course: course,
+        player1_id: playerId, player1_nickname: nickname || '익명', status:'waiting'
+      }).select().single();
+      if(error) throw error;
+      subwayMatch = data; subwayMyNum = 1;
+      subwayShowView('waiting');
+      subscribeSubwayMatch(data.id);
+    }catch(e){ alert('방 생성에 실패했어요. 다시 시도해주세요.'); }
+  }
+  async function joinSubwayRoom(roomId){
+    if(!playerId) return;
+    try{
+      const { data, error } = await sb.from('subway_matches')
+        .update({ player2_id: playerId, player2_nickname: nickname || '익명', status:'playing', updated_at:new Date().toISOString() })
+        .eq('id', roomId).eq('status','waiting').select();
+      if(error) throw error;
+      if(!data || data.length === 0){ alert('이미 다른 사람이 참가했어요.'); fetchSubwayRooms(); return; }
+      subwayMatch = data[0]; subwayMyNum = 2;
+      subscribeSubwayMatch(roomId);
+      beginSubwayMatch();
+    }catch(e){ alert('참가에 실패했어요. 다시 시도해주세요.'); }
+  }
+  function subscribeSubwayMatch(matchId){
+    subwayRemoveChannel();
+    subwayChannel = sb.channel('subway-match-'+matchId)
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'subway_matches', filter:'id=eq.'+matchId }, function(payload){
+        handleSubwayUpdate(payload.new);
+      })
+      .subscribe();
+  }
+  function handleSubwayUpdate(row){
+    const prev = subwayMatch;
+    subwayMatch = row;
+    if(prev && prev.status === 'waiting' && row.status === 'playing'){
+      beginSubwayMatch();
+      return;
+    }
+    renderSubwayProgress();
+    if(row.status === 'finished') finishSubwayMatch(row);
+  }
+
+  function beginSubwayMatch(){
+    const m = subwayMatch;
+    const course = subwayCourseOf(m.course);
+    subwayStopTimers();
+    subwayEnded = false;
+    subwayRace = { stations: course.stations, idx:0, base:0, startPerf:0, running:false, over:false, timer:null, cdTimer:null };
+    subwayShowView('match');
+    const myNick = subwayMyNum===1 ? m.player1_nickname : m.player2_nickname;
+    const oppNick = subwayMyNum===1 ? m.player2_nickname : m.player1_nickname;
+    document.getElementById('subway-vs').innerHTML = '<b class="me">'+escapeHtml(myNick||'나')+'</b> (나) vs <b class="opp">'+escapeHtml(oppNick||'상대')+'</b>';
+    document.getElementById('subway-course-name').textContent = '🚇 ' + course.label;
+    const input = document.getElementById('subway-input');
+    input.value = ''; input.disabled = true;
+    renderSubwayRace(); renderSubwayProgress();
+    // 3-2-1 카운트다운 후 시작
+    const cd = document.getElementById('subway-countdown');
+    let n = 3;
+    cd.textContent = String(n); cd.classList.remove('hidden');
+    subwayRace.cdTimer = setInterval(function(){
+      n--;
+      if(n > 0){ cd.textContent = String(n); return; }
+      clearInterval(subwayRace.cdTimer); subwayRace.cdTimer = null;
+      cd.textContent = 'GO!';
+      setTimeout(function(){ cd.classList.add('hidden'); }, 450);
+      startSubwayRace();
+    }, 1000);
+  }
+  function startSubwayRace(){
+    const r = subwayRace;
+    if(!r || r.over) return;
+    r.running = true; r.startPerf = performance.now();
+    const input = document.getElementById('subway-input');
+    input.disabled = false; input.value = ''; r.base = 0;
+    try{ input.focus(); }catch(e){}
+    r.timer = setInterval(subwayTick, 100);
+    renderSubwayRace();
+  }
+  function subwayTick(){
+    const r = subwayRace;
+    if(!r || !r.running) return;
+    const sec = (performance.now() - r.startPerf)/1000;
+    document.getElementById('subway-time').textContent = sec.toFixed(1) + 's';
+    if(sec >= SUBWAY_MAX_SECONDS) handleSubwayTimeout();
+  }
+  async function handleSubwayTimeout(){
+    const m = subwayMatch;
+    if(!m || m.status !== 'playing') return;
+    subwayStopTimers();
+    const winner = (m.player1_progress >= m.player2_progress) ? 1 : 2;
+    try{
+      const { data } = await sb.from('subway_matches')
+        .update({ status:'finished', winner:winner, updated_at:new Date().toISOString() })
+        .eq('id', m.id).eq('status','playing').select();
+      if(data && data.length>0) handleSubwayUpdate(data[0]);
+    }catch(e){}
+  }
+
+  function renderSubwayRace(){
+    const r = subwayRace; if(!r) return;
+    const st = r.stations;
+    document.getElementById('subway-prev').textContent = r.idx > 0 ? '✓ ' + st[r.idx-1] : '';
+    document.getElementById('subway-current').textContent = r.idx < st.length ? st[r.idx] : '도착!';
+    document.getElementById('subway-next').textContent = st.slice(r.idx+1, r.idx+5).join('  ›  ');
+    renderSubwayTyped();
+    renderSubwayProgress();
+  }
+  function subwaySlice(){
+    const r = subwayRace; if(!r) return '';
+    return document.getElementById('subway-input').value.slice(r.base).replace(/\s/g,'');
+  }
+  function renderSubwayTyped(){
+    const r = subwayRace; if(!r) return;
+    const typed = subwaySlice();
+    const target = r.stations[r.idx] || '';
+    const el = document.getElementById('subway-typed');
+    let html = '';
+    for(let i=0;i<typed.length;i++){
+      const ch = escapeHtml(typed[i]);
+      html += (typed[i] === target[i]) ? ch : '<span class="bad">'+ch+'</span>';
+    }
+    el.innerHTML = html + '<span class="caret"></span>';
+  }
+  function renderSubwayProgress(){
+    const m = subwayMatch, r = subwayRace; if(!m || !r) return;
+    const total = r.stations.length;
+    const mine = r.idx;
+    const opp = subwayMyNum===1 ? (m.player2_progress||0) : (m.player1_progress||0);
+    const pm = Math.min(100, mine/total*100), po = Math.min(100, opp/total*100);
+    document.getElementById('subway-fill-me').style.width = pm+'%';
+    document.getElementById('subway-train-me').style.left = pm+'%';
+    document.getElementById('subway-count-me').textContent = mine+'/'+total;
+    document.getElementById('subway-fill-opp').style.width = po+'%';
+    document.getElementById('subway-train-opp').style.left = po+'%';
+    document.getElementById('subway-count-opp').textContent = opp+'/'+total;
+  }
+
+  function onSubwayInput(){
+    const r = subwayRace;
+    if(!r || !r.running || r.over) return;
+    const input = document.getElementById('subway-input');
+    const typed = subwaySlice();
+    const target = r.stations[r.idx];
+    if(typed === target){
+      r.idx++;
+      r.base = input.value.length;
+      subwayReportProgress();
+      if(r.idx >= r.stations.length){ subwayFinishMine(); }
+      renderSubwayRace();
+      return;
+    }
+    renderSubwayTyped();
+  }
+  // 조합(한글 입력) 중에는 입력창 값을 비우지 않는다 — 기준 위치(base)만 이동시켜 IME 오동작을 피한다
+  function subwayMaybeResetInput(ev){
+    const r = subwayRace; if(!r) return;
+    const input = document.getElementById('subway-input');
+    if(ev && ev.isComposing) return;
+    if(input.value.length > 40 && input.value.slice(r.base).replace(/\s/g,'') === ''){
+      input.value = ''; r.base = 0;
+    }
+  }
+  async function subwayReportProgress(){
+    const m = subwayMatch, r = subwayRace; if(!m || !r || r.over) return;
+    const col = subwayMyNum===1 ? 'player1_progress' : 'player2_progress';
+    const upd = { updated_at:new Date().toISOString() }; upd[col] = r.idx;
+    try{ await sb.from('subway_matches').update(upd).eq('id', m.id).eq('status','playing'); }catch(e){}
+  }
+  async function subwayFinishMine(){
+    const m = subwayMatch, r = subwayRace; if(!m || !r) return;
+    const elapsedMs = Math.round(performance.now() - r.startPerf);
+    r.finishedMs = elapsedMs;
+    subwayStopTimers();
+    document.getElementById('subway-time').textContent = (elapsedMs/1000).toFixed(1) + 's';
+    const col = subwayMyNum===1 ? 'player1_progress' : 'player2_progress';
+    const upd = { status:'finished', winner:subwayMyNum, updated_at:new Date().toISOString() }; upd[col] = r.stations.length;
+    try{
+      const { data } = await sb.from('subway_matches').update(upd).eq('id', m.id).eq('status','playing').select();
+      if(data && data.length>0){ handleSubwayUpdate(data[0]); }
+    }catch(e){}
+  }
+  async function incrementSubwayWins(){
+    if(!playerId) return 0;
+    try{
+      const { data: existing } = await sb.from('scores').select('score').eq('player_id', playerId).eq('game','subwayrace').maybeSingle();
+      const newCount = (existing ? existing.score : 0) + 1;
+      await sb.from('scores').upsert({ player_id: playerId, game:'subwayrace', score:newCount, updated_at:new Date().toISOString() });
+      return newCount;
+    }catch(e){ return 0; }
+  }
+  function finishSubwayMatch(row){
+    if(subwayEnded) return;
+    subwayEnded = true;
+    const r = subwayRace;
+    if(r){ r.over = true; subwayStopTimers(); }
+    subwayRemoveChannel();
+    try{ document.getElementById('subway-input').disabled = true; document.getElementById('subway-input').blur(); }catch(e){}
+    const won = row.winner === subwayMyNum;
+    const overlay = document.getElementById('subway-overlay');
+    overlay.classList.remove('hidden');
+    document.getElementById('subway-overlay-title').textContent = won ? 'YOU WIN!' : 'YOU LOSE';
+    const msgEl = document.getElementById('subway-overlay-msg');
+    const finishedAll = r && r.idx >= r.stations.length;
+    const myTime = (r && r.finishedMs) ? (r.finishedMs/1000).toFixed(1) + '초' : '';
+    if(won){
+      msgEl.textContent = finishedAll ? ('완주! 기록 ' + myTime) : '상대가 먼저 나가서 승리!';
+      incrementSubwayWins().then(function(n){
+        if(n) msgEl.textContent += ' · 누적 ' + n + '승';
+        loadMyBest('subwayrace'); renderTeamBattle();
+      });
+    }else{
+      msgEl.textContent = '상대가 먼저 도착했어요. 다음엔 더 빨리!';
+    }
+  }
+
+  async function leaveSubwayMatch(){
+    const m = subwayMatch;
+    if(m && m.status === 'playing' && !subwayEnded){
+      const winner = subwayMyNum===1 ? 2 : 1;
+      try{ await sb.from('subway_matches').update({ status:'finished', winner:winner, updated_at:new Date().toISOString() }).eq('id', m.id).eq('status','playing'); }catch(e){}
+    }
+    prepareSubway();
+  }
+  function cleanupSubway(){
+    const m = subwayMatch;
+    if(m && !subwayEnded){
+      if(m.status === 'playing'){
+        const winner = subwayMyNum===1 ? 2 : 1;
+        try{ sb.from('subway_matches').update({ status:'finished', winner:winner, updated_at:new Date().toISOString() }).eq('id', m.id).eq('status','playing').then(function(){}, function(){}); }catch(e){}
+      }else if(m.status === 'waiting' && subwayMyNum === 1){
+        try{ sb.from('subway_matches').delete().eq('id', m.id).eq('status','waiting').then(function(){}, function(){}); }catch(e){}
+      }
+    }
+    subwayStopTimers(); subwayRemoveChannel();
+    subwayMatch = null; subwayMyNum = null; subwayRace = null; subwayEnded = false;
+  }
+
+  document.getElementById('subway-create').addEventListener('click', createSubwayRoom);
+  document.getElementById('subway-cancel').addEventListener('click', async function(){
+    if(subwayMatch){
+      try{ await sb.from('subway_matches').delete().eq('id', subwayMatch.id).eq('status','waiting'); }catch(e){}
+    }
+    prepareSubway();
+  });
+  document.getElementById('subway-leave').addEventListener('click', leaveSubwayMatch);
+  document.getElementById('subway-back-lobby').addEventListener('click', prepareSubway);
+  document.getElementById('subway-input').addEventListener('input', function(e){ onSubwayInput(); subwayMaybeResetInput(e); });
+  document.getElementById('subway-input').addEventListener('compositionend', function(){ onSubwayInput(); subwayMaybeResetInput(null); });
+  document.getElementById('subway-input').addEventListener('keydown', function(e){
+    const r = subwayRace; if(!r || !r.running) return;
+    if(e.key === 'Escape' || e.key === 'Enter'){
+      // 잘못 입력한 글자를 한 번에 지우기 (맞게 입력했다면 이미 자동으로 넘어갔음)
+      e.preventDefault();
+      r.base = this.value.length;
+      const panel = document.getElementById('subway-panel');
+      if(e.key === 'Enter'){ panel.classList.remove('shake'); void panel.offsetWidth; panel.classList.add('shake'); }
+      renderSubwayTyped();
+    }
+  });
+  document.getElementById('subway-panel').addEventListener('pointerdown', function(){
+    const i = document.getElementById('subway-input'); if(!i.disabled){ try{ i.focus(); }catch(e){} }
+  });
 
   /* ============ mobile guards: 더블탭 확대 / 핀치 확대 / 텍스트 선택 / 길게누르기 메뉴 방지 ============ */
   (function setupMobileGuards(){
