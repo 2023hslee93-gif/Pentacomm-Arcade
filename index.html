@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <title>NEON ARCADE</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap');
@@ -36,7 +36,14 @@
     overflow-x:hidden;
     overscroll-behavior-y:contain;
     -webkit-font-smoothing:antialiased;
+    /* 모바일: 더블탭 확대 · 텍스트 선택 · 길게 눌러 나오는 메뉴/하이라이트 방지 */
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none; user-select:none;
   }
+  input, textarea, select, [contenteditable="true"]{ -webkit-user-select:text; user-select:text; -webkit-touch-callout:default; }
+  img, canvas{ -webkit-user-drag:none; -webkit-touch-callout:none; }
 
   .pixel{ font-family:'Press Start 2P', monospace; letter-spacing:1px; }
 
@@ -51,14 +58,20 @@
       transparent 4px
     );
     mix-blend-mode:overlay;
+    transform:translateZ(0);
   }
   #crt-overlay::after{
     content:'';
     position:absolute; inset:0;
     box-shadow: inset 0 0 100px 20px rgba(0,0,0,0.35);
   }
-  @media (prefers-reduced-motion: no-preference){
+  @media (prefers-reduced-motion: no-preference) and (hover:hover) and (pointer:fine){
     #crt-overlay{ animation:flicker 6s infinite; }
+  }
+  /* 터치 기기(모바일)에서는 전체 화면 블렌딩 효과를 꺼서 게임이 버벅이지 않게 */
+  @media (pointer:coarse){
+    #crt-overlay{ display:none; }
+    .screen.active{ animation:none; }
   }
   @keyframes flicker{
     0%,96%,100%{ opacity:1; }
@@ -1067,6 +1080,11 @@
         <div class="cabinet-label pixel">숨은그림찾기</div>
         <div class="cabinet-sub">복잡한 그림 속에 숨은 아이템을 모두 찾으세요</div>
       </button>
+      <button class="cabinet" data-game="sidesort" style="--accent:var(--pink)">
+        <div class="cabinet-screen" style="font-size:40px;">🐱</div>
+        <div class="cabinet-label pixel">좌우분류</div>
+        <div class="cabinet-sub">가운데서 내려오는 캐릭터를 알맞은 진영으로 보내세요</div>
+      </button>
     </div>
 
     <div class="roster-panel">
@@ -1755,6 +1773,26 @@
     <p class="controls-hint">위에 표시된 물건들이 사진 속 어딘가에 하나씩 숨어있어요 · 자세히 보고 클릭/탭하세요 · 모두 찾으면 클리어</p>
   </section>
 
+  <!-- SIDESORT -->
+  <section id="screen-sidesort" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>SCORE<b id="sidesort-score">0</b></span>
+        <span>BEST<b id="sidesort-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <canvas id="sidesort-canvas" width="360" height="520"></canvas>
+      <div class="overlay" id="sidesort-overlay">
+        <div class="overlay-title pixel">좌우분류</div>
+        <div class="overlay-msg">내려오는 캐릭터를 같은 캐릭터가 있는 쪽(←/→)으로 보내세요</div>
+        <button class="start-btn" id="sidesort-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">← → 키(또는 A/D, 화면 좌/우 탭)로 맨 아래 캐릭터를 보내요 · 연속으로 맞히면 콤보 배율이 올라가요(x2~x5) · 틀리면 하트가 줄고, 캐릭터가 위까지 쌓이면 끝!</p>
+  </section>
+
   <section id="screen-admin" class="screen">
     <div class="game-topbar">
       <button class="back-btn" data-back>← 오락실로</button>
@@ -1852,7 +1890,8 @@
     { id:'numtap', label:'NUMTAP', icon:'🎯', color:'var(--yellow)' },
     { id:'shikaku', label:'SHIKAKU', icon:'🟩', color:'var(--green)' },
     { id:'spotdiff', label:'틀린그림찾기', icon:'🔍', color:'var(--pink)' },
-    { id:'hiddenpic', label:'숨은그림찾기', icon:'🧐', color:'var(--orange)' }
+    { id:'hiddenpic', label:'숨은그림찾기', icon:'🧐', color:'var(--orange)' },
+    { id:'sidesort', label:'좌우분류', icon:'🐱', color:'var(--pink)' }
   ];
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
@@ -2494,6 +2533,7 @@
     if(currentScreen === 'shikaku' && shikakuState){ stopShikakuTimer(); }
     if(currentScreen === 'spotdiff' && spotdiffState){ stopSpotdiffTimer(); }
     if(currentScreen === 'hiddenpic' && hiddenpicState){ stopHiddenpicTimer(); }
+    if(currentScreen === 'sidesort' && sidesortState){ stopSidesortLoop(); }
     currentScreen = id;
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
@@ -2532,6 +2572,7 @@
     if(id === 'shikaku') prepareShikaku();
     if(id === 'spotdiff') prepareSpotdiff();
     if(id === 'hiddenpic') prepareHiddenpic();
+    if(id === 'sidesort') prepareSidesort();
     if(id === 'admin') prepareAdmin();
   }
 
@@ -8366,7 +8407,322 @@
     else if(currentScreen==='tenten') handleTentenKey(e);
     else if(currentScreen==='catchmind') handleCatchmindKey(e);
     else if(currentScreen==='fortress') handleFortressKey(e);
+    else if(currentScreen==='sidesort') handleSidesortKey(e);
   });
+
+
+  /* ============================================================
+     SIDESORT (좌우분류) — 가운데서 내려오는 캐릭터를 알맞은 진영으로
+  ============================================================= */
+  const SS_W = 360, SS_H = 520, SS_STACK_BOTTOM = 468, SS_STACK_GAP = 44, SS_MAX_STACK = 9, SS_R = 19;
+  const SS_TYPES = [
+    { body:'#FF7EB6', ear:'cat' },   // 분홍 고양이
+    { body:'#4DA3FF', ear:'round' }, // 파랑 곰
+    { body:'#7ED957', ear:'round' }, // 초록 곰
+    { body:'#FF4757', ear:'cat' },   // 빨강 고양이
+    { body:'#FFE3A3', ear:'cap' },   // 모자 쓴 꼬마
+    { body:'#C4903F', ear:'box' }    // 갈색 상자
+  ];
+  const SS_SLOTS_Y = [250, 332, 414];
+  const SS_MIN_BUFFER = 6; // 항상 미리 이만큼의 캐릭터가 대기하도록 채워둔다
+  // 콤보 배율: 1~4콤보 x1 · 5~9 x2 · 10~19 x3 · 20~29 x4 · 30+ x5
+  function sidesortMultiplier(combo){
+    if(combo >= 30) return 5; if(combo >= 20) return 4; if(combo >= 10) return 3; if(combo >= 5) return 2; return 1;
+  }
+  // 10콤보마다 보너스 (10콤보 +50, 20콤보 +100, 30콤보 +150 …)
+  function sidesortMilestoneBonus(combo){
+    return (combo > 0 && combo % 10 === 0) ? (combo/10)*50 : 0;
+  }
+  function sidesortPushItem(s, startY){
+    s.queue.push({ type:Math.floor(Math.random()*6), x:SS_W/2, y:startY });
+  }
+  let sidesortCtx, sidesortState;
+
+  function ssRoundRectPath(ctx, x, y, w, h, rad){
+    if(ctx.roundRect){ ctx.roundRect(x, y, w, h, rad); return; }
+    ctx.moveTo(x+rad,y); ctx.lineTo(x+w-rad,y); ctx.quadraticCurveTo(x+w,y,x+w,y+rad);
+    ctx.lineTo(x+w,y+h-rad); ctx.quadraticCurveTo(x+w,y+h,x+w-rad,y+h);
+    ctx.lineTo(x+rad,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-rad);
+    ctx.lineTo(x,y+rad); ctx.quadraticCurveTo(x,y,x+rad,y);
+  }
+  // 캐릭터를 (0,0) 중심으로 직접 그린다 — 스프라이트 캐시를 만들 때만 사용
+  function ssPaintChar(ctx, type, r, tint){
+    const t = SS_TYPES[type];
+    ctx.fillStyle = t.body;
+    if(t.ear === 'cat'){
+      ctx.beginPath(); ctx.moveTo(-r*0.95,-r*0.2); ctx.lineTo(-r*0.7,-r*1.25); ctx.lineTo(-r*0.15,-r*0.8); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(r*0.95,-r*0.2); ctx.lineTo(r*0.7,-r*1.25); ctx.lineTo(r*0.15,-r*0.8); ctx.fill();
+    }else if(t.ear === 'round'){
+      ctx.beginPath(); ctx.arc(-r*0.7,-r*0.8,r*0.38,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(r*0.7,-r*0.8,r*0.38,0,Math.PI*2); ctx.fill();
+    }
+    if(t.ear === 'box'){
+      ctx.beginPath(); ssRoundRectPath(ctx,-r,-r*0.95,r*2,r*1.9,r*0.28); ctx.fill();
+    }else{
+      ctx.beginPath(); ctx.ellipse(0,0,r*1.05,r*0.95,0,0,Math.PI*2); ctx.fill();
+    }
+    if(t.ear === 'cap'){
+      ctx.fillStyle = '#9aa0a6';
+      ctx.beginPath(); ctx.ellipse(0,-r*0.55,r*0.95,r*0.5,0,Math.PI,Math.PI*2); ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(255,120,120,0.55)';
+    ctx.beginPath(); ctx.arc(-r*0.62,r*0.28,r*0.2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(r*0.62,r*0.28,r*0.2,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#1b1b2a';
+    ctx.beginPath(); ctx.arc(-r*0.36,0,r*0.1,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(r*0.36,0,r*0.1,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle = '#1b1b2a'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(0,r*0.18,r*0.14,0.1*Math.PI,0.9*Math.PI); ctx.stroke();
+    if(tint){ ctx.fillStyle = tint; ctx.beginPath(); ctx.arc(0,0,r*1.1,0,Math.PI*2); ctx.fill(); }
+  }
+  // 캐릭터별 스프라이트를 한 번만 그려 캐시 → 매 프레임 drawImage 한 번으로 끝 (화면 DPR에 맞춰 선명하게)
+  const ssSpriteCache = {};
+  function ssDpr(){ return Math.min(2, window.devicePixelRatio || 1); }
+  function getSidesortSprite(type, r, tint){
+    const key = type + '_' + r + '_' + (tint ? 1 : 0);
+    let spr = ssSpriteCache[key];
+    if(spr) return spr;
+    const dpr = ssDpr();
+    const pad = Math.ceil(r*1.5);
+    const size = pad*2;
+    const c = document.createElement('canvas');
+    c.width = Math.ceil(size*dpr); c.height = Math.ceil(size*dpr);
+    const cx = c.getContext('2d');
+    cx.scale(dpr, dpr);
+    cx.translate(pad, pad);
+    ssPaintChar(cx, type, r, tint);
+    spr = { canvas:c, pad:pad, size:size };
+    ssSpriteCache[key] = spr;
+    return spr;
+  }
+  function drawSidesortChar(ctx, type, cx, cy, r, tint){
+    const spr = getSidesortSprite(type, r, tint);
+    ctx.drawImage(spr.canvas, cx - spr.pad, cy - spr.pad, spr.size, spr.size);
+  }
+  // 움직이지 않는 배경 · 양쪽 진영 캐릭터는 한 번만 그려 두고 매 프레임 복사
+  function buildSidesortStaticLayer(s){
+    const dpr = ssDpr();
+    const c = document.createElement('canvas');
+    c.width = SS_W*dpr; c.height = SS_H*dpr;
+    const ctx = c.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.fillStyle = '#12101f';
+    ctx.fillRect(0,0,SS_W,SS_H);
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.fillRect(SS_W/2-34, 0, 68, SS_H);
+    ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(0,229,255,0.8)'; ctx.fillText('← LEFT', 52, 214);
+    ctx.fillStyle = 'rgba(255,46,126,0.8)'; ctx.fillText('RIGHT →', SS_W-52, 214);
+    s.leftTypes.forEach(function(t,i){ drawSidesortChar(ctx, t, 52, SS_SLOTS_Y[i], SS_R+2); });
+    s.rightTypes.forEach(function(t,i){ drawSidesortChar(ctx, t, SS_W-52, SS_SLOTS_Y[i], SS_R+2); });
+    const dangerY = SS_STACK_BOTTOM - (SS_MAX_STACK-2)*SS_STACK_GAP;
+    ctx.strokeStyle = 'rgba(255,71,87,0.35)'; ctx.setLineDash([6,6]);
+    ctx.beginPath(); ctx.moveTo(SS_W/2-40, dangerY); ctx.lineTo(SS_W/2+40, dangerY); ctx.stroke(); ctx.setLineDash([]);
+    return c;
+  }
+  let ssHeartSprite = null;
+  function getSidesortHeart(){
+    if(ssHeartSprite) return ssHeartSprite;
+    const dpr = ssDpr();
+    const c = document.createElement('canvas');
+    c.width = Math.ceil(22*dpr); c.height = Math.ceil(22*dpr);
+    const cx = c.getContext('2d'); cx.scale(dpr,dpr);
+    cx.fillStyle = '#FF4757';
+    cx.beginPath();
+    cx.moveTo(11,19); cx.bezierCurveTo(-3,9, 4,-1, 11,6); cx.bezierCurveTo(18,-1, 25,9, 11,19); cx.fill();
+    ssHeartSprite = c;
+    return c;
+  }
+
+  function prepareSidesort(){
+    const order = [0,1,2,3,4,5];
+    for(let i=order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const tmp=order[i]; order[i]=order[j]; order[j]=tmp; }
+    const sideOf = {};
+    order.forEach(function(type, idx){ sideOf[type] = idx < 3 ? 'L' : 'R'; });
+    sidesortState = {
+      leftTypes: order.slice(0,3), rightTypes: order.slice(3),
+      sideOf: sideOf, queue: [], flying: [], pops: [],
+      score:0, combo:0, maxCombo:0, correct:0, lives:3,
+      spawnAcc:0, flash:0, shake:0, running:false, over:false, rafId:null, lastTime:0
+    };
+    // 시작 전부터 캐릭터가 미리 줄 서 있도록 채워둔다
+    for(let i=0;i<SS_MIN_BUFFER;i++){
+      sidesortPushItem(sidesortState, SS_STACK_BOTTOM - i*SS_STACK_GAP);
+    }
+    sidesortState.staticLayer = buildSidesortStaticLayer(sidesortState);
+    document.getElementById('sidesort-score').textContent = '0';
+    loadMyBest('sidesort');
+    drawSidesort();
+    const overlay = document.getElementById('sidesort-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = '좌우분류';
+    overlay.querySelector('.overlay-msg').textContent = '내려오는 캐릭터를 같은 캐릭터가 있는 쪽(←/→)으로 보내세요';
+  }
+
+  function sidesortInterval(s){ return Math.max(420, 1400 - s.correct*12); }
+
+  function sidesortSend(dir){
+    const s = sidesortState;
+    if(!s || !s.running || s.queue.length === 0) return;
+    const item = s.queue.shift();
+    const ok = s.sideOf[item.type] === dir;
+    const tx = dir === 'L' ? 52 : SS_W-52;
+    const sideTypes = dir === 'L' ? s.leftTypes : s.rightTypes;
+    const slot = Math.max(0, sideTypes.indexOf(item.type));
+    const ty = ok ? SS_SLOTS_Y[slot] : SS_SLOTS_Y[1];
+    s.flying.push({ type:item.type, x:item.x, y:item.y, tx:tx, ty:ty, t:0, ok:ok });
+    if(ok){
+      s.combo++; s.correct++;
+      if(s.combo > s.maxCombo) s.maxCombo = s.combo;
+      const mult = sidesortMultiplier(s.combo);
+      const bonus = sidesortMilestoneBonus(s.combo);
+      const gain = 10 * mult + bonus;
+      s.score += gain;
+      s.pops.push({ x:tx, y:ty-34, text:'+'+(10*mult)+(mult>1?' x'+mult:''), life:1, color:'#3DFF7A' });
+      if(bonus){ s.pops.push({ x:SS_W/2, y:110, text:s.combo+' COMBO BONUS +'+bonus, life:1.4, color:'#FFD23F' }); }
+      document.getElementById('sidesort-score').textContent = s.score;
+    }else{
+      s.combo = 0; s.lives--; s.flash = 1; s.shake = 1;
+      s.pops.push({ x:tx, y:ty-34, text:'MISS', life:1, color:'#FF4757' });
+      if(s.lives <= 0){ endSidesort(); return; }
+    }
+  }
+
+  function updateSidesort(dtMs){
+    const s = sidesortState;
+    // 보낸 만큼 바로 위에서 새 캐릭터가 채워져서, 항상 다음 캐릭터들이 미리 보인다
+    for(let k=0; s.queue.length < SS_MIN_BUFFER; k++){ sidesortPushItem(s, -30 - k*10); }
+    s.spawnAcc += dtMs;
+    if(s.spawnAcc >= sidesortInterval(s)){
+      s.spawnAcc = 0;
+      sidesortPushItem(s, -30);
+      if(s.queue.length > SS_MAX_STACK){ endSidesort(); return; }
+    }
+    s.queue.forEach(function(it, i){
+      const targetY = SS_STACK_BOTTOM - i*SS_STACK_GAP;
+      it.y += (targetY - it.y) * Math.min(1, dtMs/70);
+    });
+    s.flying.forEach(function(f){
+      f.t += dtMs/180;
+      const k = Math.min(1, f.t);
+      f.x = f.x + (f.tx - f.x) * Math.min(1, k*0.55 + 0.1);
+      f.y = f.y + (f.ty - f.y) * Math.min(1, k*0.55 + 0.1);
+    });
+    s.flying = s.flying.filter(function(f){ return f.t < 1; });
+    s.pops.forEach(function(p){ p.life -= dtMs/700; p.y -= dtMs*0.03; });
+    s.pops = s.pops.filter(function(p){ return p.life > 0; });
+    if(s.flash > 0) s.flash = Math.max(0, s.flash - dtMs/300);
+    if(s.shake > 0) s.shake = Math.max(0, s.shake - dtMs/300);
+  }
+
+  function drawSidesort(){
+    const ctx = sidesortCtx, s = sidesortState;
+    if(!ctx || !s) return;
+    ctx.save();
+    if(s.shake > 0) ctx.translate((Math.random()*2-1)*5*s.shake, (Math.random()*2-1)*5*s.shake);
+    if(s.staticLayer) ctx.drawImage(s.staticLayer, 0, 0, SS_W, SS_H);
+    // 스택 (위에서부터 그려서 맨 아래가 앞에 보이게)
+    for(let i=s.queue.length-1;i>=0;i--){
+      const it = s.queue[i];
+      drawSidesortChar(ctx, it.type, it.x, it.y, SS_R);
+    }
+    if(s.queue.length){
+      const f0 = s.queue[0];
+      ctx.strokeStyle = '#FFD23F'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(f0.x, f0.y, SS_R+5, 0, Math.PI*2); ctx.stroke();
+    }
+    for(let i=0;i<s.flying.length;i++){
+      const f = s.flying[i];
+      drawSidesortChar(ctx, f.type, f.x, f.y, SS_R, f.ok ? null : 'rgba(255,71,87,0.45)');
+    }
+    ctx.textAlign = 'center';
+    if(s.pops.length){
+      ctx.font = 'bold 15px sans-serif';
+      s.pops.forEach(function(p){ ctx.globalAlpha = Math.min(1,Math.max(0,p.life)); ctx.fillStyle = p.color; ctx.fillText(p.text, p.x, p.y); });
+      ctx.globalAlpha = 1;
+    }
+    if(s.combo >= 2){
+      ctx.font = 'bold 22px sans-serif'; ctx.fillStyle = '#FFD23F';
+      ctx.fillText(s.combo + ' COMBO', SS_W/2, 62);
+      const m = sidesortMultiplier(s.combo);
+      ctx.font = 'bold 14px sans-serif'; ctx.fillStyle = m > 1 ? '#FF9F43' : 'rgba(255,255,255,0.5)';
+      ctx.fillText('점수 x' + m, SS_W/2, 82);
+    }
+    const heart = getSidesortHeart();
+    for(let i=0;i<s.lives;i++) ctx.drawImage(heart, 10 + i*24, 12, 22, 22);
+    if(s.flash > 0){ ctx.fillStyle = 'rgba(255,71,87,'+(s.flash*0.28)+')'; ctx.fillRect(0,0,SS_W,SS_H); }
+    ctx.restore();
+  }
+
+  function sidesortLoop(t){
+    const s = sidesortState;
+    if(!s || !s.running) return;
+    const dt = Math.min(50, t - s.lastTime); s.lastTime = t;
+    updateSidesort(dt);
+    drawSidesort();
+    if(s.running) s.rafId = requestAnimationFrame(sidesortLoop);
+  }
+  function startSidesort(){
+    const s = sidesortState;
+    if(!s || s.running) return;
+    s.running = true; s.over = false;
+    document.getElementById('sidesort-overlay').classList.add('hidden');
+    s.lastTime = performance.now();
+    s.spawnAcc = 0;
+    s.rafId = requestAnimationFrame(sidesortLoop);
+  }
+  function stopSidesortLoop(){
+    if(sidesortState){ sidesortState.running = false; if(sidesortState.rafId) cancelAnimationFrame(sidesortState.rafId); }
+  }
+  function endSidesort(){
+    const s = sidesortState;
+    if(!s || s.over) return;
+    s.running = false; s.over = true;
+    if(s.rafId) cancelAnimationFrame(s.rafId);
+    drawSidesort();
+    const overlay = document.getElementById('sidesort-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'GAME OVER';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' · 최대 ' + s.maxCombo + '콤보 · 시작하기를 눌러 재도전';
+    finalizeScore('sidesort', s.score, overlay);
+  }
+  function sidesortStartOrRestart(){
+    if(!sidesortState) return;
+    if(sidesortState.over) prepareSidesort();
+    startSidesort();
+  }
+  document.getElementById('sidesort-start').addEventListener('click', sidesortStartOrRestart);
+  document.getElementById('sidesort-canvas').addEventListener('pointerdown', function(e){
+    if(!sidesortState) return;
+    if(!sidesortState.running){ sidesortStartOrRestart(); return; }
+    const rect = this.getBoundingClientRect();
+    sidesortSend((e.clientX - rect.left) < rect.width/2 ? 'L' : 'R');
+  });
+  function handleSidesortKey(e){
+    if(!sidesortState) return;
+    if(e.key === ' '){
+      e.preventDefault();
+      if(!sidesortState.running) sidesortStartOrRestart();
+      return;
+    }
+    if(e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A'){ e.preventDefault(); sidesortSend('L'); }
+    else if(e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D'){ e.preventDefault(); sidesortSend('R'); }
+  }
+
+
+  /* ============ mobile guards: 더블탭 확대 / 핀치 확대 / 텍스트 선택 / 길게누르기 메뉴 방지 ============ */
+  (function setupMobileGuards(){
+    function isEditable(el){
+      return !!(el && el.closest && el.closest('input, textarea, select, [contenteditable="true"]'));
+    }
+    // (더블탭 확대는 CSS touch-action:manipulation 으로 막는다 — touchend를 막으면 빠른 연타 입력이 씹히므로 JS로는 막지 않음)
+    ['gesturestart','gesturechange','gestureend'].forEach(function(ev){
+      document.addEventListener(ev, function(e){ e.preventDefault(); }, { passive:false });
+    });
+    document.addEventListener('dblclick', function(e){ if(!isEditable(e.target)) e.preventDefault(); });
+    document.addEventListener('selectstart', function(e){ if(!isEditable(e.target)) e.preventDefault(); });
+    document.addEventListener('contextmenu', function(e){ if(!isEditable(e.target)) e.preventDefault(); });
+  })();
 
   /* ============ init ============ */
   window.addEventListener('DOMContentLoaded', async function(){
@@ -8387,6 +8743,7 @@
     spotdiffCtxA = document.getElementById('spotdiff-canvas-a').getContext('2d');
     spotdiffCtxB = document.getElementById('spotdiff-canvas-b').getContext('2d');
     hiddenpicCtx = document.getElementById('hiddenpic-canvas').getContext('2d');
+    sidesortCtx = document.getElementById('sidesort-canvas').getContext('2d');
     await runStorageHealthCheck();
     await initPlayer();
     renderTeamBattle();
