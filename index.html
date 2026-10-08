@@ -199,7 +199,15 @@
     display:flex; align-items:center; justify-content:space-between;
     background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 14px;
   }
-  .admin-game-row .agr-label{ font-size:13px; }
+  .admin-game-row .agr-label{ font-size:13px; display:flex; align-items:center; gap:6px; min-width:0; }
+  .agr-no{ display:inline-block; min-width:20px; color:var(--text-dim); font-size:11px; }
+  .agr-actions{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
+  .agr-move{
+    width:30px; height:30px; border-radius:6px; border:1px solid var(--border);
+    background:var(--bg-deep); color:var(--text); font-size:12px; cursor:pointer; padding:0;
+  }
+  .agr-move:disabled{ opacity:.25; cursor:default; }
+  .admin-order-msg{ font-size:12px; color:var(--green); min-height:16px; margin:-8px 0 10px; }
   .admin-toggle{ position:relative; width:42px; height:24px; flex-shrink:0; display:block; }
   .admin-toggle input{ opacity:0; width:0; height:0; position:absolute; }
   .admin-toggle-track{
@@ -482,6 +490,22 @@
     background:rgba(255,71,87,0.08); box-shadow:0 0 10px rgba(255,71,87,0.4);
     pointer-events:none; display:none;
   }
+
+  /* ---------- colorspot ---------- */
+  .cs-timebar{ width:100%; max-width:340px; height:8px; margin:0 auto 10px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .cs-timebar-fill{ height:100%; width:100%; background:var(--yellow); border-radius:4px; }
+  .cs-timebar-fill.low{ background:var(--red); }
+  .cs-board{
+    display:grid; gap:6px; width:100%; max-width:340px; aspect-ratio:1/1; margin:0 auto;
+    padding:10px; background:var(--bg-deep); border:1px solid var(--border); border-radius:14px;
+    touch-action:manipulation; box-sizing:border-box;
+  }
+  .cs-cell{ border:0; border-radius:8px; padding:0; cursor:pointer; min-width:0; min-height:0; }
+  .cs-cell.right{ outline:3px solid #fff; outline-offset:-3px; }
+  .cs-cell.wrong{ animation:csShake .25s; }
+  @keyframes csShake{ 25%{transform:translateX(-3px);} 75%{transform:translateX(3px);} }
+  .cs-hearts{ letter-spacing:2px; }
+  .cs-board.hidden{ display:none; }
 
   /* ---------- numtap ---------- */
   .numtap-board{
@@ -1138,6 +1162,17 @@
         <div class="cabinet-label pixel">SIDESORT</div>
         <div class="cabinet-sub">가운데서 내려오는 캐릭터를 알맞은 진영으로 보내세요</div>
       </button>
+      <button class="cabinet" data-game="spintail" style="--accent:var(--orange)">
+        <div class="cabinet-screen" style="font-size:40px;">🐹</div>
+        <div class="cabinet-label pixel">SPINTAIL</div>
+        <div class="cabinet-sub">탭으로 회전 방향을 바꿔 친구들을 모으세요 · 꼬리에 부딪히면 끝!</div>
+      </button>
+
+      <button class="cabinet" data-game="colorspot" style="--accent:var(--pink)">
+        <div class="cabinet-screen" style="font-size:40px;">🎨</div>
+        <div class="cabinet-label pixel">COLORSPOT</div>
+        <div class="cabinet-sub">색깔이 살짝 다른 칸 하나를 찾아내세요 · 스테이지가 올라갈수록 어려워져요</div>
+      </button>
     </div>
 
     <div class="roster-panel">
@@ -1761,6 +1796,29 @@
     <p class="controls-hint">화면에 나온 역 이름을 순서대로 입력하세요 (역 이름만, 예: 강남) · 먼저 끝까지 도착하면 승리! · 틀리면 Esc/Enter로 지우기</p>
   </section>
 
+  <!-- COLORSPOT -->
+  <section id="screen-colorspot" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>STAGE<b id="colorspot-stage">1</b></span>
+        <span>LIFE<b id="colorspot-life" class="cs-hearts">❤❤❤</b></span>
+        <span>TIME<b id="colorspot-time">15</b></span>
+        <span>BEST<b id="colorspot-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="cs-timebar"><div class="cs-timebar-fill" id="colorspot-bar"></div></div>
+      <div class="cs-board" id="colorspot-board"></div>
+      <div class="overlay" id="colorspot-overlay">
+        <div class="overlay-title pixel">COLORSPOT</div>
+        <div class="overlay-msg">색깔이 조금 다른 칸 하나를 찾으세요!</div>
+        <button class="start-btn" id="colorspot-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">색이 다른 칸을 터치하세요 · 제한시간 15초 · 목숨 3개 · 스테이지가 오를수록 판이 커지고 색 차이는 작아져요</p>
+  </section>
+
   <!-- NUMTAP -->
   <section id="screen-numtap" class="screen">
     <div class="game-topbar">
@@ -1892,6 +1950,26 @@
     <p class="controls-hint">← → 키(또는 A/D, 화면 좌/우 탭)로 맨 아래 캐릭터를 보내요 · 연속으로 맞히면 콤보 배율이 올라가요(x2~x5) · 틀리면 하트가 줄고, 캐릭터가 위까지 쌓이면 끝!</p>
   </section>
 
+  <!-- SPINTAIL -->
+  <section id="screen-spintail" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>SCORE<b id="spintail-score">0</b></span>
+        <span>BEST<b id="spintail-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <canvas id="spintail-canvas" width="360" height="520"></canvas>
+      <div class="overlay" id="spintail-overlay">
+        <div class="overlay-title pixel">SPINTAIL</div>
+        <div class="overlay-msg">탭하면 회전 방향이 반대로 바뀌어요. 친구를 모으고 꼬리·벽은 피하세요!</div>
+        <button class="start-btn" id="spintail-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">화면 탭 / 스페이스 / ← → 로 시계·반시계 방향 전환 · 노란 점=꼬리 +1 · ✂️꼬리 감소 · 🛡️보호막 · 🐌느리게 · ✨점수 2배 · 오래 못 먹으면 운동장이 좁아져요</p>
+  </section>
+
   <section id="screen-admin" class="screen">
     <div class="game-topbar">
       <button class="back-btn" data-back>← 오락실로</button>
@@ -1910,7 +1988,8 @@
           <span id="admin-user-email"></span>
           <button class="link-btn" id="admin-logout-btn">로그아웃</button>
         </div>
-        <p class="admin-panel-sub">게임을 끄면 오락실 화면에서 회색 처리되고 '점검중' 표시가 붙으며, 유저가 클릭해도 실행되지 않습니다.</p>
+        <p class="admin-panel-sub">게임을 끄면 오락실 화면에서 회색 처리되고 '점검중' 표시가 붙으며, 유저가 클릭해도 실행되지 않습니다. ▲▼ 버튼으로 메인 화면의 게임 노출 순서도 바꿀 수 있어요.</p>
+        <div class="admin-order-msg" id="admin-order-msg"></div>
         <div class="admin-game-list" id="admin-game-list"></div>
       </div>
     </div>
@@ -1991,7 +2070,9 @@
     { id:'spotdiff', label:'SPOTDIFF', icon:'🔍', color:'var(--pink)' },
     { id:'hiddenpic', label:'HIDDENPIC', icon:'🧐', color:'var(--orange)' },
     { id:'sidesort', label:'SIDESORT', icon:'🐱', color:'var(--pink)' },
-    { id:'subwayrace', label:'SUBWAY RACE', icon:'🚇', color:'var(--green)' }
+    { id:'subwayrace', label:'SUBWAY RACE', icon:'🚇', color:'var(--green)' },
+    { id:'spintail', label:'SPINTAIL', icon:'🐹', color:'var(--orange)' },
+    { id:'colorspot', label:'COLORSPOT', icon:'🎨', color:'var(--pink)' }
   ];
   const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
@@ -2001,18 +2082,45 @@
      game_settings 테이블은 누구나 읽을 수 있고, 로그인한 관리자만 쓸 수 있다(RLS).
      행이 없는 게임은 기본적으로 켜져있는 것으로 취급한다. */
   let gameSettingsMap = {};
+  let gameOrderMap = {};   // game_id -> sort_order (관리자가 지정한 노출 순서)
   async function fetchGameSettings(){
     try{
-      const { data, error } = await sb.from('game_settings').select('game_id, enabled');
-      if(error) throw error;
-      const map = {};
-      (data || []).forEach(function(r){ map[r.game_id] = r.enabled; });
+      let res = await sb.from('game_settings').select('game_id, enabled, sort_order');
+      if(res.error){
+        // sort_order 컬럼이 아직 없는 경우(SQL 미실행)에도 ON/OFF는 동작하도록 폴백
+        res = await sb.from('game_settings').select('game_id, enabled');
+      }
+      if(res.error) throw res.error;
+      const map = {}, order = {};
+      (res.data || []).forEach(function(r){
+        map[r.game_id] = r.enabled;
+        if(typeof r.sort_order === 'number') order[r.game_id] = r.sort_order;
+      });
       gameSettingsMap = map;
+      gameOrderMap = order;
     }catch(e){
       gameSettingsMap = {};
+      gameOrderMap = {};
     }
   }
+  /* 지정된 순서가 있으면 그 순서, 없는 게임은 기본 배열 순서대로 뒤에 붙는다 */
+  function getOrderedGames(){
+    return GAMES.map(function(g, i){
+      return { g:g, key: (typeof gameOrderMap[g.id] === 'number') ? gameOrderMap[g.id] : 100000 + i };
+    }).sort(function(a, b){ return a.key - b.key; }).map(function(x){ return x.g; });
+  }
+  function applyGameOrderToHub(){
+    const grid = document.getElementById('cabinet-grid');
+    if(!grid) return;
+    const frag = document.createDocumentFragment();
+    getOrderedGames().forEach(function(g){
+      const btn = grid.querySelector('.cabinet[data-game="'+g.id+'"]');
+      if(btn) frag.appendChild(btn);
+    });
+    grid.appendChild(frag);
+  }
   function applyGameSettingsToHub(){
+    applyGameOrderToHub();
     GAMES.forEach(function(g){
       const btn = document.querySelector('.cabinet[data-game="'+g.id+'"]');
       if(!btn) return;
@@ -2637,6 +2745,8 @@
     if(currentScreen === 'spotdiff' && spotdiffState){ stopSpotdiffTimer(); }
     if(currentScreen === 'hiddenpic' && hiddenpicState){ stopHiddenpicTimer(); }
     if(currentScreen === 'sidesort' && sidesortState){ stopSidesortLoop(); }
+    if(currentScreen === 'spintail' && spintailState){ stopSpintailLoop(); }
+    if(currentScreen === 'colorspot'){ stopColorspotTimer(); }
     currentScreen = id;
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
@@ -2676,6 +2786,8 @@
     if(id === 'spotdiff') prepareSpotdiff();
     if(id === 'hiddenpic') prepareHiddenpic();
     if(id === 'sidesort') prepareSidesort();
+    if(id === 'spintail') prepareSpintail();
+    if(id === 'colorspot') prepareColorspot();
     if(id === 'subwayrace') prepareSubway();
     if(id === 'admin') prepareAdmin();
   }
@@ -8384,6 +8496,142 @@
   document.getElementById('hiddenpic-start-medium').addEventListener('click', function(){ startHiddenpicWithDifficulty('medium'); });
   document.getElementById('hiddenpic-start-hard').addEventListener('click', function(){ startHiddenpicWithDifficulty('hard'); });
 
+
+  /* ============================================================
+     COLORSPOT (색깔 다른 칸 찾기)
+  ============================================================= */
+  const CS_TIME = 15;
+  let colorspotState = null;
+  let csTimer = null;
+
+  function csGridSize(stage){
+    if(stage <= 2) return 2;
+    if(stage <= 4) return 3;
+    if(stage <= 6) return 4;
+    if(stage <= 8) return 5;
+    if(stage <= 10) return 6;
+    return 7;
+  }
+  function csDelta(stage){ return Math.max(2.5, 20 - stage * 1.4); }
+  function stopColorspotTimer(){ if(csTimer){ clearInterval(csTimer); csTimer = null; } }
+
+  function prepareColorspot(){
+    stopColorspotTimer();
+    colorspotState = { stage:1, life:3, score:0, running:false, over:false, deadline:0, odd:-1 };
+    document.getElementById('colorspot-board').innerHTML = '';
+    document.getElementById('colorspot-board').classList.add('hidden');
+    csUpdateHud();
+    loadMyBest('colorspot');
+    const overlay = document.getElementById('colorspot-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'COLORSPOT';
+    overlay.querySelector('.overlay-msg').textContent = '색깔이 조금 다른 칸 하나를 찾으세요!';
+  }
+
+  function csUpdateHud(){
+    const s = colorspotState; if(!s) return;
+    document.getElementById('colorspot-stage').textContent = s.stage;
+    document.getElementById('colorspot-life').textContent = s.life > 0 ? new Array(s.life + 1).join('❤') : '-';
+  }
+
+  function csBuildStage(){
+    const s = colorspotState;
+    const n = csGridSize(s.stage);
+    const board = document.getElementById('colorspot-board');
+    board.classList.remove('hidden');
+    board.style.gridTemplateColumns = 'repeat(' + n + ', 1fr)';
+    board.style.gridTemplateRows = 'repeat(' + n + ', 1fr)';
+    const hue = Math.floor(Math.random() * 360);
+    const sat = 55 + Math.floor(Math.random() * 30);
+    const base = 42 + Math.floor(Math.random() * 18);
+    const delta = csDelta(s.stage);
+    const sign = Math.random() < 0.5 ? 1 : -1;
+    const oddL = Math.min(85, Math.max(18, base + sign * delta));
+    const baseCss = 'hsl(' + hue + ',' + sat + '%,' + base + '%)';
+    const oddCss = 'hsl(' + hue + ',' + sat + '%,' + oddL.toFixed(1) + '%)';
+    s.odd = Math.floor(Math.random() * n * n);
+    let html = '';
+    for(let i = 0; i < n * n; i++){
+      html += '<button type="button" class="cs-cell" data-i="' + i + '" style="background:' + (i === s.odd ? oddCss : baseCss) + '"></button>';
+    }
+    board.innerHTML = html;
+    s.deadline = performance.now() + CS_TIME * 1000;
+    csTick();
+  }
+
+  function csTick(){
+    const s = colorspotState; if(!s || !s.running) return;
+    const left = Math.max(0, s.deadline - performance.now());
+    document.getElementById('colorspot-time').textContent = Math.ceil(left / 1000);
+    const bar = document.getElementById('colorspot-bar');
+    bar.style.width = (left / (CS_TIME * 1000) * 100) + '%';
+    bar.classList.toggle('low', left < 4000);
+    if(left <= 0) csLoseLife(true);
+  }
+
+  function startColorspot(){
+    if(!colorspotState || colorspotState.running) return;
+    colorspotState.running = true;
+    colorspotState.over = false;
+    document.getElementById('colorspot-overlay').classList.add('hidden');
+    csBuildStage();
+    stopColorspotTimer();
+    csTimer = setInterval(csTick, 100);
+  }
+
+  function csLoseLife(timeout){
+    const s = colorspotState; if(!s || !s.running) return;
+    s.life--;
+    csUpdateHud();
+    if(s.life <= 0){ endColorspot(); return; }
+    if(timeout) csBuildStage();
+  }
+
+  function csHandleTap(cell){
+    const s = colorspotState; if(!s || !s.running || s.over) return;
+    const i = parseInt(cell.dataset.i, 10);
+    if(i === s.odd){
+      const leftSec = Math.max(0, (s.deadline - performance.now()) / 1000);
+      s.score += 50 + s.stage * 10 + Math.round(leftSec * 5);
+      s.stage++;
+      csUpdateHud();
+      csBuildStage();
+    }else{
+      cell.classList.remove('wrong'); void cell.offsetWidth; cell.classList.add('wrong');
+      const odd = document.querySelector('#colorspot-board .cs-cell[data-i="' + s.odd + '"]');
+      if(odd){ odd.classList.add('right'); }
+      s.deadline -= 2000; // 오답 시간 패널티 2초
+      csLoseLife(false);
+      if(s.running){
+        setTimeout(function(){ if(odd) odd.classList.remove('right'); }, 500);
+      }
+    }
+  }
+
+  function endColorspot(){
+    const s = colorspotState; if(!s || s.over) return;
+    s.running = false;
+    s.over = true;
+    stopColorspotTimer();
+    const cleared = s.stage - 1;
+    const overlay = document.getElementById('colorspot-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'GAME OVER';
+    overlay.querySelector('.overlay-msg').textContent = cleared + '스테이지 클리어 · 점수 ' + s.score + ' · 다시 시작하려면 버튼을 누르세요';
+    finalizeScore('colorspot', s.score, overlay);
+  }
+
+  document.getElementById('colorspot-board').addEventListener('pointerdown', function(e){
+    const cell = e.target.closest('.cs-cell'); if(!cell) return;
+    e.preventDefault();
+    csHandleTap(cell);
+  });
+  document.getElementById('colorspot-start').addEventListener('click', function(){
+    if(!colorspotState) return;
+    if(colorspotState.over) prepareColorspot();
+    startColorspot();
+  });
+
   /* ============================================================
      관리자 모드 — Supabase Auth 로그인 후 게임별 ON/OFF 토글
      (game_settings 테이블 쓰기는 RLS로 로그인한 사용자만 허용됨)
@@ -8444,16 +8692,21 @@
   function renderAdminGameList(){
     const list = document.getElementById('admin-game-list');
     list.innerHTML = '';
-    GAMES.forEach(function(g){
+    const ordered = getOrderedGames();
+    ordered.forEach(function(g, idx){
       const enabled = gameSettingsMap[g.id] !== false;
       const row = document.createElement('div');
       row.className = 'admin-game-row';
       row.innerHTML =
-        '<span class="agr-label">' + g.icon + ' ' + g.label + '</span>' +
-        '<label class="admin-toggle">' +
-          '<input type="checkbox" data-game-id="' + g.id + '"' + (enabled ? ' checked' : '') + '>' +
-          '<span class="admin-toggle-track"></span>' +
-        '</label>';
+        '<span class="agr-label"><span class="agr-no">' + (idx + 1) + '</span>' + g.icon + ' ' + g.label + '</span>' +
+        '<span class="agr-actions">' +
+          '<button type="button" class="agr-move" data-move="-1" data-game-id="' + g.id + '"' + (idx === 0 ? ' disabled' : '') + ' aria-label="위로">▲</button>' +
+          '<button type="button" class="agr-move" data-move="1" data-game-id="' + g.id + '"' + (idx === ordered.length - 1 ? ' disabled' : '') + ' aria-label="아래로">▼</button>' +
+          '<label class="admin-toggle">' +
+            '<input type="checkbox" data-game-id="' + g.id + '"' + (enabled ? ' checked' : '') + '>' +
+            '<span class="admin-toggle-track"></span>' +
+          '</label>' +
+        '</span>';
       list.appendChild(row);
     });
     list.querySelectorAll('input[type="checkbox"]').forEach(function(input){
@@ -8475,6 +8728,40 @@
         input.disabled = false;
       });
     });
+    list.querySelectorAll('.agr-move').forEach(function(btn){
+      btn.addEventListener('click', function(){ moveAdminGame(btn.dataset.gameId, parseInt(btn.dataset.move, 10)); });
+    });
+  }
+
+  async function moveAdminGame(gameId, delta){
+    const ids = getOrderedGames().map(function(g){ return g.id; });
+    const from = ids.indexOf(gameId), to = from + delta;
+    if(from < 0 || to < 0 || to >= ids.length) return;
+    const prev = Object.assign({}, gameOrderMap);
+    ids.splice(to, 0, ids.splice(from, 1)[0]);
+    const next = {};
+    ids.forEach(function(id, i){ next[id] = i + 1; });
+    gameOrderMap = next;
+    renderAdminGameList();
+    applyGameOrderToHub();
+    const msg = document.getElementById('admin-order-msg');
+    if(msg) msg.textContent = '순서 저장 중...';
+    try{
+      const email = adminAuthUser ? adminAuthUser.email : null;
+      const rows = ids.map(function(id, i){
+        return { game_id:id, enabled: gameSettingsMap[id] !== false, sort_order:i + 1,
+                 updated_at:new Date().toISOString(), updated_by:email };
+      });
+      const { error } = await sb.from('game_settings').upsert(rows);
+      if(error) throw error;
+      if(msg) msg.textContent = '순서가 저장되었습니다.';
+    }catch(e){
+      gameOrderMap = prev;
+      renderAdminGameList();
+      applyGameOrderToHub();
+      if(msg) msg.textContent = '';
+      alert('순서를 저장하지 못했습니다. Supabase에서 최신 supabase-schema.sql을 실행했는지, 로그인 상태인지 확인해주세요.');
+    }
   }
 
   document.getElementById('admin-open-btn').addEventListener('click', function(){ goTo('admin'); });
@@ -8512,6 +8799,7 @@
     else if(currentScreen==='catchmind') handleCatchmindKey(e);
     else if(currentScreen==='fortress') handleFortressKey(e);
     else if(currentScreen==='sidesort') handleSidesortKey(e);
+    else if(currentScreen==='spintail') handleSpintailKey(e);
   });
 
 
@@ -8525,7 +8813,8 @@
     { body:'#7ED957', ear:'round' }, // 초록 곰
     { body:'#FF4757', ear:'cat' },   // 빨강 고양이
     { body:'#FFE3A3', ear:'cap' },   // 모자 쓴 꼬마
-    { body:'#C4903F', ear:'box' }    // 갈색 상자
+    { body:'#C4903F', ear:'box' },   // 갈색 상자
+    { body:'#FF9F43', ear:'round' }  // (SPINTAIL 주인공 햄스터)
   ];
   const SS_SLOTS_Y = [250, 332, 414];
   const SS_MIN_BUFFER = 6; // 항상 미리 이만큼의 캐릭터가 대기하도록 채워둔다
@@ -9161,6 +9450,318 @@
     const i = document.getElementById('subway-input'); if(!i.disabled){ try{ i.focus(); }catch(e){} }
   });
 
+
+  /* ============================================================
+     SPINTAIL (붙어붙어 스타일) — 탭으로 회전 방향을 바꾸며 친구를 모으는 게임
+  ============================================================= */
+  const SP_W = 360, SP_H = 520, SP_DT = 1/60;
+  const SP_SPEED = 100, SP_SLOW_SPEED = 62, SP_RADIUS_TURN = 50;   // 원 궤도 반지름(px)
+  const SP_HEAD_R = 12, SP_TAIL_R = 10, SP_ITEM_R = 11, SP_PAD = 10;
+  const SP_SAMPLE = 1.7, SP_GAP = 10;                              // 꼬리 한 칸 = 샘플 10개(≈17px)
+  const SP_MAX_MARGIN = 80;
+  const SP_ITEMS = {
+    cut:    { emoji:'✂️', label:'꼬리 -2' },
+    shield: { emoji:'🛡️', label:'보호막' },
+    slow:   { emoji:'🐌', label:'느리게' },
+    double: { emoji:'✨', label:'점수 x2' }
+  };
+  let spintailCtx, spintailState;
+  const spEmojiCache = {};
+  function spEmojiSprite(ch, size){
+    const key = ch + size;
+    if(spEmojiCache[key]) return spEmojiCache[key];
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const c = document.createElement('canvas');
+    c.width = Math.ceil(size*2*dpr); c.height = Math.ceil(size*2*dpr);
+    const cx = c.getContext('2d'); cx.scale(dpr,dpr);
+    cx.font = Math.round(size*1.5)+'px sans-serif'; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    cx.fillText(ch, size, size+1);
+    spEmojiCache[key] = c;
+    return c;
+  }
+  let spFoodSprite = null;
+  function spGetFood(){
+    if(spFoodSprite) return spFoodSprite;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const c = document.createElement('canvas'); c.width = Math.ceil(30*dpr); c.height = Math.ceil(30*dpr);
+    const cx = c.getContext('2d'); cx.scale(dpr,dpr);
+    const g = cx.createRadialGradient(15,15,2,15,15,14);
+    g.addColorStop(0,'rgba(255,210,63,1)'); g.addColorStop(0.55,'rgba(255,210,63,0.95)'); g.addColorStop(1,'rgba(255,210,63,0)');
+    cx.fillStyle = g; cx.beginPath(); cx.arc(15,15,14,0,Math.PI*2); cx.fill();
+    cx.fillStyle = '#FFE680'; cx.beginPath(); cx.arc(15,15,6.5,0,Math.PI*2); cx.fill();
+    spFoodSprite = c; return c;
+  }
+  function spBuildBg(){
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const c = document.createElement('canvas'); c.width = SP_W*dpr; c.height = SP_H*dpr;
+    const cx = c.getContext('2d'); cx.scale(dpr,dpr);
+    cx.fillStyle = '#17142a'; cx.fillRect(0,0,SP_W,SP_H);
+    const tile = 40;
+    for(let y=0;y<SP_H;y+=tile) for(let x=0;x<SP_W;x+=tile){
+      if(((x/tile)+(y/tile))%2===0){ cx.fillStyle = 'rgba(255,255,255,0.035)'; cx.fillRect(x,y,tile,tile); }
+    }
+    return c;
+  }
+
+  function spRandPoint(s, avoid){
+    const m = s.margin + SP_PAD + 22;
+    for(let i=0;i<30;i++){
+      const x = m + Math.random()*(SP_W-2*m), y = m + Math.random()*(SP_H-2*m);
+      if(Math.hypot(x-s.x,y-s.y) < 70) continue;
+      let ok = true;
+      (avoid||[]).forEach(function(o){ if(Math.hypot(x-o.x,y-o.y) < 40) ok = false; });
+      if(ok) return { x:x, y:y };
+    }
+    return { x:SP_W/2, y:SP_H/2 };
+  }
+  function spSpawnFood(s){
+    const pt = spRandPoint(s, s.foods.concat(s.items));
+    s.foods.push({ x:pt.x, y:pt.y });
+  }
+  function spSpawnItem(s){
+    const kinds = Object.keys(SP_ITEMS);
+    // 꼬리가 길수록 '꼬리 줄이기'가 더 자주 나온다
+    let kind = kinds[Math.floor(Math.random()*kinds.length)];
+    if(s.tail.length >= 8 && Math.random() < 0.45) kind = 'cut';
+    const pt = spRandPoint(s, s.foods.concat(s.items));
+    s.items.push({ kind:kind, x:pt.x, y:pt.y, life:9 });
+  }
+
+  function prepareSpintail(){
+    const s = {
+      x:SP_W/2, y:SP_H/2+60, theta:-Math.PI/2, dir:1,
+      hist:[], acc:0, tail:[], foods:[], items:[], pops:[],
+      score:0, combo:0, comboT:0, idle:0, margin:0,
+      slowT:0, doubleT:0, shield:false, inv:0, itemTimer:5, flash:0,
+      running:false, over:false, rafId:null, lastTime:0, accum:0, bg:null
+    };
+    for(let i=60;i>=0;i--) s.hist.push({ x:s.x, y:s.y + i*SP_SAMPLE });
+    s.bg = spBuildBg();
+    spintailState = s;
+    spSpawnFood(s); spSpawnFood(s);
+    document.getElementById('spintail-score').textContent = '0';
+    loadMyBest('spintail');
+    drawSpintail();
+    const overlay = document.getElementById('spintail-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'SPINTAIL';
+    overlay.querySelector('.overlay-msg').textContent = '탭하면 회전 방향이 반대로 바뀌어요. 친구를 모으고 꼬리·벽은 피하세요!';
+  }
+
+  function spintailToggle(){
+    const s = spintailState;
+    if(!s || !s.running) return;
+    s.dir = -s.dir;
+  }
+
+  function spPop(s, x, y, text, color){ s.pops.push({ x:x, y:y, text:text, color:color, life:1 }); }
+
+  function spHit(s, kind){
+    if(s.inv > 0) return;
+    if(s.shield){
+      s.shield = false; s.inv = 1.0; s.flash = 1;
+      spPop(s, s.x, s.y-22, '보호막!', '#4DA3FF');
+      if(kind === 'wall'){
+        // 벽에 부딪히면 안쪽으로 튕겨낸다
+        const L = SP_PAD+s.margin+SP_HEAD_R, R = SP_W-SP_PAD-s.margin-SP_HEAD_R, T = SP_PAD+s.margin+SP_HEAD_R, B = SP_H-SP_PAD-s.margin-SP_HEAD_R;
+        s.x = Math.max(L, Math.min(R, s.x)); s.y = Math.max(T, Math.min(B, s.y));
+        s.theta = Math.atan2(SP_H/2 - s.y, SP_W/2 - s.x);
+      }
+      return;
+    }
+    endSpintail();
+  }
+
+  function spStep(s){
+    const speed = s.slowT > 0 ? SP_SLOW_SPEED : SP_SPEED;
+    s.theta += s.dir * (speed/SP_RADIUS_TURN) * SP_DT;
+    const dx = Math.cos(s.theta)*speed*SP_DT, dy = Math.sin(s.theta)*speed*SP_DT;
+    s.x += dx; s.y += dy;
+    s.acc += Math.hypot(dx,dy);
+    while(s.acc >= SP_SAMPLE){ s.acc -= SP_SAMPLE; s.hist.push({ x:s.x, y:s.y }); }
+    if(s.hist.length > 4000) s.hist.splice(0, 1500);
+
+    // 타이머
+    if(s.slowT > 0) s.slowT -= SP_DT;
+    if(s.doubleT > 0) s.doubleT -= SP_DT;
+    if(s.inv > 0) s.inv -= SP_DT;
+    if(s.comboT > 0){ s.comboT -= SP_DT; if(s.comboT <= 0) s.combo = 0; }
+    if(s.flash > 0) s.flash = Math.max(0, s.flash - SP_DT*3);
+    // 오래 못 먹으면 운동장이 좁아진다
+    s.idle += SP_DT;
+    if(s.idle > 3) s.margin = Math.min(SP_MAX_MARGIN, s.margin + 4*SP_DT);
+
+    // 벽
+    const L = SP_PAD+s.margin, R = SP_W-SP_PAD-s.margin, T = SP_PAD+s.margin, B = SP_H-SP_PAD-s.margin;
+    if(s.x-SP_HEAD_R < L || s.x+SP_HEAD_R > R || s.y-SP_HEAD_R < T || s.y+SP_HEAD_R > B){
+      spHit(s, 'wall'); if(s.over) return;
+    }
+    // 꼬리 충돌 (머리 바로 뒤 몇 칸은 제외)
+    for(let k=3;k<=s.tail.length;k++){
+      const pt = s.hist[Math.max(0, s.hist.length-1-k*SP_GAP)];
+      if(Math.hypot(pt.x-s.x, pt.y-s.y) < SP_HEAD_R + SP_TAIL_R - 5){ spHit(s, 'tail'); if(s.over) return; break; }
+    }
+    // 먹이
+    for(let i=s.foods.length-1;i>=0;i--){
+      const f = s.foods[i];
+      if(Math.hypot(f.x-s.x, f.y-s.y) < SP_HEAD_R + 9){
+        s.foods.splice(i,1);
+        s.tail.push(Math.floor(Math.random()*6));
+        s.combo = (s.comboT > 0) ? s.combo+1 : 1;
+        s.comboT = 2.5;
+        const mult = Math.min(5, Math.floor((s.combo-1)/3)+1) * (s.doubleT > 0 ? 2 : 1);
+        const gain = 10*mult;
+        s.score += gain;
+        s.idle = 0; s.margin = Math.max(0, s.margin - 18);
+        spPop(s, f.x, f.y-12, '+'+gain, '#FFD23F');
+        document.getElementById('spintail-score').textContent = s.score;
+        spSpawnFood(s);
+      }
+    }
+    // 아이템
+    for(let i=s.items.length-1;i>=0;i--){
+      const it = s.items[i];
+      it.life -= SP_DT;
+      if(it.life <= 0){ s.items.splice(i,1); continue; }
+      if(Math.hypot(it.x-s.x, it.y-s.y) < SP_HEAD_R + SP_ITEM_R){
+        s.items.splice(i,1);
+        if(it.kind === 'cut'){ const n = Math.min(2, s.tail.length); s.tail.splice(s.tail.length-n, n); }
+        else if(it.kind === 'shield') s.shield = true;
+        else if(it.kind === 'slow') s.slowT = 5;
+        else if(it.kind === 'double') s.doubleT = 8;
+        s.score += 15;
+        s.comboT = Math.max(s.comboT, 2.5);
+        spPop(s, it.x, it.y-14, SP_ITEMS[it.kind].label, '#3DFF7A');
+        document.getElementById('spintail-score').textContent = s.score;
+      }
+    }
+    // 아이템 스폰
+    s.itemTimer -= SP_DT;
+    if(s.itemTimer <= 0){
+      s.itemTimer = 6 + Math.random()*4;
+      if(s.items.length < 2) spSpawnItem(s);
+    }
+    // 먹이가 운동장 밖으로 밀려나면 안쪽으로 옮긴다
+    const m = s.margin + SP_PAD + 12;
+    s.foods.forEach(function(f){
+      f.x = Math.max(m, Math.min(SP_W-m, f.x)); f.y = Math.max(m, Math.min(SP_H-m, f.y));
+    });
+    s.items.forEach(function(f){
+      f.x = Math.max(m, Math.min(SP_W-m, f.x)); f.y = Math.max(m, Math.min(SP_H-m, f.y));
+    });
+  }
+
+  function drawSpintail(){
+    const ctx = spintailCtx, s = spintailState;
+    if(!ctx || !s) return;
+    ctx.drawImage(s.bg, 0, 0, SP_W, SP_H);
+    // 운동장 (좁아진 바깥은 붉게)
+    const L = SP_PAD+s.margin, R = SP_W-SP_PAD-s.margin, T = SP_PAD+s.margin, B = SP_H-SP_PAD-s.margin;
+    ctx.fillStyle = 'rgba(255,71,87,0.16)';
+    ctx.fillRect(0,0,SP_W,T); ctx.fillRect(0,B,SP_W,SP_H-B); ctx.fillRect(0,T,L,B-T); ctx.fillRect(R,T,SP_W-R,B-T);
+    ctx.strokeStyle = s.margin > 2 ? 'rgba(255,71,87,0.9)' : 'rgba(255,210,63,0.55)'; ctx.lineWidth = 3;
+    ctx.strokeRect(L, T, R-L, B-T);
+    // 먹이
+    const fs = spGetFood();
+    s.foods.forEach(function(f){ ctx.drawImage(fs, f.x-15, f.y-15, 30, 30); });
+    // 아이템 (사라지기 직전 깜빡임)
+    s.items.forEach(function(it){
+      if(it.life < 3 && Math.floor(it.life*6)%2 === 0) return;
+      ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.beginPath(); ctx.arc(it.x, it.y, SP_ITEM_R+3, 0, Math.PI*2); ctx.fill();
+      ctx.drawImage(spEmojiSprite(SP_ITEMS[it.kind].emoji, 14), it.x-14, it.y-14, 28, 28);
+    });
+    // 꼬리 (뒤에서부터)
+    for(let k=s.tail.length;k>=1;k--){
+      const pt = s.hist[Math.max(0, s.hist.length-1-k*SP_GAP)];
+      drawSidesortChar(ctx, s.tail[k-1], pt.x, pt.y, SP_TAIL_R);
+    }
+    // 머리
+    if(s.inv <= 0 || Math.floor(s.inv*12)%2 === 0){
+      drawSidesortChar(ctx, 6, s.x, s.y, SP_HEAD_R+1);
+      if(s.shield){
+        ctx.strokeStyle = 'rgba(77,163,255,0.95)'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(s.x, s.y, SP_HEAD_R+6, 0, Math.PI*2); ctx.stroke();
+      }
+    }
+    // 진행 방향 표시 (코)
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(s.x+Math.cos(s.theta)*(SP_HEAD_R+4), s.y+Math.sin(s.theta)*(SP_HEAD_R+4), 2.2, 0, Math.PI*2); ctx.fill();
+    // 팝업
+    ctx.textAlign = 'center'; ctx.font = 'bold 14px sans-serif';
+    s.pops.forEach(function(p){ ctx.globalAlpha = Math.max(0,p.life); ctx.fillStyle = p.color; ctx.fillText(p.text, p.x, p.y); });
+    ctx.globalAlpha = 1;
+    // HUD
+    ctx.textAlign = 'left'; ctx.font = 'bold 13px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.fillText('꼬리 ' + s.tail.length, L+8, T+20);
+    ctx.fillText(s.dir > 0 ? '↻ 시계' : '↺ 반시계', L+8, T+38);
+    ctx.textAlign = 'center';
+    if(s.combo >= 2){
+      ctx.font = 'bold 20px sans-serif'; ctx.fillStyle = '#FFD23F';
+      ctx.fillText(s.combo + ' COMBO', SP_W/2, T+30);
+    }
+    let bx = R-8; ctx.textAlign = 'right'; ctx.font = 'bold 12px sans-serif';
+    if(s.slowT > 0){ ctx.fillStyle = '#3DFF7A'; ctx.fillText('🐌 '+Math.ceil(s.slowT)+'s', bx, T+20); bx -= 0; }
+    if(s.doubleT > 0){ ctx.fillStyle = '#FFD23F'; ctx.fillText('✨ x2 '+Math.ceil(s.doubleT)+'s', bx, T+(s.slowT>0?38:20)); }
+    if(s.flash > 0){ ctx.fillStyle = 'rgba(77,163,255,'+(s.flash*0.25)+')'; ctx.fillRect(0,0,SP_W,SP_H); }
+  }
+
+  function spintailLoop(t){
+    const s = spintailState;
+    if(!s || !s.running) return;
+    const dt = Math.min(0.1, (t - s.lastTime)/1000); s.lastTime = t;
+    s.accum += dt;
+    let guard = 0;
+    while(s.accum >= SP_DT && guard++ < 6 && s.running){ spStep(s); s.accum -= SP_DT; }
+    if(!s.running) return;
+    s.pops.forEach(function(p){ p.life -= dt/0.8; p.y -= dt*28; });
+    s.pops = s.pops.filter(function(p){ return p.life > 0; });
+    drawSpintail();
+    s.rafId = requestAnimationFrame(spintailLoop);
+  }
+  function startSpintail(){
+    const s = spintailState;
+    if(!s || s.running) return;
+    s.running = true; s.over = false; s.accum = 0;
+    document.getElementById('spintail-overlay').classList.add('hidden');
+    s.lastTime = performance.now();
+    s.rafId = requestAnimationFrame(spintailLoop);
+  }
+  function stopSpintailLoop(){
+    if(spintailState){ spintailState.running = false; if(spintailState.rafId) cancelAnimationFrame(spintailState.rafId); }
+  }
+  function endSpintail(){
+    const s = spintailState;
+    if(!s || s.over) return;
+    s.running = false; s.over = true;
+    if(s.rafId) cancelAnimationFrame(s.rafId);
+    drawSpintail();
+    const overlay = document.getElementById('spintail-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'GAME OVER';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' · 꼬리 ' + s.tail.length + '명 · 시작하기를 눌러 재도전';
+    finalizeScore('spintail', s.score, overlay);
+  }
+  function spintailStartOrRestart(){
+    if(!spintailState) return;
+    if(spintailState.over) prepareSpintail();
+    startSpintail();
+  }
+  document.getElementById('spintail-start').addEventListener('click', spintailStartOrRestart);
+  document.getElementById('spintail-canvas').addEventListener('pointerdown', function(e){
+    e.preventDefault();
+    if(!spintailState) return;
+    if(!spintailState.running){ spintailStartOrRestart(); return; }
+    spintailToggle();
+  });
+  function handleSpintailKey(e){
+    if(!spintailState) return;
+    if(e.key === ' ' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown'){
+      e.preventDefault();
+      if(!spintailState.running){ if(e.key === ' ') spintailStartOrRestart(); return; }
+      spintailToggle();
+    }
+  }
+
   /* ============ mobile guards: 더블탭 확대 / 핀치 확대 / 텍스트 선택 / 길게누르기 메뉴 방지 ============ */
   (function setupMobileGuards(){
     function isEditable(el){
@@ -9195,6 +9796,7 @@
     spotdiffCtxB = document.getElementById('spotdiff-canvas-b').getContext('2d');
     hiddenpicCtx = document.getElementById('hiddenpic-canvas').getContext('2d');
     sidesortCtx = document.getElementById('sidesort-canvas').getContext('2d');
+    spintailCtx = document.getElementById('spintail-canvas').getContext('2d');
     await runStorageHealthCheck();
     await initPlayer();
     renderTeamBattle();
