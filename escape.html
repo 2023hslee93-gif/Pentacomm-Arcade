@@ -272,8 +272,8 @@ table.tb th{background:#eef}
 <script>
 // ===================== 설정 =====================
 // index.html에 있는 것과 같은 Supabase URL / anon key 를 넣어주세요.
-const SUPABASE_URL = 'https://yrgasjjbvbvvzkgvcdrq.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZ2FzampidmJ2dnprZ3ZjZHJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4OTI2NjIsImV4cCI6MjEwMTQ2ODY2Mn0.cL_4DHB8gPzeJCCBpRJf7LPwMVHpCGZg1Ay9d8mAJ2c';
+const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR-ANON-KEY';
 // ================================================
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -866,8 +866,28 @@ $('btn-back').onclick = () => leaveToLobby();
 // ---------------- 시작 ----------------
 (async function init() {
   if (SUPABASE_URL.includes('YOUR-PROJECT')) toast('escape.html 위쪽의 SUPABASE_URL / KEY를 설정해 주세요', { err: true, ms: 8000 });
+  // 관리자 모드에서 꺼두면 점검중 화면
+  try {
+    const { data: gs } = await sb.from('game_settings').select('enabled').eq('game_id', 'escape10f').maybeSingle();
+    if (gs && gs.enabled === false) {
+      $('s-entry').innerHTML = `<div class="hero" style="text-align:center"><h2 style="margin:0">🔧 점검중</h2>
+        <p>ESCAPE 10F는 지금 점검 중이에요. 잠시 후 다시 들러주세요.</p>
+        <a class="btn" href="index.html" style="display:inline-block;margin-top:14px;text-decoration:none">아케이드로 돌아가기</a></div>`;
+      return show('s-entry');
+    }
+  } catch (e) {}
   S.me = store.get('me');
-  if (!S.me) return show('s-entry');
+  if (!S.me) {
+    // 아케이드에서 쓰던 닉네임/팀이 있으면 미리 채워둠 (입장은 별도)
+    try {
+      const pid = localStorage.getItem('arcade-player-id');
+      if (pid) {
+        const { data: pl } = await sb.from('players').select('nickname, team').eq('id', pid).maybeSingle();
+        if (pl) { $('in-name').value = (pl.nickname || '').slice(0, 12); if (pl.team) $('in-team').value = pl.team; }
+      }
+    } catch (e) {}
+    return show('s-entry');
+  }
   const code = store.get('code');
   if (code) {
     const { data } = await sb.from('escape_rooms').select('code,status,players').eq('code', code).maybeSingle();

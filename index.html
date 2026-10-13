@@ -1134,6 +1134,12 @@
         <div class="cabinet-sub">지하철 역 이름을 먼저 다 입력하면 승리! 실시간 1:1 타자 대결</div>
       </button>
 
+      <button class="cabinet realtime-game" data-game="escape10f" style="--accent:var(--green)">
+        <div class="cabinet-screen" style="font-size:40px;">🚪</div>
+        <div class="cabinet-label pixel">ESCAPE 10F</div>
+        <div class="cabinet-sub">10층에 갇혔다! 2~4명이 단서를 나눠 보고 30분 안에 탈출하는 협동 방탈출</div>
+      </button>
+
       <button class="cabinet" data-game="numtap" style="--accent:var(--yellow)">
         <div class="cabinet-screen" style="font-size:40px;">🎯</div>
         <div class="cabinet-label pixel">NUMTAP</div>
@@ -2071,10 +2077,12 @@
     { id:'hiddenpic', label:'HIDDENPIC', icon:'🧐', color:'var(--orange)' },
     { id:'sidesort', label:'SIDESORT', icon:'🐱', color:'var(--pink)' },
     { id:'subwayrace', label:'SUBWAY RACE', icon:'🚇', color:'var(--green)' },
+    // 별도 페이지(escape.html)로 운영: scores/팀 대항전 집계에서는 제외, 관리자 ON/OFF·순서 변경에는 포함
+    { id:'escape10f', label:'ESCAPE 10F', icon:'🚪', color:'var(--green)', external:'escape.html', noScore:true },
     { id:'spintail', label:'SPINTAIL', icon:'🐹', color:'var(--orange)' },
     { id:'colorspot', label:'COLORSPOT', icon:'🎨', color:'var(--pink)' }
   ];
-  const GAME_IDS = GAMES.map(function(g){ return g.id; });
+  const GAME_IDS = GAMES.filter(function(g){ return !g.noScore; }).map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
   function gameColor(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.color : 'var(--text-dim)'; }
 
@@ -2400,6 +2408,21 @@
         if(el) el.textContent = top ? ('🏆 ' + top.name) : '아직 없음';
       });
     }catch(e){ /* ignore, leave placeholders */ }
+    // ESCAPE 10F: escape_records 의 최단 기록 팀 표시
+    try{
+      const el = document.getElementById('cabinet-leader-escape10f');
+      if(el){
+        const { data, error } = await sb.from('escape_records').select('players, total_secs').order('total_secs', { ascending:true }).limit(1);
+        if(error) throw error;
+        const r = data && data[0];
+        if(r){
+          const t = Math.floor(r.total_secs / 60) + ':' + String(r.total_secs % 60).padStart(2, '0');
+          el.textContent = '🏆 ' + r.players.map(function(p){ return p.name; }).join(', ') + ' · ' + t;
+        }else{
+          el.textContent = '아직 없음';
+        }
+      }
+    }catch(e){ /* escape-schema.sql 미실행 시 무시 */ }
   }
 
   async function renderTeamBattle(){
@@ -2836,6 +2859,8 @@
   document.querySelectorAll('.cabinet[data-game]').forEach(function(btn){
     btn.addEventListener('click', function(){
       if(btn.classList.contains('disabled')) return;
+      const ext = GAMES.find(function(g){ return g.id === btn.dataset.game && g.external; });
+      if(ext){ location.href = ext.external; return; }
       openGameInfoModal(btn.dataset.game);
     });
   });
