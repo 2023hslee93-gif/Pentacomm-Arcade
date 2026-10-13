@@ -99,8 +99,13 @@ input.txt:focus{border-color:var(--accent)}
 .chat .sys{color:var(--muted);font-style:italic}
 
 /* modal */
-.modal{position:fixed;inset:0;background:#000b;z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}
-.mbox{background:var(--panel);border:1px solid var(--line);border-radius:16px;width:100%;max-width:580px;padding:18px}
+/* 팝업: inset 미지원 브라우저·외부 CSS 충돌을 피하려고 고유 이름 + 크기를 명시 */
+#modal.escm{position:fixed!important;top:0!important;left:0!important;right:auto!important;bottom:auto!important;
+  width:100vw!important;height:100vh!important;height:100dvh!important;max-height:none!important;min-height:0;
+  margin:0!important;transform:none!important;background:rgba(0,0,0,.72);z-index:9000;
+  display:block;overflow-y:auto;overflow-x:hidden;padding:4vh 12px;box-sizing:border-box}
+#modal.escm.hidden{display:none!important}
+.mbox{background:var(--panel);border:1px solid var(--line);border-radius:16px;width:100%;max-width:580px;padding:18px;margin:0 auto 4vh}
 .mhead{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .mhead h2{margin:0;font-size:18px;flex:1}
 .x{background:none;border:0;color:var(--muted);font-size:24px;cursor:pointer;line-height:1}
@@ -267,11 +272,11 @@ table.tb th{background:#eef}
   </section>
 </div>
 
-<div class="modal hidden" id="modal"><div class="mbox" id="mbox"></div></div>
+<div class="escm hidden" id="modal"><div class="mbox" id="mbox"></div></div>
 
 <script>
 // ===================== 설정 =====================
-// index.html에 있는 것과 같은 Supabase URL / anon key 를 넣어주세요.
+// index.html과 같은 Supabase 프로젝트
 const SUPABASE_URL = 'https://yrgasjjbvbvvzkgvcdrq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZ2FzampidmJ2dnprZ3ZjZHJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4OTI2NjIsImV4cCI6MjEwMTQ2ODY2Mn0.cL_4DHB8gPzeJCCBpRJf7LPwMVHpCGZg1Ay9d8mAJ2c';
 // ================================================
