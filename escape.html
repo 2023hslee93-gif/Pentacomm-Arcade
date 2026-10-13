@@ -8,8 +8,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
-  --bg:#0c1210; --panel:#141d1a; --panel2:#1a2622; --line:#26352f;
-  --text:#e9f0ec; --muted:#8ea69c; --accent:#34c491; --accent2:#1f6b55;
+  --bg:#0a0a0b; --panel:#151517; --panel2:#1d1d20; --line:#2c2c30;
+  --text:#f6f2f4; --muted:#a09aa0; --accent:#ff3e8a; --accent2:#3d1026; --accent-soft:#ff3e8a33;
   --warn:#ffb547; --danger:#ff6b6b; --tile:#1d5e50; --tileodd:#25705f;
   --A:#ff8a5c; --B:#5cb8ff; --C:#c88bff; --D:#ffd65c;
 }
@@ -27,7 +27,7 @@ button,input,select{font:inherit}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
 .card h2{margin:0 0 12px;font-size:17px}
 .muted{color:var(--muted)}
-.btn{background:var(--accent);color:#06281d;border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer;white-space:nowrap;flex:none}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
 .btn.small{padding:7px 11px;font-size:13px;white-space:nowrap}
@@ -39,11 +39,11 @@ input.txt:focus{border-color:var(--accent)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:760px){.grid2{grid-template-columns:1fr}}
 .toast-box{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
-.toast{background:#0f2a21;border:1px solid var(--accent);color:var(--text);padding:9px 14px;border-radius:10px;font-size:14px;box-shadow:0 6px 20px #0008;pointer-events:auto;cursor:pointer;max-width:92vw}
+.toast{background:#2a0d1b;border:1px solid var(--accent);color:var(--text);padding:9px 14px;border-radius:10px;font-size:14px;box-shadow:0 6px 20px #0008;pointer-events:auto;cursor:pointer;max-width:92vw}
 .toast.err{border-color:var(--danger);background:#2a1212}
 
 /* entry / lobby */
-.hero{padding:26px;background:linear-gradient(135deg,#123328,#0c1210 60%);border:1px solid var(--line);border-radius:16px;margin-bottom:16px}
+.hero{padding:26px;background:radial-gradient(120% 140% at 0% 0%,#4a0f2c 0%,#160a10 45%,#0a0a0b 75%);border:1px solid var(--line);border-radius:16px;margin-bottom:16px}
 .hero p{margin:6px 0 0;color:var(--muted);line-height:1.6}
 .rank{list-style:none;margin:0;padding:0}
 .rank li{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;align-items:center}
@@ -55,7 +55,7 @@ input.txt:focus{border-color:var(--accent)}
 .code-big{font-size:46px;letter-spacing:.25em;font-weight:900;color:var(--accent);text-align:center;margin:6px 0}
 .plist{list-style:none;margin:0;padding:0}
 .plist li{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
-.dot{width:8px;height:8px;border-radius:50%;background:#46524d;flex:none}
+.dot{width:8px;height:8px;border-radius:50%;background:#4a4548;flex:none}
 .dot.on{background:var(--accent);box-shadow:0 0 8px var(--accent)}
 .role{display:inline-block;font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;color:#111;margin-left:3px}
 .role.A{background:var(--A)}.role.B{background:var(--B)}.role.C{background:var(--C)}.role.D{background:var(--D)}
@@ -76,13 +76,13 @@ input.txt:focus{border-color:var(--accent)}
 .hs{position:absolute;cursor:pointer;border-radius:8px}
 .hs:hover{outline:2px dashed #ffffffaa;background:#ffffff14}
 .hs .mk{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;
-  background:#34c49155;border:2px solid #fff;box-shadow:0 0 0 0 #34c491aa;animation:pulse 1.8s infinite}
+  background:#ff3e8a66;border:2px solid #fff;box-shadow:0 0 0 0 #ff3e8aaa;animation:pulse 1.8s infinite}
 .hs.flav .mk{background:#ffffff33;width:14px;height:14px;margin:-7px 0 0 -7px;animation:none;opacity:.7}
 .hs.done .mk{background:var(--accent);animation:none}
-.hs.done .mk::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#06281d;font-weight:900;font-size:12px}
+.hs.done .mk::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:900;font-size:12px}
 .hs .lb{position:absolute;left:50%;top:calc(50% + 14px);transform:translateX(-50%);white-space:nowrap;font-size:11px;
   background:#000b;padding:2px 6px;border-radius:6px;pointer-events:none}
-@keyframes pulse{0%{box-shadow:0 0 0 0 #34c491aa}70%{box-shadow:0 0 0 14px #34c49100}100%{box-shadow:0 0 0 0 #34c49100}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #ff3e8aaa}70%{box-shadow:0 0 0 14px #ff3e8a00}100%{box-shadow:0 0 0 0 #ff3e8a00}}
 .ping{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:3px solid var(--warn);
   animation:ping 1.2s ease-out 2;pointer-events:none}
 .ping span{position:absolute;top:46px;left:50%;transform:translateX(-50%);background:var(--warn);color:#111;font-size:11px;font-weight:800;padding:1px 6px;border-radius:5px;white-space:nowrap}
@@ -114,7 +114,7 @@ input.txt:focus{border-color:var(--accent)}
 .noclue{border-style:dashed;color:var(--muted);font-size:13px}
 .ansrow{display:flex;gap:8px;margin-top:12px}
 .ansrow input{flex:1}
-.solved{background:#0f2a21;border:1px solid var(--accent);border-radius:12px;padding:12px;margin-top:10px;font-size:14px;line-height:1.5}
+.solved{background:#2a0d1b;border:1px solid var(--accent);border-radius:12px;padding:12px;margin-top:10px;font-size:14px;line-height:1.5}
 .hintbox{background:#2a2210;border:1px solid var(--warn);border-radius:10px;padding:10px;font-size:13px;margin-top:10px;line-height:1.5}
 .shake{animation:shake .35s}
 @keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
@@ -129,7 +129,7 @@ input.txt:focus{border-color:var(--accent)}
 .memo{background:#fff7a8;color:#3a3200;border-radius:4px;padding:14px;font-family:"Nanum Pen Script",Pretendard,sans-serif;font-size:16px;line-height:1.6;transform:rotate(-1deg);box-shadow:2px 3px 0 #0004}
 .pad{display:grid;grid-template-columns:repeat(3,64px);gap:18px;justify-content:center;padding:16px;background:#0a0d14;border-radius:12px}
 .pad button{width:64px;height:64px;border-radius:50%;border:2px solid #556;background:#1a1f2e;color:#fff;font-size:24px;cursor:pointer}
-.pad button.sel{border-color:var(--accent);background:#173a30}
+.pad button.sel{border-color:var(--accent);background:#4a1230}
 .seqview{text-align:center;margin-top:8px;font-size:15px;min-height:22px;letter-spacing:.1em}
 .tgrid{display:grid;gap:3px;justify-content:center}
 .tgrid .h{font-size:11px;color:var(--muted);display:grid;place-items:center}
@@ -147,7 +147,7 @@ table.tb{width:100%;border-collapse:collapse;background:#fff;color:#222;font-siz
 table.tb th,table.tb td{border:1px solid #ddd;padding:7px;text-align:center}
 table.tb th{background:#eef}
 .wb{background:#f4f6f5;color:#1f3a8a;border-radius:6px;padding:20px 14px;font-size:21px;font-weight:700;text-align:center;letter-spacing:.06em;border:6px solid #cfd6d3;font-family:"Nanum Pen Script",Pretendard,sans-serif}
-.doc{background:#fff;color:#222;border-radius:4px;padding:16px;font-size:18px;text-align:center;border-top:6px solid #1f6b55}
+.doc{background:#fff;color:#222;border-radius:4px;padding:16px;font-size:18px;text-align:center;border-top:6px solid #ff3e8a}
 .cushions{display:flex;gap:12px;justify-content:center}
 .cush{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
 .cush .st{display:flex;height:120px;width:70px;border-radius:6px;overflow:hidden;border:2px solid #aaa}
@@ -155,6 +155,22 @@ table.tb th{background:#eef}
 .files{display:flex;gap:6px}
 .files select{flex:1}
 .tagbtn{width:100%;padding:22px;font-size:20px}
+.rcpt{background:#fff;color:#222;font-family:"D2Coding",Consolas,monospace;font-size:14px;padding:14px;border-radius:3px;line-height:1.7}
+.rcpt .rl{display:grid;grid-template-columns:1fr 50px 80px;gap:6px}
+.smear{color:#b98a5a;letter-spacing:-1px;filter:blur(.6px)}
+.seat{display:grid;gap:5px;background:#fff;padding:10px;border-radius:6px}
+.seat div{background:#eceaea;color:#333;font-weight:700;text-align:center;padding:9px 0;border-radius:3px;font-size:14px}
+.shelfrow .it{display:flex;flex-direction:column;align-items:center;line-height:1}
+.shelfrow .it small{font-size:10px;color:#6b5a48;margin-top:3px}
+.shelfrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:28px;padding:8px;border-bottom:6px solid #8a6a46;background:#f2efe9;border-radius:4px 4px 0 0;margin-bottom:10px}
+.sw{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sw div{background:#222;border:1px solid #444;border-radius:8px;padding:10px 6px;text-align:center;font-size:13px;color:#aaa}
+.sw div i{display:block;width:22px;height:22px;border-radius:50%;margin:0 auto 6px;background:#333;border:2px solid #555}
+.sw div.on{color:#fff;border-color:var(--accent)}
+.sw div.on i{background:#ffe9a3;border-color:#fff;box-shadow:0 0 14px #ffe9a3}
+.nb{background:#fffdf5;color:#333;border-radius:4px;padding:10px 14px;background-image:repeating-linear-gradient(#fffdf5 0 33px,#d6e3f0 33px 34px)}
+.nb div{height:34px;display:flex;align-items:center;gap:10px;font-size:19px;letter-spacing:.1em}
+.nb small{color:#c55;font-size:11px;width:14px}
 </style>
 </head>
 <body>
@@ -168,7 +184,7 @@ table.tb th{background:#eef}
     <div class="hero">
       <h2 style="margin:0">유경빌딩 10층에 갇혔다.</h2>
       <p>금요일 밤 11시, 내일 아침 9시가 경쟁 PT인데 보안 시스템 오작동으로 10층 전체가 잠겼어요.<br>
-      2~4명이 서로 다른 단서를 나눠 보고, 30분 안에 PT 파일을 찾아 입구 문을 열어야 해요.</p>
+      2~4명이 서로 다른 단서를 나눠 보고, 40분 안에 PT 파일을 찾아 입구 문을 열어야 해요.</p>
     </div>
     <div class="card" style="max-width:420px">
       <h2>입장하기</h2>
@@ -282,7 +298,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // ================================================
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const LIMIT = 30 * 60;           // 제한 시간(초)
+const LIMIT = 40 * 60;           // 제한 시간(초)
 const HINT_PENALTY = 120;
 const ROLE_NAME = { A: '기획', B: 'AE', C: '디자이너', D: '경영지원' };
 const MENUS = ['아메리카노', '카페라떼', '바닐라라떼', '콜드브루'];
@@ -291,24 +307,26 @@ const COLOR_HEX = { '빨강': '#e53935', '파랑': '#1e63e9', '초록': '#1aa260
 
 const SCENES = [
   { id: 'office1', name: '오픈 오피스', img: 'assets/escape/office1.jpg', room: 1,
-    cap: '야근하던 자리. 책상 위에 7월 탁상 달력이 그대로 있다.',
+    cap: '야근하던 자리. 책상 위에 7월 탁상 달력과 먹다 남은 야식 봉투가 있다.',
     hs: [
       { x: 23.5, y: 79.5, w: 8, h: 12, p: 'calendar', lb: '탁상 달력' },
       { x: 13.5, y: 66, w: 11, h: 9, p: 'calendar', lb: '잠긴 서랍' },
-      { x: 49, y: 62, w: 12, h: 10, f: '택배 상자. 안에는 뽁뽁이만 가득하다. 누가 이걸 다 터뜨렸을까.' },
+      { x: 49, y: 62, w: 12, h: 10, p: 'receipt', lb: '야식 봉투' },
+      { x: 86, y: 26, w: 12, h: 40, f: '흰 캐비닛. 서류만 잔뜩 들어 있다. 누군가 "야근 금지"라고 붙여놨다.' },
     ] },
   { id: 'office2', name: '스튜디오 새폴더', img: 'assets/escape/office2.jpg', room: 1,
     cap: '스튜디오 새폴더 구역. 27번 자리 모니터만 켜져 있다.',
     hs: [
       { x: 35.5, y: 71.5, w: 17.5, h: 14, p: 'pattern', lb: '27번 모니터' },
+      { x: 82, y: 62, w: 4, h: 30, p: 'seatmap', lb: '자리 배치도' },
       { x: 3, y: 55, w: 5.5, h: 7, f: '빨간 모자 인형. 스튜디오 새폴더의 비공식 마스코트라는 소문이 있다.' },
-      { x: 82, y: 62, w: 4, h: 30, f: '"STUDIO NEW FOLDER" 기둥. 누군가 연필로 "디자이너는 기호를 본다"라고 적어놨다.' },
     ] },
   { id: 'lounge', name: '라운지', img: 'assets/escape/lounge.jpg', room: 2,
-    cap: '초록 타일 벽과 커피머신이 있는 라운지.',
+    cap: '초록 타일 벽과 커피머신, 비품 선반이 있는 라운지.',
     hs: [
       { x: 37.5, y: 36.5, w: 6, h: 9.5, p: 'tiles', lb: '초록 타일 벽' },
       { x: 44.6, y: 45.5, w: 5.4, h: 6.5, p: 'coffee', lb: '커피머신' },
+      { x: 50.5, y: 37.5, w: 6, h: 7, p: 'shelf', lb: '비품 선반' },
       { x: 2, y: 57, w: 12, h: 13, f: '소파 쿠션 밑에서 찢어진 회의록 반쪽이 나왔다. "…화이트보드 카피는 원본과 한 글자씩 대조할 것…"' },
       { x: 86, y: 52, w: 12, h: 18, f: '긴 테이블. 누군가 먹다 남긴 과자 봉지가 있다.' },
     ] },
@@ -317,13 +335,15 @@ const SCENES = [
     hs: [
       { x: 41.5, y: 32.5, w: 21, h: 18.5, p: 'chart', lb: 'TV 보고서' },
       { x: 1, y: 30, w: 20, h: 24, p: 'white', lb: '유리 화이트보드' },
+      { x: 40, y: 9, w: 10, h: 8, p: 'lights', lb: '조명 패널' },
       { x: 83, y: 25, w: 16, h: 30, f: '창밖으로 강남구청역 일대가 보인다. 아직 불 켜진 사무실이 많다.' },
     ] },
   { id: 'booth', name: '포커스 부스', img: 'assets/escape/booth.jpg', room: 3,
     cap: '줄무늬 쿠션이 있는 포커스 부스. 안쪽부터 1~4번 부스.',
     hs: [
       { x: 44, y: 38, w: 40, h: 25, p: 'stripes', lb: '부스 쿠션 · 사물함' },
-      { x: 25, y: 46, w: 7, h: 9, f: '두고 간 노트. "포커스 부스 사물함 다이얼은 4자리"라고 적혀 있다.' },
+      { x: 30, y: 52, w: 9, h: 6, p: 'notebook', lb: '두고 간 노트' },
+      { x: 91, y: 30, w: 7, h: 22, f: '복도 끝 화분. 물을 준 지 오래된 것 같다.' },
     ] },
   { id: 'exit', name: '입구', img: 'assets/escape/exit.jpg', room: 4,
     cap: '마지막 관문. 유리문 너머로 라운지가 보인다.',
@@ -333,7 +353,9 @@ const SCENES = [
       { x: 22, y: 24, w: 48, h: 40, f: 'WELCOME TO PENTACOMM. 오늘따라 문이 꿈쩍도 안 한다.' },
     ] },
 ];
-const ROOM_REQ = { 1: [], 2: ['calendar', 'pattern'], 3: ['tiles', 'coffee'], 4: ['chart', 'white', 'stripes'] };
+const ROOM_REQ = { 1: [], 2: ['calendar', 'receipt', 'pattern', 'seatmap'], 3: ['tiles', 'coffee', 'shelf'],
+  4: ['chart', 'white', 'lights', 'stripes', 'notebook'] };
+const ROOM_NAME = { 2: '라운지가', 3: '대회의실과 포커스 부스가', 4: '입구가' };
 
 const PUZ = {
   calendar: { title: '탁상 달력과 잠긴 서랍', pair: ['A', 'B'], kind: 'digits', len: 6,
@@ -357,6 +379,21 @@ const PUZ = {
   stripes: { title: '부스 쿠션과 사물함', pair: ['C', 'D'], kind: 'digits', len: 4,
     q: '사물함 다이얼 4자리를 입력하세요.',
     hint: 'D(경영지원)의 규칙에 나온 부스 순서대로, C(디자이너)가 지정된 색 줄의 개수를 세어 불러주세요.' },
+  receipt: { title: '야식 봉투 속 영수증', pair: ['A', 'D'], kind: 'num', len: 6,
+    q: '영수증 합계 금액(원)을 숫자로 입력하세요.',
+    hint: 'A(기획)가 영수증의 메뉴와 수량을 불러주고, D(경영지원)가 메뉴판 가격으로 곱해서 더하세요.' },
+  seatmap: { title: '스튜디오 새폴더 자리 배치도', pair: ['B', 'C'], kind: 'num', len: 2,
+    q: '열쇠가 있는 자리 번호를 입력하세요.',
+    hint: 'C(디자이너)가 배치도에서 27번 자리를 찾고, B(AE)의 메모대로 화살표 방향으로 한 칸씩 옮겨가세요. 위쪽이 ↑예요.' },
+  shelf: { title: '라운지 비품 선반', pair: ['B', 'C'], kind: 'num', len: 2,
+    q: '비품장 자물쇠 숫자를 입력하세요.',
+    hint: 'C(디자이너)가 선반 위 물건 개수를 세어 알려주고, B(AE)가 비품 대장의 계산식에 넣어 계산하세요.' },
+  lights: { title: '회의실 조명 패널', pair: ['A', 'D'], kind: 'num', len: 4,
+    q: '켜진 조명의 번호를 작은 수부터 이어서 입력하세요.',
+    hint: 'A(기획)가 켜진 조명 이름을 불러주고, D(경영지원)가 번호표에서 번호를 찾아 작은 수부터 정렬하세요.' },
+  notebook: { title: '두고 간 노트', pair: ['A', 'B'], kind: 'text',
+    q: '책갈피가 가리키는 글자를 순서대로 이어 붙인 단어를 입력하세요.',
+    hint: '"2-3"은 노트 2번째 줄의 3번째 글자예요. B(AE)가 책갈피를 불러주고 A(기획)가 노트에서 글자를 찾아요.' },
   filename: { title: 'PT 파일명', pair: ['ALL'], kind: 'filename',
     q: 'USB 속 PT 파일명을 순서대로 맞추세요.',
     hint: '공유 아이템의 "파일명 조각 ①②③"에 각 자리의 단어가 적혀 있어요.' },
@@ -497,6 +534,11 @@ async function refresh() {
 }
 function announceNew(prev, cur) {
   if (!prev || prev.status !== 'playing') return;
+  const wasOpen = n => ROOM_REQ[n].every(x => (prev.solved || []).includes(x));
+  for (const n of [2, 3, 4]) if (!wasOpen(n) && ROOM_REQ[n].every(x => cur.solved.includes(x))) {
+    toast(`🔓 ${ROOM_NAME[n]} 열렸어요!`, { ms: 5000 });
+    addChat(null, `🔓 ${ROOM_NAME[n]} 열렸어요!`);
+  }
   const old = new Set((prev.inventory || []).map(i => i.puzzle));
   for (const it of cur.inventory) if (!old.has(it.puzzle)) {
     toast(`🔓 ${it.by}님이 풀었어요: ${it.title}`, { ms: 4200 });
@@ -781,6 +823,73 @@ const CLUES = {
     } else out += noClue('D', '다이얼 규칙');
     return out;
   },
+  receipt() {
+    let out = '';
+    if (has('A')) {
+      const items = C().receipt_items;
+      out += clueBox('A 기획 · 야식 봉투 속 영수증', `<div class="rcpt"><b>24시 분식 · 강남구청역점</b><br>---------------------------<br>
+        ${items.map(it => `<div class="rl"><span>${esc(it.name)}</span><span>× ${it.qty}</span><span class="smear">▒▒▒▒</span></div>`).join('')}
+        ---------------------------<br><div class="rl"><b>합계</b><span></span><span class="smear">▒▒▒▒▒▒</span></div>
+        <div style="font-size:11px;color:#888;margin-top:6px">※ 커피를 쏟아서 금액이 번졌다</div></div>`);
+    } else out += noClue('A', '영수증');
+    if (has('D')) {
+      const { menu, prices } = C().receipt_menu;
+      out += clueBox('D 경영지원 · 법카 정산용 분식집 메뉴판', `<table class="tb"><tr>${menu.slice(0, 4).map(m => `<th>${m}</th>`).join('')}</tr>
+        <tr>${prices.slice(0, 4).map(v => `<td>${v.toLocaleString()}</td>`).join('')}</tr>
+        <tr>${menu.slice(4).map(m => `<th>${m}</th>`).join('')}</tr><tr>${prices.slice(4).map(v => `<td>${v.toLocaleString()}</td>`).join('')}</tr></table>`);
+    } else out += noClue('D', '메뉴판 가격');
+    return out;
+  },
+  seatmap() {
+    let out = '';
+    if (has('C')) {
+      const { rows, cols, nums } = C().seatmap_grid;
+      out += clueBox('C 디자이너 · 기둥에 붙은 자리 배치도 (위쪽이 창가)', `<div class="seat" style="grid-template-columns:repeat(${cols},1fr)">${nums.map(n => `<div>${n}</div>`).join('')}</div>
+        <div class="muted" style="font-size:12px;margin-top:6px;text-align:center">▼ 출입구</div>`);
+    } else out += noClue('C', '자리 배치도');
+    if (has('B')) out += clueBox('B AE · 팀장님이 남긴 메신저', `<div class="memo">"열쇠는 <b>27번 자리</b>에서<br><span style="font-size:24px">${C().seatmap_moves.join(' ')}</span><br>로 한 칸씩 옮겨간 자리 서랍에 둠"</div>`);
+    else out += noClue('B', '열쇠 위치 메모');
+    return out;
+  },
+  shelf() {
+    const ICON = { '머그컵': '☕', '찻잔': '🍵', '티팟': '🫖', '유리병': '🍶' };
+    let out = '';
+    if (has('C')) {
+      const { items, counts } = C().shelf_counts;
+      // 개수를 숫자로 주지 않고 선반에 섞어서 진열
+      const all = []; items.forEach((n, i) => { for (let k = 0; k < counts[i]; k++) all.push(n); });
+      const seed = all.length * 7 + counts[0]; const mixed = all.map((n, i) => ({ n, o: (i * 37 + seed) % 97 })).sort((a, b) => a.o - b.o).map(x => x.n);
+      const half = Math.ceil(mixed.length / 2);
+      const row = arr => `<div class="shelfrow">${arr.map(n => `<span class="it">${ICON[n]}<small>${n}</small></span>`).join('')}</div>`;
+      out += clueBox('C 디자이너 · 라운지 비품 선반', row(mixed.slice(0, half)) + row(mixed.slice(half)));
+    } else out += noClue('C', '선반 위 물건');
+    if (has('B')) {
+      const f = C().shelf_formula;
+      out += clueBox('B AE · 비품 관리 대장', `<div class="memo">비품장 자물쇠 =<br><b>(${f[0]} 수 × ${f[1]} 수) + ${f[2]} 수</b></div>`);
+    } else out += noClue('B', '자물쇠 계산식');
+    return out;
+  },
+  lights() {
+    let out = '';
+    if (has('A')) {
+      const { names, on } = C().lights_state;
+      out += clueBox('A 기획 · 회의실 조명 패널', `<div class="sw">${names.map((n, i) => `<div class="${on[i] ? 'on' : ''}"><i></i>${esc(n)}</div>`).join('')}</div>`);
+    } else out += noClue('A', '조명 패널');
+    if (has('D')) {
+      const { names, nums } = C().lights_nums;
+      out += clueBox('D 경영지원 · 시설 관리 번호표', `<table class="tb"><tr>${names.map(n => `<th>${n}</th>`).join('')}</tr><tr>${nums.map(v => `<td>${v}</td>`).join('')}</tr></table>
+        <div class="memo" style="margin-top:10px">야간 보안 해제 = 켜진 조명 번호를 <b>작은 수부터</b> 이어서</div>`);
+    } else out += noClue('D', '조명 번호표');
+    return out;
+  },
+  notebook() {
+    let out = '';
+    if (has('A')) out += clueBox('A 기획 · 부스에 두고 간 노트', `<div class="nb">${C().notebook_lines.map((l, i) => `<div><small>${i + 1}</small>${[...l].map(ch => `<span>${esc(ch)}</span>`).join('')}</div>`).join('')}</div>`);
+    else out += noClue('A', '노트 내용');
+    if (has('B')) out += clueBox('B AE · 노트 사이 책갈피', `<div class="memo" style="text-align:center;font-size:20px">${C().notebook_marks.join(' · ')}</div><div class="muted" style="font-size:12px;margin-top:6px">줄-칸</div>`);
+    else out += noClue('B', '책갈피');
+    return out;
+  },
   filename() {
     const inv = S.room.inventory.filter(i => i.title.startsWith('파일명 조각'));
     return clueBox('공유 아이템의 파일명 조각', inv.map(i => `<div>· ${esc(i.text)}</div>`).join(''));
@@ -793,6 +902,7 @@ const CLUES = {
 // 입력 UI
 const INPUTS = {
   digits: p => `<div class="ansrow"><input class="txt" id="in-ans" inputmode="numeric" maxlength="${PUZ[p].len}" placeholder="${'•'.repeat(PUZ[p].len)}" style="letter-spacing:.3em;font-size:20px;text-align:center"><button class="btn" id="btn-ans">확인</button></div>`,
+  num: p => `<div class="ansrow"><input class="txt" id="in-ans" inputmode="numeric" maxlength="${PUZ[p].len}" placeholder="숫자" style="font-size:20px;text-align:center"><button class="btn" id="btn-ans">확인</button></div>`,
   text: () => `<div class="ansrow"><input class="txt" id="in-ans" maxlength="12" placeholder="정답 단어"><button class="btn" id="btn-ans">확인</button></div>`,
   pattern: () => {
     const syms = has('C') ? C().pattern_symbols : null;
@@ -815,6 +925,7 @@ const BIND = {
     $('btn-ans').onclick = go; $('in-ans').onkeydown = e => { if (e.key === 'Enter') go(); };
   },
   text(p) { BIND.digits(p); },
+  num(p) { BIND.digits(p); },
   pattern(p) {
     const syms = has('C') ? C().pattern_symbols : null;
     const view = () => { $('seqv').textContent = S.seq.map(i => syms ? syms[i] : '●').join(' → ');
@@ -863,7 +974,7 @@ function renderResult() {
       ${r.players.map(p => esc(p.name)).join(', ')}`;
   } else {
     $('r-title').innerHTML = '⏰ 시간 초과';
-    $('r-body').innerHTML = `오전 9시까지 PT 파일을 찾지 못했어요…<br>푼 퍼즐 ${r.solved.length} / 9`;
+    $('r-body').innerHTML = `오전 9시까지 PT 파일을 찾지 못했어요…<br>푼 퍼즐 ${r.solved.length} / ${Object.keys(PUZ).length}`;
   }
 }
 $('btn-back').onclick = () => leaveToLobby();
