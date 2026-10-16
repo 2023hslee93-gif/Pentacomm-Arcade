@@ -1134,12 +1134,6 @@
         <div class="cabinet-sub">지하철 역 이름을 먼저 다 입력하면 승리! 실시간 1:1 타자 대결</div>
       </button>
 
-      <button class="cabinet realtime-game" data-game="escape10f" style="--accent:var(--pink)">
-        <div class="cabinet-screen" style="font-size:40px;">🚪</div>
-        <div class="cabinet-label pixel">ESCAPE 10F</div>
-        <div class="cabinet-sub">10층에 갇혔다! 2~4명이 단서를 나눠 보고 40분 안에 탈출하는 협동 방탈출</div>
-      </button>
-
       <button class="cabinet" data-game="numtap" style="--accent:var(--yellow)">
         <div class="cabinet-screen" style="font-size:40px;">🎯</div>
         <div class="cabinet-label pixel">NUMTAP</div>
@@ -2077,12 +2071,10 @@
     { id:'hiddenpic', label:'HIDDENPIC', icon:'🧐', color:'var(--orange)' },
     { id:'sidesort', label:'SIDESORT', icon:'🐱', color:'var(--pink)' },
     { id:'subwayrace', label:'SUBWAY RACE', icon:'🚇', color:'var(--green)' },
-    // 별도 페이지(escape.html)로 운영: scores/팀 대항전 집계에서는 제외, 관리자 ON/OFF·순서 변경에는 포함
-    { id:'escape10f', label:'ESCAPE 10F', icon:'🚪', color:'var(--pink)', external:'escape.html', noScore:true },
     { id:'spintail', label:'SPINTAIL', icon:'🐹', color:'var(--orange)' },
     { id:'colorspot', label:'COLORSPOT', icon:'🎨', color:'var(--pink)' }
   ];
-  const GAME_IDS = GAMES.filter(function(g){ return !g.noScore; }).map(function(g){ return g.id; });
+  const GAME_IDS = GAMES.map(function(g){ return g.id; });
   function gameLabel(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.label : id; }
   function gameColor(id){ const g = GAMES.find(function(x){ return x.id===id; }); return g ? g.color : 'var(--text-dim)'; }
 
@@ -2408,21 +2400,6 @@
         if(el) el.textContent = top ? ('🏆 ' + top.name) : '아직 없음';
       });
     }catch(e){ /* ignore, leave placeholders */ }
-    // ESCAPE 10F: escape_records 의 최단 기록 팀 표시
-    try{
-      const el = document.getElementById('cabinet-leader-escape10f');
-      if(el){
-        const { data, error } = await sb.from('escape_records').select('players, total_secs').order('total_secs', { ascending:true }).limit(1);
-        if(error) throw error;
-        const r = data && data[0];
-        if(r){
-          const t = Math.floor(r.total_secs / 60) + ':' + String(r.total_secs % 60).padStart(2, '0');
-          el.textContent = '🏆 ' + r.players.map(function(p){ return p.name; }).join(', ') + ' · ' + t;
-        }else{
-          el.textContent = '아직 없음';
-        }
-      }
-    }catch(e){ /* escape-schema.sql 미실행 시 무시 */ }
   }
 
   async function renderTeamBattle(){
@@ -2859,8 +2836,6 @@
   document.querySelectorAll('.cabinet[data-game]').forEach(function(btn){
     btn.addEventListener('click', function(){
       if(btn.classList.contains('disabled')) return;
-      const ext = GAMES.find(function(g){ return g.id === btn.dataset.game && g.external; });
-      if(ext){ location.href = ext.external; return; }
       openGameInfoModal(btn.dataset.game);
     });
   });
@@ -5236,36 +5211,33 @@
   const ZZ_W = 280, ZZ_H = 420, ZZ_SPEED = 2.4, ZZ_TOL = 26;
   let zigzagCtx, zigzagState;
 
-  function buildZigzagTurns(){
-    const turns = [{ d:0, x:0 }];
-    let d = 0, x = 0, dir = 1;
-    for(let i=0;i<300;i++){
+  /* 길은 필요한 만큼만 앞쪽에 계속 이어서 생성한다 (예전: 300구간 고정 → 약 2300점에서 길이 끝났음) */
+  function extendZigzagTurns(s, untilD){
+    const turns = s.turns;
+    let last = turns[turns.length-1];
+    while(last.d < untilD){
       const segLen = 55 + Math.random()*45;
-      d += segLen;
-      x += dir*segLen;
-      turns.push({ d:d, x:x });
-      dir *= -1;
+      s.genDir *= -1;
+      last = { d:last.d + segLen, x:last.x + s.genDir*segLen };
+      turns.push(last);
     }
-    return turns;
   }
 
-  function zigzagPathXAt(turns, d){
-    for(let i=0;i<turns.length-1;i++){
-      if(d >= turns[i].d && d <= turns[i+1].d){
-        const t = (d-turns[i].d)/(turns[i+1].d-turns[i].d);
-        return turns[i].x + t*(turns[i+1].x-turns[i].x);
-      }
-    }
-    const last = turns[turns.length-1], prev = turns[turns.length-2];
-    const dir = (last.x-prev.x) >= 0 ? 1 : -1;
-    return last.x + dir*(d-last.d);
+  /* dist는 항상 증가하므로 구간 인덱스를 앞으로만 전진시키며 찾는다 */
+  function zigzagPathXAt(s, d){
+    const turns = s.turns;
+    while(s.segIdx < turns.length-2 && d > turns[s.segIdx+1].d) s.segIdx++;
+    const a = turns[s.segIdx], b = turns[s.segIdx+1];
+    const t = (d-a.d)/(b.d-a.d);
+    return a.x + t*(b.x-a.x);
   }
 
   function prepareZigzag(){
     zigzagState = {
-      turns: buildZigzagTurns(), dist:0, ballX:0, playerDir:1,
+      turns: [{ d:0, x:0 }], genDir:-1, segIdx:0, dist:0, ballX:0, playerDir:1,
       score:0, running:false, over:false, rafId:null, lastTime:0
     };
+    extendZigzagTurns(zigzagState, 600);
     document.getElementById('zigzag-score').textContent = '0';
     loadMyBest('zigzag');
     drawZigzag();
@@ -5284,7 +5256,8 @@
     const s = zigzagState;
     s.dist += ZZ_SPEED*step;
     s.ballX += s.playerDir*ZZ_SPEED*step;
-    const truePathX = zigzagPathXAt(s.turns, s.dist);
+    extendZigzagTurns(s, s.dist + 600);
+    const truePathX = zigzagPathXAt(s, s.dist);
     if(Math.abs(s.ballX-truePathX) > ZZ_TOL){ endZigzag(); return; }
     s.score = Math.floor(s.dist/10);
     document.getElementById('zigzag-score').textContent = s.score;
@@ -5300,13 +5273,15 @@
     ctx.lineCap = 'round';
     ctx.beginPath();
     let started = false;
-    s.turns.forEach(function(t){
-      if(t.d < s.dist-150 || t.d > s.dist+250) return;
+    for(let i = Math.max(0, s.segIdx-3); i < s.turns.length; i++){
+      const t = s.turns[i];
+      if(i > 0 && s.turns[i-1].d > s.dist+250) break;
+      if(t.d < s.dist-150 && !(s.turns[i+1] && s.turns[i+1].d >= s.dist-150)) continue;
       const screenY = ballScreenY - (t.d - s.dist);
       const screenX = ZZ_W/2 + (t.x - s.ballX);
       if(!started){ ctx.moveTo(screenX, screenY); started = true; }
       else ctx.lineTo(screenX, screenY);
-    });
+    }
     ctx.stroke();
     ctx.fillStyle = '#FFD23F';
     ctx.shadowColor = '#FFD23F'; ctx.shadowBlur = 8;
