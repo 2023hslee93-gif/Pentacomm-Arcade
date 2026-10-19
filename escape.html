@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ESCAPE 10F</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
@@ -105,6 +106,9 @@ input.txt:focus{border-color:var(--accent)}
   margin:0!important;transform:none!important;background:rgba(0,0,0,.72);z-index:9000;
   display:block;overflow-y:auto;overflow-x:hidden;padding:4vh 12px;box-sizing:border-box}
 #modal.escm.hidden{display:none!important}
+#vbar{position:sticky;top:0;z-index:9500;background:var(--accent);color:#fff;font-weight:700;padding:10px 16px;
+  display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center}
+#vbar .btn{background:#fff;color:var(--accent)}
 .mbox{background:var(--panel);border:1px solid var(--line);border-radius:16px;width:100%;max-width:580px;padding:18px;margin:0 auto 4vh}
 .mhead{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .mhead h2{margin:0;font-size:18px;flex:1}
@@ -171,6 +175,45 @@ table.tb th{background:#eef}
 .nb{background:#fffdf5;color:#333;border-radius:4px;padding:10px 14px;background-image:repeating-linear-gradient(#fffdf5 0 33px,#d6e3f0 33px 34px)}
 .nb div{height:34px;display:flex;align-items:center;gap:10px;font-size:19px;letter-spacing:.1em}
 .nb small{color:#c55;font-size:11px;width:14px}
+.nb.cs{background:#fff;background-image:none}.nb.cs div{border-bottom:1px dashed #ddd}
+/* 맵 선택 */
+.maps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.maps.one{grid-template-columns:1fr;max-width:340px;margin:0 auto 14px}
+@media(max-width:520px){.maps{grid-template-columns:1fr}}
+.mapc{display:flex;flex-direction:column;text-align:left;padding:0;background:var(--panel2);border:2px solid var(--line);border-radius:12px;overflow:hidden;color:var(--text);cursor:pointer;font:inherit}
+.mapc:disabled{cursor:default}
+.mapc img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block;background:#000}
+.mapc .mi{padding:8px 10px 10px;display:flex;flex-direction:column;gap:2px}
+.mapc .mi b{font-size:14px;letter-spacing:.03em}.mapc .mi>span{font-size:12px;color:var(--muted)}
+.mapc .mt{font-size:12px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.mapc.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+@media(max-width:520px){.mapc{flex-direction:row}.mapc img{width:110px;aspect-ratio:auto;height:auto}}
+.lv{font-size:11px;font-weight:800;padding:1px 7px;border-radius:99px;color:#111}
+.lv-쉬움{background:#7ee2a8}.lv-보통{background:#ffd166}.lv-어려움{background:#ff6b8f}
+.mstory{grid-column:1/-1;font-size:13px;color:var(--muted);line-height:1.6;background:var(--panel2);border-radius:10px;padding:10px 12px}
+.mswitch{text-align:center;font-size:13px;color:var(--muted);margin-bottom:12px;display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap}
+.rtabs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.rtab{background:var(--panel2);border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:5px 11px;font-size:12px;cursor:pointer}
+.rtab.on{background:var(--accent2);color:var(--text);border-color:var(--accent)}
+/* LAST TRAIN 단서 */
+.led{background:#05070b;border:4px solid #3a3f4a;border-radius:8px;padding:12px 16px;font-family:"D2Coding",Consolas,monospace;color:#ffb000;font-size:18px;text-shadow:0 0 8px #ffb00088}
+.led div{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #3a2a00}
+.led div:last-child{border:0}
+.kakao{background:#b2c7da;border-radius:10px;padding:12px}
+.kakao small{display:block;font-size:12px;color:#334;margin-bottom:4px}
+.kakao div{background:#fff;color:#222;border-radius:4px 12px 12px 12px;padding:10px 12px;display:inline-block;line-height:1.6;font-size:15px}
+.seat.locker{background:#3d4757}.seat.locker div{background:#c9d1dc}
+.seat.lensg{background:#2c2f36}.seat.lensg div{background:#0d0e10;color:#ffc46b;border:3px solid #777;border-radius:50%;aspect-ratio:1;display:grid;place-items:center;padding:0}
+.tgrid .cam{width:54px;height:40px;background:#0b1a14;border:2px solid #2b3340;border-radius:3px;display:grid;place-items:center;font-size:20px}
+.tgrid .cam.on{background:#123a28}
+.tgrid .case{width:30px;height:28px;background:#1b1d22;border:1px solid #000;border-radius:4px;position:relative}
+.tgrid .case.tag::after{content:"";position:absolute;right:3px;top:3px;width:8px;height:12px;background:#e53935;border-radius:2px}
+/* SHOOTING DAY 단서 */
+.floor{position:relative;height:190px;background:#d9d5cf;border-radius:8px;overflow:hidden}
+.floor div{position:absolute;display:flex;flex-direction:column;align-items:center;color:#222}
+.floor b{font-size:40px;line-height:1}.floor span{font-weight:900;font-size:18px;background:#fff;padding:0 6px;border-radius:4px}
+.floor small{font-size:10px;color:#666}
+.subt{background:#2b2b36;color:#fff;border-radius:6px;padding:28px 14px 14px;text-align:center;font-size:20px;font-weight:700;letter-spacing:.05em;text-shadow:0 2px 4px #000}
 </style>
 </head>
 <body>
@@ -182,9 +225,9 @@ table.tb th{background:#eef}
   <!-- 입장 -->
   <section id="s-entry" class="hidden">
     <div class="hero">
-      <h2 style="margin:0">유경빌딩 10층에 갇혔다.</h2>
-      <p>금요일 밤 11시, 내일 아침 9시가 경쟁 PT인데 보안 시스템 오작동으로 10층 전체가 잠겼어요.<br>
-      2~4명이 서로 다른 단서를 나눠 보고, 40분 안에 PT 파일을 찾아 입구 문을 열어야 해요.</p>
+      <h2 style="margin:0">갇혔다. 같이 나가자.</h2>
+      <p>2~4명이 서로 다른 단서를 나눠 보고, 말로 맞춰서 탈출하는 협동 방탈출이에요.<br>
+      사무실 · 막차 지하철역 · 광고 촬영장, 맵 3개 중에 골라서 플레이하세요.</p>
     </div>
     <div class="card" style="max-width:420px">
       <h2>입장하기</h2>
@@ -209,8 +252,9 @@ table.tb th{background:#eef}
     <div class="grid2">
       <div>
         <div class="card" style="margin-bottom:16px">
-          <h2>방 만들기</h2>
-          <button class="btn" style="width:100%" id="btn-create">새 방 만들기</button>
+          <h2>맵 고르고 방 만들기</h2>
+          <div class="maps" id="map-pick"></div>
+          <button class="btn" style="width:100%;margin-top:12px" id="btn-create">이 맵으로 방 만들기</button>
           <h2 style="margin-top:18px">초대 코드로 입장</h2>
           <div class="row"><input class="txt" id="in-code" maxlength="4" placeholder="예: K7QM" style="text-transform:uppercase">
             <button class="btn" id="btn-join">입장</button></div>
@@ -220,13 +264,14 @@ table.tb th{background:#eef}
           <div class="muted" style="font-size:14px;line-height:1.7">
             · 시작하면 역할(A 기획 · B AE · C 디자이너 · D 경영지원)이 배정돼요. 인원이 적으면 한 사람이 두 역할을 맡아요.<br>
             · 역할마다 보이는 단서가 달라요. 내 화면에 없는 단서는 동료에게 물어보세요.<br>
-            · 사진 속 빛나는 곳을 누르면 퍼즐이 열려요. 사진을 길게 누르거나 더블클릭하면 동료 화면에 "여기 봐" 핑이 가요.<br>
+            · 화면 속 빛나는 곳을 누르면 퍼즐이 열려요. 화면을 길게 누르거나 더블클릭하면 동료 화면에 "여기 봐" 핑이 가요.<br>
             · 힌트는 팀당 3번, 쓸 때마다 2분이 더해져요. 기록은 클리어 시간 + 힌트 페널티예요.
           </div>
         </div>
       </div>
       <div class="card">
         <h2>탈출 랭킹 TOP 10</h2>
+        <div class="rtabs" id="rtabs-lobby"></div>
         <ul class="rank" id="rank-lobby"><li class="muted">불러오는 중…</li></ul>
       </div>
     </div>
@@ -238,6 +283,7 @@ table.tb th{background:#eef}
       <div class="muted" style="text-align:center">초대 코드</div>
       <div class="code-big" id="w-code"></div>
       <div class="muted" style="text-align:center;font-size:13px;margin-bottom:14px">동료에게 코드를 알려주세요 · 2~4명</div>
+      <div id="w-map"></div>
       <ul class="plist" id="w-players"></ul>
       <div class="row" style="margin-top:16px">
         <button class="btn ghost" id="btn-leave">나가기</button>
@@ -251,7 +297,7 @@ table.tb th{background:#eef}
   <!-- 게임 -->
   <section id="s-game" class="hidden">
     <div class="hud">
-      <div class="timer" id="g-timer">30:00</div>
+      <div class="timer" id="g-timer">--:--</div><span class="chip" id="g-map"></span>
       <div id="g-myroles"></div>
       <div class="sp"></div>
       <span class="chip" id="g-hints">힌트 3/3</span>
@@ -283,7 +329,7 @@ table.tb th{background:#eef}
         <div id="r-body" class="muted" style="line-height:1.8"></div>
         <button class="btn" style="margin-top:16px" id="btn-back">로비로</button>
       </div>
-      <div class="card"><h2>탈출 랭킹 TOP 10</h2><ul class="rank" id="rank-result"></ul></div>
+      <div class="card"><h2>탈출 랭킹 TOP 10</h2><div class="rtabs" id="rtabs-result"></div><ul class="rank" id="rank-result"></ul></div>
     </div>
   </section>
 </div>
@@ -298,116 +344,418 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // ================================================
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const LIMIT = 40 * 60;           // 제한 시간(초)
+const APP_VERSION = '2026-10-14-v4';   // 배포할 때마다 바뀜: 열려 있던 옛 화면에 새로고침 안내를 띄움
 const HINT_PENALTY = 120;
 const ROLE_NAME = { A: '기획', B: 'AE', C: '디자이너', D: '경영지원' };
-const MENUS = ['아메리카노', '카페라떼', '바닐라라떼', '콜드브루'];
-const WORDS = ['Deeply', 'Differently', 'Detail'];
-const COLOR_HEX = { '빨강': '#e53935', '파랑': '#1e63e9', '초록': '#1aa260', '남색': '#24305e', '회색': '#a9a49a' };
+const COLOR_HEX = { '빨강': '#e53935', '파랑': '#1e63e9', '초록': '#1aa260', '남색': '#24305e', '회색': '#a9a49a', '노랑': '#f2c200' };
 
-const SCENES = [
-  { id: 'office1', name: '오픈 오피스', img: 'assets/escape/office1.jpg', room: 1,
-    cap: '야근하던 자리. 책상 위에 7월 탁상 달력과 먹다 남은 야식 봉투가 있다.',
-    hs: [
-      { x: 23.5, y: 79.5, w: 8, h: 12, p: 'calendar', lb: '탁상 달력' },
-      { x: 13.5, y: 66, w: 11, h: 9, p: 'calendar', lb: '잠긴 서랍' },
-      { x: 49, y: 62, w: 12, h: 10, p: 'receipt', lb: '야식 봉투' },
-      { x: 86, y: 26, w: 12, h: 40, f: '흰 캐비닛. 서류만 잔뜩 들어 있다. 누군가 "야근 금지"라고 붙여놨다.' },
-    ] },
-  { id: 'office2', name: '스튜디오 새폴더', img: 'assets/escape/office2.jpg', room: 1,
-    cap: '스튜디오 새폴더 구역. 27번 자리 모니터만 켜져 있다.',
-    hs: [
-      { x: 35.5, y: 71.5, w: 17.5, h: 14, p: 'pattern', lb: '27번 모니터' },
-      { x: 82, y: 62, w: 4, h: 30, p: 'seatmap', lb: '자리 배치도' },
-      { x: 3, y: 55, w: 5.5, h: 7, f: '빨간 모자 인형. 스튜디오 새폴더의 비공식 마스코트라는 소문이 있다.' },
-    ] },
-  { id: 'lounge', name: '라운지', img: 'assets/escape/lounge.jpg', room: 2,
-    cap: '초록 타일 벽과 커피머신, 비품 선반이 있는 라운지.',
-    hs: [
-      { x: 37.5, y: 36.5, w: 6, h: 9.5, p: 'tiles', lb: '초록 타일 벽' },
-      { x: 44.6, y: 45.5, w: 5.4, h: 6.5, p: 'coffee', lb: '커피머신' },
-      { x: 50.5, y: 37.5, w: 6, h: 7, p: 'shelf', lb: '비품 선반' },
-      { x: 2, y: 57, w: 12, h: 13, f: '소파 쿠션 밑에서 찢어진 회의록 반쪽이 나왔다. "…화이트보드 카피는 원본과 한 글자씩 대조할 것…"' },
-      { x: 86, y: 52, w: 12, h: 18, f: '긴 테이블. 누군가 먹다 남긴 과자 봉지가 있다.' },
-    ] },
-  { id: 'meeting', name: '대회의실', img: 'assets/escape/meeting.jpg', room: 3,
-    cap: '대회의실. TV에는 아까 보던 성과 보고서가 떠 있다.',
-    hs: [
-      { x: 41.5, y: 32.5, w: 21, h: 18.5, p: 'chart', lb: 'TV 보고서' },
-      { x: 1, y: 30, w: 20, h: 24, p: 'white', lb: '유리 화이트보드' },
-      { x: 40, y: 9, w: 10, h: 8, p: 'lights', lb: '조명 패널' },
-      { x: 83, y: 25, w: 16, h: 30, f: '창밖으로 강남구청역 일대가 보인다. 아직 불 켜진 사무실이 많다.' },
-    ] },
-  { id: 'booth', name: '포커스 부스', img: 'assets/escape/booth.jpg', room: 3,
-    cap: '줄무늬 쿠션이 있는 포커스 부스. 안쪽부터 1~4번 부스.',
-    hs: [
-      { x: 44, y: 38, w: 40, h: 25, p: 'stripes', lb: '부스 쿠션 · 사물함' },
-      { x: 30, y: 52, w: 9, h: 6, p: 'notebook', lb: '두고 간 노트' },
-      { x: 91, y: 30, w: 7, h: 22, f: '복도 끝 화분. 물을 준 지 오래된 것 같다.' },
-    ] },
-  { id: 'exit', name: '입구', img: 'assets/escape/exit.jpg', room: 4,
-    cap: '마지막 관문. 유리문 너머로 라운지가 보인다.',
-    hs: [
-      { x: 54, y: 79, w: 9, h: 12, p: 'filename', lb: 'PT 파일 확인' },
-      { x: 87, y: 38, w: 6.5, h: 23, p: 'tag', lb: '출입 단말기' },
-      { x: 22, y: 24, w: 48, h: 40, f: 'WELCOME TO PENTACOMM. 오늘따라 문이 꿈쩍도 안 한다.' },
-    ] },
-];
-const ROOM_REQ = { 1: [], 2: ['calendar', 'receipt', 'pattern', 'seatmap'], 3: ['tiles', 'coffee', 'shelf'],
-  4: ['chart', 'white', 'lights', 'stripes', 'notebook'] };
-const ROOM_NAME = { 2: '라운지가', 3: '대회의실과 포커스 부스가', 4: '입구가' };
-
-const PUZ = {
-  calendar: { title: '탁상 달력과 잠긴 서랍', pair: ['A', 'B'], kind: 'digits', len: 6,
-    q: '서랍 비밀번호 6자리를 입력하세요.',
-    hint: 'A(기획)는 스티커 색과 날짜를, B(AE)는 색의 순서를 알고 있어요. 날짜는 7일 → 07처럼 두 자리로 이어 붙여요.' },
-  pattern: { title: '27번 모니터 잠금화면', pair: ['C', 'D'], kind: 'pattern',
-    q: '점을 순서대로 눌러 패턴을 입력하세요.',
-    hint: 'C(디자이너) 화면의 점에는 기호가 그려져 있어요. D(경영지원)의 포스트잇에 적힌 기호 순서대로 점을 누르면 돼요.' },
-  tiles: { title: '초록 타일 벽', pair: ['C', 'D'], kind: 'digits', len: 3,
-    q: '색이 다른 타일 3개의 도면 숫자를 입력하세요. (위 줄부터, 같은 줄은 왼쪽부터)',
-    hint: 'C(디자이너)가 살짝 밝은 타일의 위치(예: B3)를 불러주고, D(경영지원)가 도면에서 그 칸의 숫자를 읽어요.' },
-  coffee: { title: '커피머신', pair: ['ALL'], kind: 'coffee',
-    q: '주문이 들어온 시간 순서대로 메뉴 버튼을 누르세요.',
-    hint: '주문 메시지는 모두의 메신저에 하나씩 흩어져 있어요. 각자 받은 주문의 시간과 메뉴를 말해서 빠른 시간 순으로 정렬하세요.' },
-  chart: { title: 'TV 성과 보고서', pair: ['A', 'B'], kind: 'digits', len: 2,
-    q: 'TV 차트에 잘못 들어간 달의 "원본" 수치를 입력하세요.',
-    hint: 'A(기획)가 차트의 값을 한 달씩 불러주고, B(AE)가 원본 표와 비교해요. 정답은 원본 표에 있는 숫자예요.' },
-  white: { title: '유리 화이트보드', pair: ['A', 'B'], kind: 'text',
-    q: '원본과 다른 글자들을 순서대로 이어 붙이면 단어가 돼요.',
-    hint: '두 문장을 첫 글자부터 하나씩 비교하세요. 화이트보드 쪽에만 있는 글자 4개를 순서대로 적으면 돼요.' },
-  stripes: { title: '부스 쿠션과 사물함', pair: ['C', 'D'], kind: 'digits', len: 4,
-    q: '사물함 다이얼 4자리를 입력하세요.',
-    hint: 'D(경영지원)의 규칙에 나온 부스 순서대로, C(디자이너)가 지정된 색 줄의 개수를 세어 불러주세요.' },
-  receipt: { title: '야식 봉투 속 영수증', pair: ['A', 'D'], kind: 'num', len: 6,
-    q: '영수증 합계 금액(원)을 숫자로 입력하세요.',
-    hint: 'A(기획)가 영수증의 메뉴와 수량을 불러주고, D(경영지원)가 메뉴판 가격으로 곱해서 더하세요.' },
-  seatmap: { title: '스튜디오 새폴더 자리 배치도', pair: ['B', 'C'], kind: 'num', len: 2,
-    q: '열쇠가 있는 자리 번호를 입력하세요.',
-    hint: 'C(디자이너)가 배치도에서 27번 자리를 찾고, B(AE)의 메모대로 화살표 방향으로 한 칸씩 옮겨가세요. 위쪽이 ↑예요.' },
-  shelf: { title: '라운지 비품 선반', pair: ['B', 'C'], kind: 'num', len: 2,
-    q: '비품장 자물쇠 숫자를 입력하세요.',
-    hint: 'C(디자이너)가 선반 위 물건 개수를 세어 알려주고, B(AE)가 비품 대장의 계산식에 넣어 계산하세요.' },
-  lights: { title: '회의실 조명 패널', pair: ['A', 'D'], kind: 'num', len: 4,
-    q: '켜진 조명의 번호를 작은 수부터 이어서 입력하세요.',
-    hint: 'A(기획)가 켜진 조명 이름을 불러주고, D(경영지원)가 번호표에서 번호를 찾아 작은 수부터 정렬하세요.' },
-  notebook: { title: '두고 간 노트', pair: ['A', 'B'], kind: 'text',
-    q: '책갈피가 가리키는 글자를 순서대로 이어 붙인 단어를 입력하세요.',
-    hint: '"2-3"은 노트 2번째 줄의 3번째 글자예요. B(AE)가 책갈피를 불러주고 A(기획)가 노트에서 글자를 찾아요.' },
-  filename: { title: 'PT 파일명', pair: ['ALL'], kind: 'filename',
-    q: 'USB 속 PT 파일명을 순서대로 맞추세요.',
-    hint: '공유 아이템의 "파일명 조각 ①②③"에 각 자리의 단어가 적혀 있어요.' },
-  tag: { title: '출입 단말기', pair: ['ALL'], kind: 'tag',
-    q: '서로 다른 두 사람이 3초 안에 카드를 태그해야 문이 열려요.',
-    hint: '채팅이나 말로 "하나, 둘, 셋!" 하고 동시에 누르세요.' },
+// ---------------- 공통 단서 그림 ----------------
+const V = {
+  memo: (html, style = '') => `<div class="memo" style="${style}">${html}</div>`,
+  table: (labels, values, fmtv = v => v) => `<table class="tb"><tr>${labels.map(l => `<th>${esc(l)}</th>`).join('')}</tr><tr>${values.map(v => `<td>${fmtv(v)}</td>`).join('')}</tr></table>`,
+  table2: (labels, values, fmtv = v => v) => {
+    const h = Math.ceil(labels.length / 2);
+    return `<table class="tb"><tr>${labels.slice(0, h).map(l => `<th>${esc(l)}</th>`).join('')}</tr><tr>${values.slice(0, h).map(v => `<td>${fmtv(v)}</td>`).join('')}</tr>
+      <tr>${labels.slice(h).map(l => `<th>${esc(l)}</th>`).join('')}</tr><tr>${values.slice(h).map(v => `<td>${fmtv(v)}</td>`).join('')}</tr></table>`;
+  },
+  bars: (labels, values, color = '#e46e2e') => {
+    const mx = Math.max(...values) * 1.1;
+    return `<div class="bars">${labels.map((m, i) => `<div class="b"><b>${values[i]}</b><i style="height:${values[i] / mx * 120}px;background:${color}"></i><span>${esc(m)}</span></div>`).join('')}</div>`;
+  },
+  gridHead(cols, cw) {
+    let g = `<div class="tgrid" style="grid-template-columns:20px repeat(${cols},${cw}px)"><div></div>`;
+    for (let j = 1; j <= cols; j++) g += `<div class="h">${j}</div>`;
+    return g;
+  },
+  gridMark({ rows, cols, odd }, cell, cw = 34) {   // cell(isOdd) → html
+    let g = V.gridHead(cols, cw);
+    for (let i = 0; i < rows; i++) { g += `<div class="h">${'ABCDEFG'[i]}</div>`; for (let j = 0; j < cols; j++) g += cell(odd.includes(i * cols + j)); }
+    return g + '</div>';
+  },
+  gridNum({ rows, cols, digits }, cw = 34) {
+    let g = V.gridHead(cols, cw);
+    for (let i = 0; i < rows; i++) { g += `<div class="h">${'ABCDEFG'[i]}</div>`; for (let j = 0; j < cols; j++) g += `<div class="n" style="width:${cw}px">${digits[i * cols + j]}</div>`; }
+    return g + '</div>';
+  },
+  seat: ({ cols, nums }, cls = 'seat', foot = '') => `<div class="${cls}" style="grid-template-columns:repeat(${cols},1fr)">${nums.map(n => `<div>${n}</div>`).join('')}</div>${foot}`,
+  moves: (start, moves, before, after) => V.memo(`${before} <b>${start}번</b>에서<br><span style="font-size:26px;letter-spacing:.1em">${moves.join(' ')}</span><br>${after}`),
+  shelf(items, counts, icons, bg = '#f2efe9') {
+    const all = []; items.forEach((n, i) => { for (let k = 0; k < counts[i]; k++) all.push(n); });
+    const seed = all.length * 7 + counts[0];
+    const mixed = all.map((n, i) => ({ n, o: (i * 37 + seed) % 97 })).sort((a, b) => a.o - b.o).map(x => x.n);
+    const half = Math.ceil(mixed.length / 2);
+    const row = arr => `<div class="shelfrow" style="background:${bg}">${arr.map(n => `<span class="it">${icons[n]}<small>${esc(n)}</small></span>`).join('')}</div>`;
+    return row(mixed.slice(0, half)) + row(mixed.slice(half));
+  },
+  formula: (f, title) => V.memo(`${title} =<br><b>(${esc(f[0])} 수 × ${esc(f[1])} 수) + ${esc(f[2])} 수</b>`),
+  switches: ({ names, on }) => `<div class="sw">${names.map((n, i) => `<div class="${on[i] ? 'on' : ''}"><i></i>${esc(n)}</div>`).join('')}</div>`,
+  notebook: ({ lines }, cls = 'nb') => `<div class="${cls}">${lines.map((l, i) => `<div><small>${i + 1}</small>${[...l].map(ch => `<span>${esc(ch)}</span>`).join('')}</div>`).join('')}</div>`,
+  marks: ({ marks }) => V.memo(marks.join(' · '), 'text-align:center;font-size:20px') + '<div class="muted" style="font-size:12px;margin-top:6px">줄-칸 (예: 2-3 = 2번째 줄의 3번째 글자)</div>',
+  receipt: ({ items }, head, foot) => `<div class="rcpt"><b>${head}</b><br>---------------------------<br>
+    ${items.map(it => `<div class="rl"><span>${esc(it.name)}</span><span>× ${it.qty}</span><span class="smear">▒▒▒▒</span></div>`).join('')}
+    ---------------------------<br><div class="rl"><b>합계</b><span></span><span class="smear">▒▒▒▒▒▒</span></div>
+    <div style="font-size:11px;color:#888;margin-top:6px">${foot}</div></div>`,
 };
+
+// =====================================================================
+// 맵 정의 (서버 escape-schema.sql 의 _esc_def 와 퍼즐 id·선행조건이 같아야 함)
+// =====================================================================
+const MAPS = {
+  // ------------------------------------------------------------ PENTACOMM 10F
+  pentacom: {
+    name: 'PENTACOMM 10F', sub: '사무실 탈출', level: '보통', minutes: 40, thumb: 'assets/escape/office1.jpg',
+    story: '금요일 밤 11시, 내일 아침 9시가 경쟁 PT인데 보안 시스템 오작동으로 유경빌딩 10층이 잠겼다. PT 파일을 찾아 입구로 나가야 한다.',
+    fail: '오전 9시까지 PT 파일을 찾지 못했어요…',
+    roomReq: { 1: [], 2: ['calendar', 'receipt', 'pattern', 'seatmap'], 3: ['tiles', 'coffee', 'shelf'], 4: ['chart', 'white', 'lights', 'stripes', 'notebook'] },
+    roomName: { 2: '라운지가', 3: '대회의실과 포커스 부스가', 4: '입구가' },
+    scenes: [
+      { id: 'office1', name: '오픈 오피스', img: 'assets/escape/office1.jpg', room: 1,
+        cap: '야근하던 자리. 책상 위에 7월 탁상 달력과 먹다 남은 야식 봉투가 있다.',
+        hs: [
+          { x: 23.5, y: 79.5, w: 8, h: 12, p: 'calendar', lb: '탁상 달력' },
+          { x: 13.5, y: 66, w: 11, h: 9, p: 'calendar', lb: '잠긴 서랍' },
+          { x: 49, y: 62, w: 12, h: 10, p: 'receipt', lb: '야식 봉투' },
+          { x: 86, y: 26, w: 12, h: 40, f: '흰 캐비닛. 서류만 잔뜩 들어 있다. 누군가 "야근 금지"라고 붙여놨다.' },
+        ] },
+      { id: 'office2', name: '스튜디오 새폴더', img: 'assets/escape/office2.jpg', room: 1,
+        cap: '스튜디오 새폴더 구역. 27번 자리 모니터만 켜져 있다.',
+        hs: [
+          { x: 35.5, y: 71.5, w: 17.5, h: 14, p: 'pattern', lb: '27번 모니터' },
+          { x: 82, y: 62, w: 4, h: 30, p: 'seatmap', lb: '자리 배치도' },
+          { x: 3, y: 55, w: 5.5, h: 7, f: '빨간 모자 인형. 스튜디오 새폴더의 비공식 마스코트라는 소문이 있다.' },
+        ] },
+      { id: 'lounge', name: '라운지', img: 'assets/escape/lounge.jpg', room: 2,
+        cap: '초록 타일 벽과 커피머신, 비품 선반이 있는 라운지.',
+        hs: [
+          { x: 37.5, y: 36.5, w: 6, h: 9.5, p: 'tiles', lb: '초록 타일 벽' },
+          { x: 44.6, y: 45.5, w: 5.4, h: 6.5, p: 'coffee', lb: '커피머신' },
+          { x: 50.5, y: 37.5, w: 6, h: 7, p: 'shelf', lb: '비품 선반' },
+          { x: 2, y: 57, w: 12, h: 13, f: '소파 쿠션 밑에서 찢어진 회의록 반쪽이 나왔다. "…화이트보드 카피는 원본과 한 글자씩 대조할 것…"' },
+          { x: 86, y: 52, w: 12, h: 18, f: '긴 테이블. 누군가 먹다 남긴 과자 봉지가 있다.' },
+        ] },
+      { id: 'meeting', name: '대회의실', img: 'assets/escape/meeting.jpg', room: 3,
+        cap: '대회의실. TV에는 아까 보던 성과 보고서가 떠 있다.',
+        hs: [
+          { x: 41.5, y: 32.5, w: 21, h: 18.5, p: 'chart', lb: 'TV 보고서' },
+          { x: 1, y: 30, w: 20, h: 24, p: 'white', lb: '유리 화이트보드' },
+          { x: 40, y: 9, w: 10, h: 8, p: 'lights', lb: '조명 패널' },
+          { x: 83, y: 25, w: 16, h: 30, f: '창밖으로 강남구청역 일대가 보인다. 아직 불 켜진 사무실이 많다.' },
+        ] },
+      { id: 'booth', name: '포커스 부스', img: 'assets/escape/booth.jpg', room: 3,
+        cap: '줄무늬 쿠션이 있는 포커스 부스. 안쪽부터 1~4번 부스.',
+        hs: [
+          { x: 44, y: 38, w: 40, h: 25, p: 'stripes', lb: '부스 쿠션 · 사물함' },
+          { x: 30, y: 52, w: 9, h: 6, p: 'notebook', lb: '두고 간 노트' },
+          { x: 91, y: 30, w: 7, h: 22, f: '복도 끝 화분. 물을 준 지 오래된 것 같다.' },
+        ] },
+      { id: 'exit', name: '입구', img: 'assets/escape/exit.jpg', room: 4,
+        cap: '마지막 관문. 유리문 너머로 라운지가 보인다.',
+        hs: [
+          { x: 54, y: 79, w: 9, h: 12, p: 'filename', lb: 'PT 파일 확인' },
+          { x: 87, y: 38, w: 6.5, h: 23, p: 'tag', lb: '출입 단말기' },
+          { x: 22, y: 24, w: 48, h: 40, f: 'WELCOME TO PENTACOMM. 오늘따라 문이 꿈쩍도 안 한다.' },
+        ] },
+    ],
+    puz: {
+      calendar: { title: '탁상 달력과 잠긴 서랍', pair: ['A', 'B'], kind: 'digits', len: 6,
+        q: '서랍 비밀번호 6자리를 입력하세요.',
+        hint: 'A(기획)는 스티커 색과 날짜를, B(AE)는 색의 순서를 알고 있어요. 날짜는 7일 → 07처럼 두 자리로 이어 붙여요.',
+        aL: 'A 기획 · 책상 위 탁상 달력', aW: '탁상 달력', bL: 'B AE · 내 수첩 메모', bW: '서랍 비번 메모',
+        a: ({ values }) => {
+          const mark = {}; for (const [c, d] of Object.entries(values)) mark[d] = c;
+          let cells = Array.from({ length: 3 }, () => '<div></div>').join('');   // 2026년 7월 1일 = 수요일
+          for (let d = 1; d <= 31; d++) cells += `<div>${mark[d] ? `<i class="stk" style="background:${COLOR_HEX[mark[d]]}"></i>` : ''}<span style="position:relative">${d}</span></div>`;
+          return `<div class="cal"><div class="mt">7</div><div style="text-align:center;font-size:12px;color:#888">JULY 2026</div>
+            <div class="wd"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div><div class="ds">${cells}</div></div>`;
+        },
+        b: ({ order }) => V.memo(`서랍 비번 까먹지 말 것!<br>달력 스티커 날짜를<br><b>${order.join(' → ')}</b> 순서로<br>두 자리씩 이어 붙이기`) },
+      receipt: { title: '야식 봉투 속 영수증', pair: ['A', 'D'], kind: 'num', len: 6,
+        q: '영수증 합계 금액(원)을 숫자로 입력하세요.',
+        hint: 'A(기획)가 영수증의 메뉴와 수량을 불러주고, D(경영지원)가 메뉴판 가격으로 곱해서 더하세요.',
+        aL: 'A 기획 · 야식 봉투 속 영수증', aW: '영수증', bL: 'D 경영지원 · 법카 정산용 분식집 메뉴판', bW: '메뉴판 가격',
+        a: d => V.receipt(d, '24시 분식 · 강남구청역점', '※ 커피를 쏟아서 금액이 번졌다'),
+        b: ({ menu, prices }) => V.table2(menu, prices, v => v.toLocaleString()) },
+      pattern: { title: '27번 모니터 잠금화면', pair: ['C', 'D'], kind: 'pattern', btn: '잠금 해제',
+        q: '점을 순서대로 눌러 패턴을 입력하세요.',
+        hint: 'C(디자이너) 화면의 점에는 기호가 그려져 있어요. D(경영지원)의 포스트잇에 적힌 기호 순서대로 점을 누르면 돼요.',
+        aL: 'C 디자이너 · 모니터 잠금화면 (점마다 기호가 보여요)', aW: '점의 기호 배치', bL: 'D 경영지원 · 모니터 옆 포스트잇', bW: '패턴 포스트잇',
+        b: ({ seq }) => V.memo(seq.join(' → '), 'font-size:22px;text-align:center') },
+      seatmap: { title: '스튜디오 새폴더 자리 배치도', pair: ['C', 'B'], kind: 'num', len: 2,
+        q: '열쇠가 있는 자리 번호를 입력하세요.',
+        hint: 'C(디자이너)가 배치도에서 27번 자리를 찾고, B(AE)의 메모대로 화살표 방향으로 한 칸씩 옮겨가세요. 위쪽이 ↑예요.',
+        aL: 'C 디자이너 · 기둥에 붙은 자리 배치도 (위쪽이 창가)', aW: '자리 배치도', bL: 'B AE · 팀장님이 남긴 메신저', bW: '열쇠 위치 메모',
+        a: d => V.seat(d, 'seat', '<div class="muted" style="font-size:12px;margin-top:6px;text-align:center">▼ 출입구</div>'),
+        b: ({ start, moves }) => V.moves(start, moves, '"열쇠는', '로 한 칸씩 옮겨간 자리 서랍에 둠"') },
+      tiles: { title: '초록 타일 벽', pair: ['C', 'D'], kind: 'digits', len: 3,
+        q: '색이 다른 타일 3개의 도면 숫자를 입력하세요. (위 줄부터, 같은 줄은 왼쪽부터)',
+        hint: 'C(디자이너)가 살짝 밝은 타일의 위치(예: B3)를 불러주고, D(경영지원)가 도면에서 그 칸의 숫자를 읽어요.',
+        aL: 'C 디자이너 · 타일 벽 (가까이서 보면 색이 미묘하게 다른 타일이 있어요)', aW: '타일 벽 색 차이', bL: 'D 경영지원 · 인테리어 시공 도면', bW: '시공 도면',
+        a: d => V.gridMark(d, o => `<div class="t ${o ? 'odd' : ''}"></div>`), b: d => V.gridNum(d) },
+      coffee: { title: '커피머신', pair: ['ALL'], kind: 'order', items: ['아메리카노', '카페라떼', '바닐라라떼', '콜드브루'], icon: '☕', btn: '추출',
+        q: '주문이 들어온 시간 순서대로 메뉴 버튼을 누르세요.',
+        hint: '주문 메시지는 모두의 메신저에 하나씩 흩어져 있어요. 각자 받은 주문의 시간과 메뉴를 말해서 빠른 시간 순으로 정렬하세요.',
+        oL: '내 메신저에 온 주문', msg: o => `<b>${esc(o.who)}</b>: ${esc(o.item)} 하나 부탁해요 🙏` },
+      shelf: { title: '라운지 비품 선반', pair: ['C', 'B'], kind: 'num', len: 2,
+        q: '비품장 자물쇠 숫자를 입력하세요.',
+        hint: 'C(디자이너)가 선반 위 물건 개수를 세어 알려주고, B(AE)가 비품 대장의 계산식에 넣어 계산하세요.',
+        aL: 'C 디자이너 · 라운지 비품 선반', aW: '선반 위 물건', bL: 'B AE · 비품 관리 대장', bW: '자물쇠 계산식',
+        a: ({ items, counts }) => V.shelf(items, counts, { '머그컵': '☕', '찻잔': '🍵', '티팟': '🫖', '유리병': '🍶' }),
+        b: ({ formula }) => V.formula(formula, '비품장 자물쇠') },
+      chart: { title: 'TV 성과 보고서', pair: ['A', 'B'], kind: 'digits', len: 2,
+        q: 'TV 차트에 잘못 들어간 달의 "원본" 수치를 입력하세요.',
+        hint: 'A(기획)가 차트의 값을 한 달씩 불러주고, B(AE)가 원본 표와 비교해요. 정답은 원본 표에 있는 숫자예요.',
+        aL: 'A 기획 · TV에 띄운 보고서 차트 (월별 참여율 %)', aW: 'TV 차트', bL: 'B AE · 원본 리포트 수치표', bW: '원본 수치표',
+        a: ({ labels, values }) => V.bars(labels, values), b: ({ labels, values }) => V.table(labels, values) },
+      white: { title: '유리 화이트보드', pair: ['A', 'B'], kind: 'text',
+        q: '원본과 다른 글자들을 순서대로 이어 붙이면 단어가 돼요.',
+        hint: '두 문장을 첫 글자부터 하나씩 비교하세요. 화이트보드 쪽에만 있는 글자들을 순서대로 적으면 돼요.',
+        aL: 'A 기획 · 유리 화이트보드', aW: '화이트보드 문구', bL: 'B AE · 클라이언트 컨펌 카피 원본', bW: '카피 원본',
+        a: ({ text }) => `<div class="wb">${esc(text)}</div>`, b: ({ text }) => `<div class="doc">${esc(text)}</div>` },
+      lights: { title: '회의실 조명 패널', pair: ['A', 'D'], kind: 'num', len: 4,
+        q: '켜진 조명의 번호를 작은 수부터 이어서 입력하세요.',
+        hint: 'A(기획)가 켜진 조명 이름을 불러주고, D(경영지원)가 번호표에서 번호를 찾아 작은 수부터 정렬하세요.',
+        aL: 'A 기획 · 회의실 조명 패널', aW: '조명 패널', bL: 'D 경영지원 · 시설 관리 번호표', bW: '조명 번호표',
+        a: d => V.switches(d), b: ({ names, nums }) => V.table(names, nums) + V.memo('야간 보안 해제 = 켜진 조명 번호를 <b>작은 수부터</b> 이어서', 'margin-top:10px') },
+      stripes: { title: '부스 쿠션과 사물함', pair: ['C', 'D'], kind: 'digits', len: 4,
+        q: '사물함 다이얼 4자리를 입력하세요.',
+        hint: 'D(경영지원)의 규칙에 나온 부스 순서대로, C(디자이너)가 지정된 색 줄의 개수를 세어 불러주세요.',
+        aL: 'C 디자이너 · 부스 쿠션 줄무늬 (왼쪽부터 순서대로)', aW: '쿠션 줄무늬', bL: 'D 경영지원 · 비품 관리 대장', bW: '다이얼 규칙',
+        a: ({ groups }) => `<div class="cushions">${groups.map((g, i) => `<div class="cush"><div class="st">${g.map(c => `<i style="background:${COLOR_HEX[c]}"></i>`).join('')}</div>${i + 1}번 부스</div>`).join('')}</div>
+          <div class="muted" style="font-size:12px;margin-top:8px">빨강 · 남색 · 회색 줄이 섞여 있어요.</div>`,
+        b: ({ color, order }) => V.memo(`사물함 다이얼 =<br><b>${order.join('번 → ')}번</b> 부스 쿠션의<br><b>${color}</b> 줄 개수를 차례로`) },
+      notebook: { title: '두고 간 노트', pair: ['A', 'B'], kind: 'text',
+        q: '책갈피가 가리키는 글자를 순서대로 이어 붙인 단어를 입력하세요.',
+        hint: '"2-3"은 노트 2번째 줄의 3번째 글자예요. B(AE)가 책갈피를 불러주고 A(기획)가 노트에서 글자를 찾아요.',
+        aL: 'A 기획 · 부스에 두고 간 노트', aW: '노트 내용', bL: 'B AE · 노트 사이 책갈피', bW: '책갈피',
+        a: d => V.notebook(d), b: d => V.marks(d) },
+      filename: { title: 'PT 파일명', pair: ['ALL'], kind: 'final', words: ['Deeply', 'Differently', 'Detail'], pieces: ['tiles', 'chart', 'stripes'],
+        btn: '파일 열기', q: 'USB 속 PT 파일명을 순서대로 맞추세요.', pL: '공유 아이템의 파일명 조각',
+        hint: '공유 아이템의 "파일명 조각 ①②③"에 각 자리의 단어가 적혀 있어요.' },
+      tag: { title: '출입 단말기', pair: ['ALL'], kind: 'tag', btn: '🪪 카드 태그',
+        q: '서로 다른 두 사람이 3초 안에 카드를 태그해야 문이 열려요.', hint: '채팅이나 말로 "하나, 둘, 셋!" 하고 동시에 누르세요.',
+        box: ['출입 단말기', '"ADT 출입 통제 · 야간 모드"<br>두 명 이상의 출입증이 <b>3초 이내</b>에 태그되어야 문이 열립니다.'],
+        tagged: n => `${n}님이 카드를 태그했어요! 3초 안에 태그하세요` },
+    },
+  },
+
+  // ------------------------------------------------------------ LAST TRAIN
+  lasttrain: {
+    name: 'LAST TRAIN', sub: '막차 탈출', level: '쉬움', minutes: 25, thumb: 'assets/escape/lasttrain/platform.svg',
+    story: '회식 끝나고 강남구청역에 내려왔는데, 졸다 깨보니 막차는 떠났고 셔터가 내려가고 있다. 첫차까지 갇혀 있기 싫다면 지금 나가야 한다.',
+    fail: '셔터가 완전히 내려갔어요… 첫차는 5시 30분.',
+    roomReq: { 1: [], 2: ['board', 'locker', 'card', 'lost'], 3: ['cctv', 'radio', 'keybox'] },
+    roomName: { 2: '역무실이', 3: '개찰구가' },
+    scenes: [
+      { id: 'platform', name: '승강장', img: 'assets/escape/lasttrain/platform.svg', room: 1,
+        cap: '불 꺼지기 직전의 승강장. 전광판에는 회송 열차 정보만 남아 있다.',
+        hs: [
+          { x: 35, y: 12.2, w: 30, h: 10.3, p: 'board', lb: '도착 전광판' },
+          { x: 3, y: 32, w: 19, h: 44, p: 'locker', lb: '물품보관함' },
+          { x: 81, y: 34, w: 10.6, h: 42, f: '자판기. 지갑에 동전이 한 개도 없다.' },
+          { x: 29.4, y: 25.3, w: 41, h: 10.3, f: '강남구청역. 7호선과 수인분당선이 만나는 역이다.' },
+        ] },
+      { id: 'car', name: '객차 안', img: 'assets/escape/lasttrain/car.svg', room: 1,
+        cap: '차고에 들어가기 직전 멈춰 선 마지막 열차. 좌석에 분실물이 잔뜩 있다.',
+        hs: [
+          { x: 73.5, y: 66, w: 21, h: 13, p: 'lost', lb: '분실물' },
+          { x: 39.5, y: 82, w: 9, h: 11, p: 'card', lb: '떨어진 교통카드' },
+          { x: 46, y: 37.5, w: 7.5, h: 22, f: '연결문. 잠겨 있다. 창문 너머 옆 칸도 텅 비었다.' },
+          { x: 38.4, y: 32, w: 23, h: 4.5, f: '7호선 노선도. 장암에서 석남까지 이어져 있다.' },
+        ] },
+      { id: 'office', name: '역무실', img: 'assets/escape/lasttrain/office.svg', room: 2,
+        cap: '아무도 없는 역무실. CCTV 화면만 깜빡이고 있다.',
+        hs: [
+          { x: 25, y: 10.3, w: 50, h: 41, p: 'cctv', lb: 'CCTV 모니터' },
+          { x: 68.5, y: 55, w: 5, h: 16.5, p: 'radio', lb: '무전기' },
+          { x: 6.9, y: 21.5, w: 13.75, h: 31, p: 'keybox', lb: '열쇠함' },
+          { x: 79.4, y: 16.9, w: 16, h: 32, f: '근무 편성표. 오늘 밤 근무자는 4명이다.' },
+        ] },
+      { id: 'gate', name: '개찰구', img: 'assets/escape/lasttrain/gate.svg', room: 3,
+        cap: '4번 출구 앞 개찰구. 셔터가 반쯤 내려와 있다.',
+        hs: [
+          { x: 72.5, y: 21.6, w: 18.75, h: 28, p: 'exitpath', lb: '출구 안내판' },
+          { x: 18.75, y: 58, w: 60, h: 24, p: 'tag', lb: '개찰구' },
+          { x: 31, y: 14, w: 37.5, h: 20.6, f: '셔터가 반쯤 내려와 있다. 기어서 나가기엔 너무 낮다.' },
+          { x: 8.75, y: 26, w: 15, h: 14, f: '셔터 작동 시간 01:00 ~ 05:00. 지금은 00시 50분.' },
+        ] },
+    ],
+    puz: {
+      board: { title: '도착 전광판', pair: ['A', 'B'], kind: 'digits', len: 3,
+        q: '승강장 비상문 비밀번호 3자리를 입력하세요.',
+        hint: 'A(기획)가 전광판의 행선지별 남은 시간을 불러주고, B(AE)의 메모에 적힌 행선지 순서대로 숫자를 이어 붙이세요.',
+        aL: 'A 기획 · 꺼지기 직전의 도착 전광판', aW: '전광판', bL: 'B AE · 역무원이 흘린 메모', bW: '비상문 메모',
+        a: ({ values }) => `<div class="led">${Object.entries(values).map(([k, v]) => `<div><span>${esc(k)}</span><span>${v}분 후 회송</span></div>`).join('')}</div>`,
+        b: ({ order }) => V.memo(`비상문 비번 =<br><b>${order.join(' → ')}</b><br>열차의 남은 시간(분)을 순서대로`) },
+      locker: { title: '물품보관함', pair: ['C', 'B'], kind: 'num', len: 2,
+        q: '가방이 들어 있는 보관함 번호를 입력하세요.',
+        hint: 'C(디자이너)가 보관함 배치에서 출발 번호를 찾고, B(AE)의 카톡대로 한 칸씩 옮겨가세요.',
+        aL: 'C 디자이너 · 물품보관함 번호 배치', aW: '보관함 배치', bL: 'B AE · 동료가 보낸 카톡', bW: '카톡 메시지',
+        a: d => V.seat(d, 'seat locker'),
+        b: ({ start, moves }) => `<div class="kakao"><small>회식 같이 간 김대리</small><div>야 내 가방 보관함에 넣어놨는데<br><b>${start}번</b>에서 <b style="font-size:20px">${moves.join(' ')}</b><br>로 한 칸씩 간 데 있어 ㅋㅋ</div></div>` },
+      card: { title: '떨어진 교통카드', pair: ['A', 'D'], kind: 'num', len: 5,
+        q: '오늘 쓴 교통비 합계(원)를 입력하세요.',
+        hint: 'A(기획)가 이용 내역의 수단과 횟수를 불러주고, D(경영지원)가 요금표로 곱해서 더하세요.',
+        aL: 'A 기획 · 교통카드 앱 이용 내역', aW: '이용 내역', bL: 'D 경영지원 · 법카 교통비 요금표', bW: '요금표',
+        a: d => V.receipt(d, '오늘의 이용 내역', '※ 화면이 깨져서 금액이 안 보인다'),
+        b: ({ menu, prices }) => V.table2(menu, prices, v => v.toLocaleString()) },
+      lost: { title: '좌석 위 분실물', pair: ['C', 'B'], kind: 'num', len: 2,
+        q: '분실물 상자 자물쇠 숫자를 입력하세요.',
+        hint: 'C(디자이너)가 분실물 개수를 세고, B(AE)가 신고서의 계산식에 넣어요.',
+        aL: 'C 디자이너 · 좌석 위 분실물', aW: '분실물', bL: 'B AE · 분실물 신고서', bW: '신고서 계산식',
+        a: ({ items, counts }) => V.shelf(items, counts, { '우산': '☂️', '모자': '🧢', '장갑': '🧤', '목도리': '🧣' }, '#d9b44a'),
+        b: ({ formula }) => V.formula(formula, '분실물 상자 자물쇠') },
+      cctv: { title: 'CCTV 모니터', pair: ['C', 'D'], kind: 'digits', len: 3,
+        q: '사람이 찍힌 화면 3개의 모니터 번호를 입력하세요. (위 줄부터, 같은 줄은 왼쪽부터)',
+        hint: 'C(디자이너)가 사람이 보이는 화면 위치(예: B2)를 불러주고, D(경영지원)가 모니터 번호표에서 숫자를 찾아요.',
+        aL: 'C 디자이너 · CCTV 화면 (누군가 찍힌 화면이 있다)', aW: 'CCTV 화면', bL: 'D 경영지원 · 모니터 번호표', bW: '모니터 번호표',
+        a: d => V.gridMark(d, o => `<div class="cam ${o ? 'on' : ''}">${o ? '🚶' : ''}</div>`, 54), b: d => V.gridNum(d, 54) },
+      radio: { title: '무전기', pair: ['ALL'], kind: 'order', items: ['승강장', '대합실', '환승통로', '출구'], icon: '📻', btn: '송신',
+        q: '무전이 온 시간 순서대로 구역 버튼을 누르세요.',
+        hint: '무전 기록은 모두의 화면에 하나씩 나뉘어 있어요. 각자 받은 시간과 구역을 말해서 빠른 순으로 정렬하세요.',
+        oL: '내 무전기에 남은 기록', msg: o => `<b>${esc(o.who)}</b>: ${esc(o.item)} 순찰 완료, 이상 없음` },
+      keybox: { title: '열쇠함', pair: ['A', 'B'], kind: 'text',
+        q: '열쇠함 비밀번호 단어를 입력하세요.',
+        hint: '"2-3"은 근무일지 2번째 줄의 3번째 글자예요. B(AE)가 표시를 불러주고 A(기획)가 일지에서 글자를 찾아요.',
+        aL: 'A 기획 · 역무실 근무일지', aW: '근무일지', bL: 'B AE · 열쇠함에 붙은 쪽지', bW: '열쇠함 쪽지',
+        a: d => V.notebook(d), b: d => V.marks(d) },
+      exitpath: { title: '출구 안내판', pair: ['ALL'], kind: 'final', words: ['계단', '개찰구', '4번출구'], pieces: ['cctv', 'radio', 'keybox'],
+        btn: '경로 확정', q: '탈출 경로를 순서대로 맞추세요.', pL: '공유 아이템의 탈출 경로',
+        hint: '공유 아이템의 "탈출 경로 ①②③"에 각 순서의 장소가 적혀 있어요.' },
+      tag: { title: '개찰구', pair: ['ALL'], kind: 'tag', btn: '🚇 교통카드 찍기',
+        q: '서로 다른 두 사람이 3초 안에 교통카드를 찍어야 비상 게이트가 열려요.', hint: '채팅이나 말로 "하나, 둘, 셋!" 하고 동시에 누르세요.',
+        box: ['개찰구', '"심야 모드 · 비상 게이트"<br>두 장 이상의 교통카드가 <b>3초 이내</b>에 인식되어야 열립니다.'],
+        tagged: n => `${n}님이 교통카드를 찍었어요! 3초 안에 찍으세요` },
+    },
+  },
+
+  // ------------------------------------------------------------ SHOOTING DAY
+  studio: {
+    name: 'SHOOTING DAY', sub: '촬영장 탈출', level: '어려움', minutes: 45, thumb: 'assets/escape/studio/set.svg',
+    story: '새벽 3시, 아침 7시 광고 촬영을 앞두고 세팅하던 중 스튜디오 방음문이 잠겼다. 감독님이 오기 전에 촬영 준비를 끝내고 빠져나가야 한다.',
+    fail: '감독님이 도착했어요… 촬영 준비가 하나도 안 됐어요.',
+    roomReq: { 1: [], 2: ['tape', 'conti', 'mirror', 'makeup', 'callsheet'], 3: ['gel', 'cases', 'lens', 'timeline', 'subtitle'] },
+    roomName: { 2: '장비실과 편집실이', 3: '방음문 앞이' },
+    scenes: [
+      { id: 'set', name: '촬영 세트', img: 'assets/escape/studio/set.svg', room: 1,
+        cap: '하얀 호리존 세트. 바닥에 배우 동선 테이프가 붙어 있다.',
+        hs: [
+          { x: 32.5, y: 77.8, w: 42, h: 17, p: 'tape', lb: '바닥 테이프' },
+          { x: 76.9, y: 56, w: 20.6, h: 17, p: 'conti', lb: '감독 의자 · 콘티' },
+          { x: 9.4, y: 48.7, w: 20.6, h: 15, f: '카메라. 배터리가 없어서 켜지지 않는다.' },
+          { x: 56, y: 5.5, w: 16, h: 25, f: '붐마이크. 누가 높이를 이렇게 올려놨지.' },
+        ] },
+      { id: 'makeup', name: '분장실', img: 'assets/escape/studio/makeup.svg', room: 1,
+        cap: '전구가 둘러진 거울과 화장대. 벽에 콜시트가 걸려 있다.',
+        hs: [
+          { x: 31, y: 11, w: 37.5, h: 35.6, p: 'mirror', lb: '거울 전구' },
+          { x: 27.5, y: 47.8, w: 45, h: 12.2, p: 'makeup', lb: '화장대' },
+          { x: 8.75, y: 21.4, w: 12.5, h: 27.4, p: 'callsheet', lb: '콜시트' },
+          { x: 78.75, y: 15, w: 17.5, h: 28, f: '의상 행거. 내일 모델이 입을 핑크 재킷이 걸려 있다.' },
+        ] },
+      { id: 'gear', name: '장비실', img: 'assets/escape/studio/gear.svg', room: 2,
+        cap: '장비 케이스가 가득한 선반. 조명 콘솔은 꺼져 있다.',
+        hs: [
+          { x: 6.25, y: 13, w: 51, h: 69, p: 'cases', lb: '장비 케이스' },
+          { x: 61.25, y: 15, w: 21, h: 37.5, p: 'lens', lb: '렌즈 선반' },
+          { x: 58.75, y: 65.6, w: 36, h: 18.7, p: 'gel', lb: '조명 콘솔' },
+          { x: 85, y: 13, w: 11.25, h: 52, f: '사다리. 올라가 봐도 천장뿐이다.' },
+        ] },
+      { id: 'edit', name: '편집실', img: 'assets/escape/studio/edit.svg', room: 2,
+        cap: '편집 모니터 두 대. 한쪽엔 타임라인, 한쪽엔 자막 시안이 떠 있다.',
+        hs: [
+          { x: 15, y: 18.7, w: 32.5, h: 32, p: 'timeline', lb: '타임라인' },
+          { x: 52.5, y: 18.7, w: 32.5, h: 32, p: 'subtitle', lb: '자막 시안' },
+          { x: 11, y: 55, w: 14, h: 6.5, f: '식은 피자. 누가 파인애플을 시켰을까.' },
+        ] },
+      { id: 'door', name: '방음문', img: 'assets/escape/studio/door.svg', room: 3,
+        cap: '두꺼운 방음문. ON AIR 불이 켜진 채 잠겨 있다.',
+        hs: [
+          { x: 68.75, y: 39.4, w: 8.1, h: 17.8, p: 'action', lb: '키패드' },
+          { x: 20.6, y: 41.2, w: 10, h: 20.6, p: 'tag', lb: '비상 해제 버튼' },
+          { x: 41.25, y: 4.7, w: 17.5, h: 8.4, f: 'ON AIR. 아무도 촬영하고 있지 않은데…' },
+          { x: 37, y: 18, w: 26, h: 68, f: '두꺼운 방음문. 힘으로는 절대 안 열린다.' },
+        ] },
+    ],
+    puz: {
+      tape: { title: '바닥 동선 테이프', pair: ['A', 'B'], kind: 'digits', len: 6,
+        q: '슬레이트 자물쇠 6자리를 입력하세요.',
+        hint: 'A(기획)는 테이프 색과 번호를, B(AE)는 동선 순서를 알고 있어요. 번호를 두 자리씩 이어 붙이세요. 동선에 없는 색도 있어요.',
+        aL: 'A 기획 · 바닥 테이프 (색 X표 옆에 번호)', aW: '바닥 테이프', bL: 'B AE · 콘티 속 배우 동선', bW: '배우 동선',
+        a: ({ values }) => `<div class="floor">${Object.entries(values).map(([c, v], i) => `<div style="left:${12 + i * 22}%;top:${i % 2 ? 52 : 18}%"><b style="color:${COLOR_HEX[c]}">✕</b><span>${v}</span><small>${c}</small></div>`).join('')}</div>`,
+        b: ({ order }) => V.memo(`배우 동선: <b>${order.join(' → ')}</b><br>슬레이트 자물쇠 = 동선 순서대로<br>테이프 번호를 이어서`) },
+      conti: { title: '감독 의자 · 콘티', pair: ['ALL'], kind: 'order', items: ['와이드', '클로즈업', '인서트', '엔딩'], icon: '🎬', btn: '콘티 확정',
+        q: '감독 단톡방에 올라온 시간 순서대로 컷 버튼을 누르세요.',
+        hint: '단톡방 메시지는 모두의 화면에 하나씩 나뉘어 있어요. 시간과 컷 이름을 모아 빠른 순으로 정렬하세요.',
+        oL: '촬영팀 단톡방 (내 폰)', msg: o => `<b>${esc(o.who)}</b>: ${esc(o.item)} 컷 먼저 가죠` },
+      mirror: { title: '거울 전구 잠금', pair: ['C', 'D'], kind: 'pattern', btn: '서랍 열기',
+        q: '전구를 순서대로 눌러 화장대 서랍을 여세요.',
+        hint: 'C(디자이너) 화면의 전구에는 기호가 보여요. D(경영지원)의 메모에 적힌 기호 순서대로 누르세요. 6개예요.',
+        aL: 'C 디자이너 · 거울 전구 (전구마다 기호가 비쳐요)', aW: '전구 기호', bL: 'D 경영지원 · 분장팀 인수인계 메모', bW: '분장팀 메모',
+        b: ({ seq }) => V.memo(seq.join(' → '), 'font-size:22px;text-align:center') },
+      makeup: { title: '화장대', pair: ['C', 'B'], kind: 'num', len: 2,
+        q: '분장 키트 자물쇠 숫자를 입력하세요.',
+        hint: 'C(디자이너)가 화장대 위 물건 개수를 세고, B(AE)가 분장팀 메모의 계산식에 넣어요.',
+        aL: 'C 디자이너 · 화장대 위', aW: '화장대 물건', bL: 'B AE · 분장팀장 메모', bW: '키트 계산식',
+        a: ({ items, counts }) => V.shelf(items, counts, { '립스틱': '💄', '브러시': '🖌️', '퍼프': '☁️', '헤어핀': '📌' }, '#f3e3d3'),
+        b: ({ formula }) => V.formula(formula, '분장 키트 자물쇠') },
+      callsheet: { title: '콜시트', pair: ['A', 'B'], kind: 'text',
+        q: '형광펜 표시가 가리키는 글자를 이어 붙인 단어를 입력하세요.',
+        hint: '"2-3"은 콜시트 2번째 줄의 3번째 글자예요. B(AE)가 표시를 불러주고 A(기획)가 글자를 찾아요.',
+        aL: 'A 기획 · 벽에 걸린 콜시트', aW: '콜시트', bL: 'B AE · 조감독 형광펜 메모', bW: '형광펜 메모',
+        a: d => V.notebook(d, 'nb cs'), b: d => V.marks(d) },
+      gel: { title: '조명 콘솔', pair: ['A', 'D'], kind: 'num', len: 4,
+        q: '켜진 조명의 채널 번호를 작은 수부터 이어서 입력하세요.',
+        hint: 'A(기획)가 켜진 조명 이름을 불러주고, D(경영지원)가 채널표에서 번호를 찾아 작은 수부터 정렬하세요.',
+        aL: 'A 기획 · 조명 콘솔 상태', aW: '조명 콘솔', bL: 'D 경영지원 · 조명 채널표', bW: '채널표',
+        a: d => V.switches(d), b: ({ names, nums }) => V.table2(names, nums) },
+      cases: { title: '장비 케이스 선반', pair: ['C', 'D'], kind: 'digits', len: 4,
+        q: '빨간 태그가 붙은 케이스 4개의 장비 번호를 입력하세요. (위 줄부터, 같은 줄은 왼쪽부터)',
+        hint: 'C(디자이너)가 빨간 태그 위치(예: C5)를 불러주고, D(경영지원)가 장비 리스트에서 번호를 찾아요.',
+        aL: 'C 디자이너 · 장비 케이스 선반 (빨간 태그를 찾아요)', aW: '케이스 태그', bL: 'D 경영지원 · 장비 대여 리스트', bW: '장비 리스트',
+        a: d => V.gridMark(d, o => `<div class="case ${o ? 'tag' : ''}"></div>`, 30), b: d => V.gridNum(d, 30) },
+      lens: { title: '렌즈 선반', pair: ['C', 'B'], kind: 'num', len: 2,
+        q: '메모가 든 렌즈 케이스 번호를 입력하세요.',
+        hint: 'C(디자이너)가 선반에서 출발 번호를 찾고, B(AE)의 메모대로 한 칸씩 옮겨가세요. 5번 움직여요.',
+        aL: 'C 디자이너 · 렌즈 선반 번호', aW: '렌즈 선반', bL: 'B AE · 촬영감독님 메모', bW: '촬영감독 메모',
+        a: d => V.seat(d, 'seat lensg'),
+        b: ({ start, moves }) => V.moves(start, moves, '"35mm는', '로 옮겨둠. 헷갈리지 마"') },
+      timeline: { title: '편집 타임라인', pair: ['A', 'B'], kind: 'num', len: 2,
+        q: '길이가 잘못 편집된 컷의 "콘티 원본" 길이(초)를 입력하세요.',
+        hint: 'A(기획)가 타임라인의 컷 길이를 불러주고, B(AE)가 콘티 원본과 비교하세요. 정답은 원본 숫자예요.',
+        aL: 'A 기획 · 편집 타임라인 (컷 길이, 초)', aW: '타임라인', bL: 'B AE · 콘티 원본 컷 길이', bW: '콘티 원본',
+        a: ({ labels, values }) => V.bars(labels, values, '#ff3e8a'), b: ({ labels, values }) => V.table(labels, values) },
+      subtitle: { title: '자막 시안', pair: ['C', 'B'], kind: 'text',
+        q: '최종 카피와 다른 글자들을 순서대로 이어 붙인 단어를 입력하세요.',
+        hint: '두 문장을 첫 글자부터 하나씩 비교하세요. 자막 시안에만 있는 글자들을 순서대로 적으면 돼요.',
+        aL: 'C 디자이너 · 편집 모니터의 자막 시안', aW: '자막 시안', bL: 'B AE · 광고주 컨펌 최종 카피', bW: '최종 카피',
+        a: ({ text }) => `<div class="subt">${esc(text)}</div>`, b: ({ text }) => `<div class="doc">${esc(text)}</div>` },
+      action: { title: '방음문 키패드', pair: ['ALL'], kind: 'final', words: ['LIGHTS', 'CAMERA', 'ACTION'], pieces: ['timeline', 'subtitle', 'cases'],
+        btn: '입력', q: '구호 세 개를 순서대로 입력하세요.', pL: '공유 아이템의 구호 카드',
+        hint: '공유 아이템의 "구호 카드 ①②③"에 각 순서의 구호가 적혀 있어요.' },
+      tag: { title: '비상 해제 버튼', pair: ['ALL'], kind: 'tag', btn: '🔴 비상 해제',
+        q: '서로 다른 두 사람이 3초 안에 버튼을 눌러야 방음문이 열려요.', hint: '채팅이나 말로 "하나, 둘, 셋!" 하고 동시에 누르세요.',
+        box: ['비상 해제 패널', '"2인 동시 조작"<br>버튼 두 개가 <b>3초 이내</b>에 눌려야 방음문 잠금이 풀립니다.'],
+        tagged: n => `${n}님이 버튼을 눌렀어요! 3초 안에 누르세요` },
+    },
+  },
+};
+const MAP_IDS = Object.keys(MAPS);
+
+// 현재 방의 맵 (방에 들어가면 바뀜)
+let M = MAPS.pentacom, SCENES, ROOM_REQ, ROOM_NAME, PUZ, LIMIT;
+function setMap(id) {
+  M = MAPS[id] || MAPS.pentacom;
+  SCENES = M.scenes; ROOM_REQ = M.roomReq; ROOM_NAME = M.roomName; PUZ = M.puz; LIMIT = M.minutes * 60;
+}
+setMap('pentacom');
 
 // ---------------- 상태 ----------------
 const S = {
   me: null, code: null, room: null, clues: null, offset: 0,
-  chan: null, online: new Set(), scene: 'office1', modalP: null,
+  chan: null, online: new Set(), scene: null, modalP: null, pickMap: 'pentacom', rankMap: 'pentacom',
   seq: [], poll: null, tick: null, lastStatus: null, chatLog: [],
 };
+let renderedScene = null;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const store = {
@@ -445,7 +793,20 @@ function whoHas(role) {
 function enterLobby() {
   $('lb-me').innerHTML = `${esc(S.me.name)} <span class="chip">${esc(S.me.team)}</span>`;
   show('s-lobby');
-  loadRank('rank-lobby');
+  renderMapPick();
+  loadRank('lobby', S.rankMap);
+}
+function mapCard(id, sel, extra = '') {
+  const m = MAPS[id], n = Object.keys(m.puz).length - 1;
+  return `<button class="mapc ${sel ? 'sel' : ''}" data-map="${id}" ${extra}>
+    <img src="${m.thumb}" alt="" loading="lazy"><div class="mi"><b>${m.name}</b><span>${m.sub}</span>
+    <div class="mt"><span class="lv lv-${m.level}">${m.level}</span>${m.minutes}분 · 퍼즐 ${n}개</div></div></button>`;
+}
+function renderMapPick() {
+  const box = $('map-pick');
+  box.innerHTML = MAP_IDS.map(id => mapCard(id, id === S.pickMap)).join('')
+    + `<div class="mstory">${esc(MAPS[S.pickMap].story)}</div>`;
+  box.querySelectorAll('.mapc').forEach(b => b.onclick = () => { S.pickMap = b.dataset.map; store.set('pickMap', S.pickMap); renderMapPick(); });
 }
 $('btn-enter').onclick = () => {
   const name = $('in-name').value.trim();
@@ -460,7 +821,7 @@ $('btn-change').onclick = () => {
   show('s-entry');
 };
 $('btn-create').onclick = async () => {
-  try { const code = await rpc('escape_create_room', { p_name: S.me.name, p_team: S.me.team }); await joinRoom(code); }
+  try { const code = await rpc('escape_create_room', { p_name: S.me.name, p_team: S.me.team, p_map: S.pickMap }); await joinRoom(code); }
   catch (e) { toast(e.message, { err: true }); }
 };
 $('btn-join').onclick = async () => {
@@ -471,9 +832,13 @@ $('btn-join').onclick = async () => {
 };
 $('in-code').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-join').click(); });
 
-async function loadRank(el) {
-  const { data, error } = await sb.from('escape_records').select('*').order('total_secs', { ascending: true }).limit(10);
-  const ul = $(el);
+async function loadRank(where, map) {
+  S.rankMap = map;
+  const tabs = $('rtabs-' + where);
+  tabs.innerHTML = MAP_IDS.map(id => `<button class="rtab ${id === map ? 'on' : ''}" data-map="${id}">${MAPS[id].name}</button>`).join('');
+  tabs.querySelectorAll('.rtab').forEach(b => b.onclick = () => loadRank(where, b.dataset.map));
+  const ul = $('rank-' + where);
+  const { data, error } = await sb.from('escape_records').select('*').eq('map', map).order('total_secs', { ascending: true }).limit(10);
   if (error) { ul.innerHTML = `<li class="muted">랭킹을 불러오지 못했어요</li>`; return; }
   if (!data.length) { ul.innerHTML = `<li class="muted">아직 탈출한 팀이 없어요. 첫 기록의 주인공이 되어보세요!</li>`; return; }
   ul.innerHTML = data.map((r, i) => `<li><span class="no">${i + 1}</span>
@@ -484,7 +849,7 @@ async function loadRank(el) {
 
 // ---------------- 방 / 실시간 ----------------
 async function joinRoom(code) {
-  S.code = code; S.clues = null; S.scene = 'office1'; S.chatLog = []; S.lastStatus = null;
+  S.code = code; S.clues = null; S.scene = null; S.chatLog = []; S.lastStatus = null; renderedScene = null;
   store.set('code', code);
   if (S.chan) { await sb.removeChannel(S.chan); S.chan = null; }
   const ch = sb.channel('escape-' + code, { config: { presence: { key: S.me.name }, broadcast: { self: false } } });
@@ -492,7 +857,7 @@ async function joinRoom(code) {
   ch.on('broadcast', { event: 'chat' }, ({ payload }) => addChat(payload.name, payload.text));
   ch.on('broadcast', { event: 'ping' }, ({ payload }) => showPing(payload, true));
   ch.on('broadcast', { event: 'tagged' }, ({ payload }) =>
-    toast(`${payload.name}님이 카드를 태그했어요! 3초 안에 태그하세요`, { ms: 3000, onClick: () => gotoScene('exit') }));
+    toast(PUZ.tag.tagged(payload.name), { ms: 3000, onClick: () => gotoScene(SCENES[SCENES.length - 1].id) }));
   ch.on('presence', { event: 'sync' }, () => {
     S.online = new Set(Object.keys(ch.presenceState()));
     renderPlayers();
@@ -514,6 +879,7 @@ async function refresh() {
     return leaveToLobby();
   }
   const prev = S.room;
+  if (!prev || prev.map !== data.map || !S.scene) { setMap(data.map); S.scene = SCENES[0].id; renderedScene = null; }
   S.room = data;
   if (data.status === 'waiting') { renderWait(); show('s-wait'); }
   else if (data.status === 'playing') {
@@ -528,14 +894,14 @@ async function refresh() {
     renderGame(); show('s-game');
   } else {
     renderResult(); show('s-result');
-    if (S.lastStatus !== data.status) { loadRank('rank-result'); closeModal(); store.del('code'); }
+    if (S.lastStatus !== data.status) { loadRank('result', data.map); closeModal(); store.del('code'); }
   }
   S.lastStatus = data.status;
 }
 function announceNew(prev, cur) {
   if (!prev || prev.status !== 'playing') return;
   const wasOpen = n => ROOM_REQ[n].every(x => (prev.solved || []).includes(x));
-  for (const n of [2, 3, 4]) if (!wasOpen(n) && ROOM_REQ[n].every(x => cur.solved.includes(x))) {
+  for (const n of Object.keys(ROOM_REQ).filter(k => k > 1)) if (!wasOpen(n) && ROOM_REQ[n].every(x => cur.solved.includes(x))) {
     toast(`🔓 ${ROOM_NAME[n]} 열렸어요!`, { ms: 5000 });
     addChat(null, `🔓 ${ROOM_NAME[n]} 열렸어요!`);
   }
@@ -560,6 +926,12 @@ function renderWait() {
     <b>${esc(p.name)}</b>${p.name === r.host ? ' 👑' : ''}<span class="chip">${esc(p.team)}</span></li>`).join('')
     + Array.from({ length: 4 - r.players.length }, () => `<li class="muted"><span class="dot"></span>빈 자리</li>`).join('');
   const host = r.host === S.me.name;
+  $('w-map').innerHTML = `<div class="maps one">${mapCard(r.map, true, 'disabled')}</div>`
+    + (host ? `<div class="mswitch">맵 바꾸기: ${MAP_IDS.filter(id => id !== r.map).map(id => `<button class="btn ghost small" data-map="${id}">${MAPS[id].name}</button>`).join(' ')}</div>` : '');
+  $('w-map').querySelectorAll('.mswitch button').forEach(b => b.onclick = async () => {
+    try { await rpc('escape_set_map', { p_code: S.code, p_name: S.me.name, p_map: b.dataset.map }); bcast('refresh'); await refresh(); }
+    catch (e) { toast(e.message, { err: true }); }
+  });
   $('btn-start').classList.toggle('hidden', !host);
   $('btn-start').disabled = r.players.length < 2;
   $('w-note').textContent = host ? (r.players.length < 2 ? '1명 더 필요해요' : '') : '방장이 시작하길 기다리는 중…';
@@ -596,6 +968,7 @@ function renderPlayers() {
 function renderGame() {
   const r = S.room;
   $('g-code').textContent = '방 ' + r.code;
+  $('g-map').textContent = M.name;
   $('g-hints').textContent = `힌트 ${3 - r.hints_used}/3`;
   $('g-myroles').innerHTML = '내 역할 ' + myRoles().map(x => `<span class="role ${x}">${x} ${ROLE_NAME[x]}</span>`).join('');
   renderPlayers();
@@ -616,7 +989,6 @@ async function gotoScene(id) {
   if (!roomOpen(sc.room)) return toast('아직 잠겨 있어요. 앞 공간의 퍼즐을 먼저 풀어야 해요.');
   S.scene = id; renderGame();
 }
-let renderedScene = null;
 function renderScene() {
   const sc = SCENES.find(s => s.id === S.scene);
   const box = $('g-scene');
@@ -689,7 +1061,7 @@ function openFlavor(text) {
     <div style="line-height:1.7">${esc(text)}</div>`;
   $('modal').classList.remove('hidden');
 }
-const C = () => S.clues.clues;
+const mine = p => (S.clues?.clues || {})[p] || {};
 const has = r => myRoles().includes(r);
 const noClue = (role, what) => `<div class="clue noclue">🔒 ${what}는 <span class="role ${role}">${role} ${ROLE_NAME[role]}</span>
   역할인 <b>${esc(whoHas(role))}</b>님 화면에만 보여요. 물어보세요!</div>`;
@@ -703,7 +1075,7 @@ function openPuzzle(p) {
   if (!done) delete $('modal').dataset.solvedShown;
   const hinted = (S.room.hint_log || []).includes(p);
   let body = '';
-  try { body = CLUES[p](); } catch (e) { body = '<div class="muted">단서를 불러오지 못했어요</div>'; }
+  try { body = renderClues(p); } catch (e) { console.error(e); body = '<div class="muted">단서를 불러오지 못했어요</div>'; }
   const reward = S.room.inventory.find(i => i.puzzle === p);
   $('mbox').innerHTML = `<div class="mhead"><h2>${esc(P.title)}</h2><button class="x" onclick="closeModal()">×</button></div>
     ${body}
@@ -736,198 +1108,58 @@ async function submit(p, answer) {
   } catch (e) { toast(e.message, { err: true }); }
 }
 
-// 단서 화면 (내 역할에 따라 다르게)
-const CLUES = {
-  calendar() {
-    let out = '';
-    if (has('A')) {
-      const days = C().calendar_days, mark = {};
-      for (const [c, d] of Object.entries(days)) mark[d] = c;
-      const first = 3; // 2026년 7월 1일 = 수요일
-      let cells = Array.from({ length: first }, () => '<div></div>').join('');
-      for (let d = 1; d <= 31; d++) cells += `<div>${mark[d] ? `<i class="stk" style="background:${COLOR_HEX[mark[d]]}"></i>` : ''}<span style="position:relative">${d}</span></div>`;
-      out += clueBox('A 기획 · 책상 위 탁상 달력', `<div class="cal"><div class="mt">7</div><div class="muted" style="text-align:center;font-size:12px;color:#888">JULY 2026</div>
-        <div class="wd"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div><div class="ds">${cells}</div></div>`);
-    } else out += noClue('A', '탁상 달력');
-    if (has('B')) out += clueBox('B AE · 내 수첩 메모', `<div class="memo">서랍 비번 까먹지 말 것!<br>달력 스티커 날짜를<br><b>${C().calendar_order.join(' → ')}</b> 순서로<br>두 자리씩 이어 붙이기</div>`);
-    else out += noClue('B', '서랍 비번 메모');
-    return out;
-  },
-  pattern() {
-    let out = '';
-    if (has('C')) out += clueBox('C 디자이너 · 모니터 잠금화면 (점마다 기호가 보여요)', '<div class="muted" style="font-size:13px">아래 입력판의 점에 기호가 표시돼요.</div>');
-    else out += noClue('C', '점의 기호 배치');
-    if (has('D')) out += clueBox('D 경영지원 · 모니터 옆 포스트잇', `<div class="memo" style="font-size:22px;text-align:center">${C().pattern_seq.join(' → ')}</div>`);
-    else out += noClue('D', '패턴 포스트잇');
-    return out;
-  },
-  tiles() {
-    const lbl = (r, c) => {
-      let g = `<div class="tgrid" style="grid-template-columns:20px repeat(${c},34px)"><div></div>`;
-      for (let j = 1; j <= c; j++) g += `<div class="h">${j}</div>`;
-      return g;
-    };
-    const R = 'ABCDE';
-    let out = '';
-    if (has('C')) {
-      const { rows, cols, odd } = C().tiles_odd;
-      let g = lbl(rows, cols);
-      for (let i = 0; i < rows; i++) { g += `<div class="h">${R[i]}</div>`; for (let j = 0; j < cols; j++) g += `<div class="t ${odd.includes(i * cols + j) ? 'odd' : ''}"></div>`; }
-      out += clueBox('C 디자이너 · 타일 벽 (가까이서 보면 색이 미묘하게 다른 타일이 있어요)', g + '</div>');
-    } else out += noClue('C', '타일 벽 색 차이');
-    if (has('D')) {
-      const { rows, cols, digits } = C().tiles_digits;
-      let g = lbl(rows, cols);
-      for (let i = 0; i < rows; i++) { g += `<div class="h">${R[i]}</div>`; for (let j = 0; j < cols; j++) g += `<div class="n">${digits[i * cols + j]}</div>`; }
-      out += clueBox('D 경영지원 · 인테리어 시공 도면', g + '</div>');
-    } else out += noClue('D', '시공 도면');
-    return out;
-  },
-  coffee() {
-    const mine = C().coffee_orders;
-    const msgs = mine.map(o => `<div><div class="msg"><small>${esc(o.time)}</small><b>${esc(o.who)}</b>: ${esc(o.menu)} 하나 부탁해요 🙏</div></div>`).join('');
-    return clueBox('내 메신저에 온 주문', msgs || '<span class="muted">받은 주문이 없어요</span>')
-      + `<div class="muted" style="font-size:13px">나머지 주문은 다른 사람들 메신저에 있어요. 모두 모아야 해요.</div>`;
-  },
-  chart() {
-    let out = '';
-    if (has('A')) {
-      const { months, values } = C().chart_chart; const mx = Math.max(...values, 100);
-      out += clueBox('A 기획 · TV에 띄운 보고서 차트 (월별 참여율 %)', `<div class="bars">${months.map((m, i) =>
-        `<div class="b"><b>${values[i]}</b><i style="height:${values[i] / mx * 120}px"></i><span>${m}</span></div>`).join('')}</div>`);
-    } else out += noClue('A', 'TV 차트');
-    if (has('B')) {
-      const { months, values } = C().chart_table;
-      out += clueBox('B AE · 원본 리포트 수치표', `<table class="tb"><tr>${months.map(m => `<th>${m}</th>`).join('')}</tr><tr>${values.map(v => `<td>${v}</td>`).join('')}</tr></table>`);
-    } else out += noClue('B', '원본 수치표');
-    return out;
-  },
-  white() {
-    let out = '';
-    if (has('A')) out += clueBox('A 기획 · 유리 화이트보드', `<div class="wb">${esc(C().white_mod)}</div>`);
-    else out += noClue('A', '화이트보드 문구');
-    if (has('B')) out += clueBox('B AE · 클라이언트 컨펌 카피 원본', `<div class="doc">${esc(C().white_orig)}</div>`);
-    else out += noClue('B', '카피 원본');
-    return out;
-  },
-  stripes() {
-    let out = '';
-    if (has('C')) {
-      out += clueBox('C 디자이너 · 부스 쿠션 줄무늬 (왼쪽부터 순서대로)', `<div class="cushions">${C().stripes_booths.map((b, i) =>
-        `<div class="cush"><div class="st">${b.map(c => `<i style="background:${COLOR_HEX[c]}"></i>`).join('')}</div>${i + 1}번 부스</div>`).join('')}</div>
-        <div class="muted" style="font-size:12px;margin-top:8px">빨강 · 남색 · 회색 줄이 섞여 있어요.</div>`);
-    } else out += noClue('C', '쿠션 줄무늬');
-    if (has('D')) {
-      const { color, order } = C().stripes_rule;
-      out += clueBox('D 경영지원 · 비품 관리 대장', `<div class="memo">사물함 다이얼 =<br><b>${order.join('번 → ')}번</b> 부스 쿠션의<br><b>${color}</b> 줄 개수를 차례로</div>`);
-    } else out += noClue('D', '다이얼 규칙');
-    return out;
-  },
-  receipt() {
-    let out = '';
-    if (has('A')) {
-      const items = C().receipt_items;
-      out += clueBox('A 기획 · 야식 봉투 속 영수증', `<div class="rcpt"><b>24시 분식 · 강남구청역점</b><br>---------------------------<br>
-        ${items.map(it => `<div class="rl"><span>${esc(it.name)}</span><span>× ${it.qty}</span><span class="smear">▒▒▒▒</span></div>`).join('')}
-        ---------------------------<br><div class="rl"><b>합계</b><span></span><span class="smear">▒▒▒▒▒▒</span></div>
-        <div style="font-size:11px;color:#888;margin-top:6px">※ 커피를 쏟아서 금액이 번졌다</div></div>`);
-    } else out += noClue('A', '영수증');
-    if (has('D')) {
-      const { menu, prices } = C().receipt_menu;
-      out += clueBox('D 경영지원 · 법카 정산용 분식집 메뉴판', `<table class="tb"><tr>${menu.slice(0, 4).map(m => `<th>${m}</th>`).join('')}</tr>
-        <tr>${prices.slice(0, 4).map(v => `<td>${v.toLocaleString()}</td>`).join('')}</tr>
-        <tr>${menu.slice(4).map(m => `<th>${m}</th>`).join('')}</tr><tr>${prices.slice(4).map(v => `<td>${v.toLocaleString()}</td>`).join('')}</tr></table>`);
-    } else out += noClue('D', '메뉴판 가격');
-    return out;
-  },
-  seatmap() {
-    let out = '';
-    if (has('C')) {
-      const { rows, cols, nums } = C().seatmap_grid;
-      out += clueBox('C 디자이너 · 기둥에 붙은 자리 배치도 (위쪽이 창가)', `<div class="seat" style="grid-template-columns:repeat(${cols},1fr)">${nums.map(n => `<div>${n}</div>`).join('')}</div>
-        <div class="muted" style="font-size:12px;margin-top:6px;text-align:center">▼ 출입구</div>`);
-    } else out += noClue('C', '자리 배치도');
-    if (has('B')) out += clueBox('B AE · 팀장님이 남긴 메신저', `<div class="memo">"열쇠는 <b>27번 자리</b>에서<br><span style="font-size:24px">${C().seatmap_moves.join(' ')}</span><br>로 한 칸씩 옮겨간 자리 서랍에 둠"</div>`);
-    else out += noClue('B', '열쇠 위치 메모');
-    return out;
-  },
-  shelf() {
-    const ICON = { '머그컵': '☕', '찻잔': '🍵', '티팟': '🫖', '유리병': '🍶' };
-    let out = '';
-    if (has('C')) {
-      const { items, counts } = C().shelf_counts;
-      // 개수를 숫자로 주지 않고 선반에 섞어서 진열
-      const all = []; items.forEach((n, i) => { for (let k = 0; k < counts[i]; k++) all.push(n); });
-      const seed = all.length * 7 + counts[0]; const mixed = all.map((n, i) => ({ n, o: (i * 37 + seed) % 97 })).sort((a, b) => a.o - b.o).map(x => x.n);
-      const half = Math.ceil(mixed.length / 2);
-      const row = arr => `<div class="shelfrow">${arr.map(n => `<span class="it">${ICON[n]}<small>${n}</small></span>`).join('')}</div>`;
-      out += clueBox('C 디자이너 · 라운지 비품 선반', row(mixed.slice(0, half)) + row(mixed.slice(half)));
-    } else out += noClue('C', '선반 위 물건');
-    if (has('B')) {
-      const f = C().shelf_formula;
-      out += clueBox('B AE · 비품 관리 대장', `<div class="memo">비품장 자물쇠 =<br><b>(${f[0]} 수 × ${f[1]} 수) + ${f[2]} 수</b></div>`);
-    } else out += noClue('B', '자물쇠 계산식');
-    return out;
-  },
-  lights() {
-    let out = '';
-    if (has('A')) {
-      const { names, on } = C().lights_state;
-      out += clueBox('A 기획 · 회의실 조명 패널', `<div class="sw">${names.map((n, i) => `<div class="${on[i] ? 'on' : ''}"><i></i>${esc(n)}</div>`).join('')}</div>`);
-    } else out += noClue('A', '조명 패널');
-    if (has('D')) {
-      const { names, nums } = C().lights_nums;
-      out += clueBox('D 경영지원 · 시설 관리 번호표', `<table class="tb"><tr>${names.map(n => `<th>${n}</th>`).join('')}</tr><tr>${nums.map(v => `<td>${v}</td>`).join('')}</tr></table>
-        <div class="memo" style="margin-top:10px">야간 보안 해제 = 켜진 조명 번호를 <b>작은 수부터</b> 이어서</div>`);
-    } else out += noClue('D', '조명 번호표');
-    return out;
-  },
-  notebook() {
-    let out = '';
-    if (has('A')) out += clueBox('A 기획 · 부스에 두고 간 노트', `<div class="nb">${C().notebook_lines.map((l, i) => `<div><small>${i + 1}</small>${[...l].map(ch => `<span>${esc(ch)}</span>`).join('')}</div>`).join('')}</div>`);
-    else out += noClue('A', '노트 내용');
-    if (has('B')) out += clueBox('B AE · 노트 사이 책갈피', `<div class="memo" style="text-align:center;font-size:20px">${C().notebook_marks.join(' · ')}</div><div class="muted" style="font-size:12px;margin-top:6px">줄-칸</div>`);
-    else out += noClue('B', '책갈피');
-    return out;
-  },
-  filename() {
-    const inv = S.room.inventory.filter(i => i.title.startsWith('파일명 조각'));
-    return clueBox('공유 아이템의 파일명 조각', inv.map(i => `<div>· ${esc(i.text)}</div>`).join(''));
-  },
-  tag() {
-    return clueBox('출입 단말기', `<div style="line-height:1.6">"ADT 출입 통제 · 야간 모드"<br>두 명 이상의 출입증이 <b>3초 이내</b>에 태그되어야 문이 열립니다.</div>`);
-  },
-};
+// 단서 화면: 내 역할에 해당하는 쪽만 보이고, 나머지는 누구한테 물어볼지 안내
+function renderClues(p) {
+  const P = PUZ[p], m = mine(p);
+  if (P.kind === 'order') {
+    const msgs = (m.orders || []).map(o => `<div><div class="msg"><small>${esc(o.time)}</small>${P.msg(o)}</div></div>`).join('');
+    return clueBox(P.oL, msgs || '<span class="muted">받은 메시지가 없어요</span>')
+      + `<div class="muted" style="font-size:13px">나머지 메시지는 다른 사람들 화면에 있어요. 모두 모아야 해요.</div>`;
+  }
+  if (P.kind === 'final') {
+    const inv = S.room.inventory.filter(i => P.pieces.includes(i.puzzle));
+    return clueBox(P.pL, inv.length ? inv.map(i => `<div>· ${esc(i.text)}</div>`).join('') : '<span class="muted">아직 없어요</span>');
+  }
+  if (P.kind === 'tag') return clueBox(P.box[0], `<div style="line-height:1.6">${P.box[1]}</div>`);
+  let out = '';
+  if (P.kind === 'pattern') out += m.a ? clueBox(P.aL, '<div class="muted" style="font-size:13px">아래 입력판에 기호가 표시돼요.</div>') : noClue(P.pair[0], P.aW);
+  else out += m.a ? clueBox(P.aL, P.a(m.a)) : noClue(P.pair[0], P.aW);
+  out += m.b ? clueBox(P.bL, P.b(m.b)) : noClue(P.pair[1], P.bW);
+  return out;
+}
 
 // 입력 UI
 const INPUTS = {
   digits: p => `<div class="ansrow"><input class="txt" id="in-ans" inputmode="numeric" maxlength="${PUZ[p].len}" placeholder="${'•'.repeat(PUZ[p].len)}" style="letter-spacing:.3em;font-size:20px;text-align:center"><button class="btn" id="btn-ans">확인</button></div>`,
-  num: p => `<div class="ansrow"><input class="txt" id="in-ans" inputmode="numeric" maxlength="${PUZ[p].len}" placeholder="숫자" style="font-size:20px;text-align:center"><button class="btn" id="btn-ans">확인</button></div>`,
+  num: p => `<div class="ansrow"><input class="txt" id="in-ans" inputmode="numeric" maxlength="${PUZ[p].len + 2}" placeholder="숫자" style="font-size:20px;text-align:center"><button class="btn" id="btn-ans">확인</button></div>`,
   text: () => `<div class="ansrow"><input class="txt" id="in-ans" maxlength="12" placeholder="정답 단어"><button class="btn" id="btn-ans">확인</button></div>`,
-  pattern: () => {
-    const syms = has('C') ? C().pattern_symbols : null;
+  pattern: p => {
+    const syms = mine(p).a?.symbols;
     return `<div class="pad" style="margin-top:10px">${Array.from({ length: 9 }, (_, i) =>
       `<button data-i="${i}">${syms ? syms[i] : ''}</button>`).join('')}</div>
       <div class="seqview" id="seqv"></div>
-      <div class="ansrow"><button class="btn ghost" id="btn-clr">지우기</button><div style="flex:1"></div><button class="btn" id="btn-ans">잠금 해제</button></div>`;
+      <div class="ansrow"><button class="btn ghost" id="btn-clr">지우기</button><div style="flex:1"></div><button class="btn" id="btn-ans">${PUZ[p].btn}</button></div>`;
   },
-  coffee: () => `<div class="menubtns">${MENUS.map((m, i) => `<button class="btn ghost" data-i="${i}">☕ ${m}</button>`).join('')}</div>
+  order: p => `<div class="menubtns">${PUZ[p].items.map((m, i) => `<button class="btn ghost" data-i="${i}">${PUZ[p].icon} ${m}</button>`).join('')}</div>
       <div class="seqview" id="seqv"></div>
-      <div class="ansrow"><button class="btn ghost" id="btn-clr">지우기</button><div style="flex:1"></div><button class="btn" id="btn-ans">추출</button></div>`,
-  filename: () => `<div class="files" style="margin-top:10px">${[1, 2, 3].map(n =>
-      `<select class="txt" id="fn${n}"><option value="">${n}번째</option>${WORDS.map(w => `<option>${w}</option>`).join('')}</select>`).join('<span style="align-self:center">_</span>')}</div>
-      <div class="ansrow"><div style="flex:1"></div><button class="btn" id="btn-ans">파일 열기</button></div>`,
-  tag: () => `<div style="margin-top:12px"><button class="btn tagbtn" id="btn-tag">🪪 카드 태그</button><div class="seqview muted" id="tagst"></div></div>`,
+      <div class="ansrow"><button class="btn ghost" id="btn-clr">지우기</button><div style="flex:1"></div><button class="btn" id="btn-ans">${PUZ[p].btn}</button></div>`,
+  final: p => {
+    const words = [...PUZ[p].words].sort();
+    return `<div class="files" style="margin-top:10px">${[1, 2, 3].map(n =>
+      `<select class="txt" id="fn${n}"><option value="">${n}번째</option>${words.map(w => `<option>${w}</option>`).join('')}</select>`).join('<span style="align-self:center">→</span>')}</div>
+      <div class="ansrow"><div style="flex:1"></div><button class="btn" id="btn-ans">${PUZ[p].btn}</button></div>`;
+  },
+  tag: p => `<div style="margin-top:12px"><button class="btn tagbtn" id="btn-tag">${PUZ[p].btn}</button><div class="seqview muted" id="tagst"></div></div>`,
 };
 const BIND = {
   digits(p) {
     const go = () => submit(p, $('in-ans').value.trim());
-    $('btn-ans').onclick = go; $('in-ans').onkeydown = e => { if (e.key === 'Enter') go(); };
+    $('btn-ans').onclick = go; $('in-ans').onkeydown = e => { if (e.key === 'Enter' && !e.isComposing) go(); };
   },
   text(p) { BIND.digits(p); },
   num(p) { BIND.digits(p); },
   pattern(p) {
-    const syms = has('C') ? C().pattern_symbols : null;
+    const syms = mine(p).a?.symbols;
     const view = () => { $('seqv').textContent = S.seq.map(i => syms ? syms[i] : '●').join(' → ');
       document.querySelectorAll('.pad button').forEach(b => b.classList.toggle('sel', S.seq.includes(+b.dataset.i))); };
     document.querySelectorAll('.pad button').forEach(b => b.onclick = () => {
@@ -935,14 +1167,15 @@ const BIND = {
     $('btn-clr').onclick = () => { S.seq = []; view(); };
     $('btn-ans').onclick = () => { submit(p, S.seq.join('')); S.seq = []; view(); };
   },
-  coffee(p) {
-    const view = () => { $('seqv').textContent = S.seq.map(i => MENUS[i]).join(' → '); };
+  order(p) {
+    const items = PUZ[p].items;
+    const view = () => { $('seqv').textContent = S.seq.map(i => items[i]).join(' → '); };
     document.querySelectorAll('.menubtns button').forEach(b => b.onclick = () => {
       if (S.seq.length < 4) { S.seq.push(+b.dataset.i); view(); } });
     $('btn-clr').onclick = () => { S.seq = []; view(); };
-    $('btn-ans').onclick = () => { if (S.seq.length < 4) return toast('주문 4개를 모두 눌러주세요'); submit(p, S.seq.join('')); S.seq = []; view(); };
+    $('btn-ans').onclick = () => { if (S.seq.length < 4) return toast('4개를 모두 눌러주세요'); submit(p, S.seq.join('')); S.seq = []; view(); };
   },
-  filename(p) {
+  final(p) {
     $('btn-ans').onclick = () => {
       const v = [1, 2, 3].map(n => $('fn' + n).value);
       if (v.some(x => !x)) return toast('세 자리를 모두 골라주세요');
@@ -955,9 +1188,9 @@ const BIND = {
         const r = await rpc('escape_tag', { p_code: S.code, p_name: S.me.name });
         if (r.failed || r.cleared) { bcast('refresh'); return refresh(); }
         bcast('tagged', { name: S.me.name });
-        let n = 3; $('tagst').textContent = `태그됨! 다른 사람을 기다리는 중… ${n}`;
+        let n = 3; $('tagst').textContent = `눌렀어요! 다른 사람을 기다리는 중… ${n}`;
         const iv = setInterval(() => { n--; const el = $('tagst'); if (!el) return clearInterval(iv);
-          el.textContent = n > 0 ? `태그됨! 다른 사람을 기다리는 중… ${n}` : '시간이 지났어요. 다시 맞춰서 태그하세요'; if (n <= 0) clearInterval(iv); }, 1000);
+          el.textContent = n > 0 ? `눌렀어요! 다른 사람을 기다리는 중… ${n}` : '시간이 지났어요. 다시 맞춰서 누르세요'; if (n <= 0) clearInterval(iv); }, 1000);
       } catch (e) { toast(e.message, { err: true }); }
     };
   },
@@ -967,19 +1200,34 @@ const BIND = {
 function renderResult() {
   const r = S.room;
   if (r.status === 'cleared') {
-    const secs = Math.round((new Date(r.ended_at) - new Date(r.started_at)) / 1000);
+    const secs = Math.max(1, Math.floor((new Date(r.ended_at) - new Date(r.started_at)) / 1000));
     $('r-title').innerHTML = '🎉 탈출 성공!';
-    $('r-body').innerHTML = `클리어 시간 <b>${fmt(secs)}</b><br>힌트 ${r.hints_used}개 (+${fmt(r.hints_used * HINT_PENALTY)})<br>
+    $('r-body').innerHTML = `${M.name}<br>클리어 시간 <b>${fmt(secs)}</b><br>힌트 ${r.hints_used}개 (+${fmt(r.hints_used * HINT_PENALTY)})<br>
       최종 기록 <b style="color:var(--accent);font-size:22px">${fmt(secs + r.hints_used * HINT_PENALTY)}</b><br>
       ${r.players.map(p => esc(p.name)).join(', ')}`;
   } else {
     $('r-title').innerHTML = '⏰ 시간 초과';
-    $('r-body').innerHTML = `오전 9시까지 PT 파일을 찾지 못했어요…<br>푼 퍼즐 ${r.solved.length} / ${Object.keys(PUZ).length}`;
+    $('r-body').innerHTML = `${esc(M.fail)}<br>푼 퍼즐 ${r.solved.length} / ${Object.keys(PUZ).length - 1}`;
   }
 }
 $('btn-back').onclick = () => leaveToLobby();
 
 // ---------------- 시작 ----------------
+// 새 버전이 배포됐는데 옛 화면이 열려 있으면 퍼즐이 안 맞으므로 새로고침을 강하게 안내
+async function checkVersion() {
+  try {
+    const res = await fetch(location.pathname + '?v=' + Date.now(), { cache: 'no-store' });
+    const m = (await res.text()).match(/const APP_VERSION = '([^']+)'/);
+    if (m && m[1] !== APP_VERSION && !$('vbar')) {
+      const bar = document.createElement('div');
+      bar.id = 'vbar';
+      bar.innerHTML = `새 버전이 올라왔어요. 지금 화면은 옛 버전이라 일부 퍼즐이 보이지 않아요.
+        <button class="btn small" onclick="location.reload()">새로고침</button>`;
+      document.body.prepend(bar);
+    }
+  } catch (e) {}
+}
+checkVersion(); setInterval(checkVersion, 60000);
 (async function init() {
   if (SUPABASE_URL.includes('YOUR-PROJECT')) toast('escape.html 위쪽의 SUPABASE_URL / KEY를 설정해 주세요', { err: true, ms: 8000 });
   // 관리자 모드에서 꺼두면 점검중 화면
@@ -992,6 +1240,7 @@ $('btn-back').onclick = () => leaveToLobby();
       return show('s-entry');
     }
   } catch (e) {}
+  if (MAPS[store.get('pickMap')]) S.pickMap = S.rankMap = store.get('pickMap');
   S.me = store.get('me');
   if (!S.me) {
     // 아케이드에서 쓰던 닉네임/팀이 있으면 미리 채워둠 (입장은 별도)
