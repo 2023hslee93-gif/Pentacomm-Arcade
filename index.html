@@ -126,6 +126,13 @@
   .cabinet-grid .cabinet.realtime-game{ display:none; }
   .cabinet-grid.showing-realtime .cabinet.realtime-game{ display:block; }
   .cabinet-grid.showing-realtime .cabinet:not(.realtime-game){ display:none; }
+  /* 링크 카드(ESCAPE 10F)는 두 탭 모두에서 보임 */
+  .cabinet-grid .cabinet.link-cabinet,
+  .cabinet-grid.showing-realtime .cabinet.link-cabinet{
+    display:block; text-decoration:none; color:var(--text);
+    background:linear-gradient(145deg, #1c0b16 0%, #0c0c12 100%);
+    border-color:var(--pink); box-shadow:0 0 12px rgba(255,64,160,0.25);
+  }
 
   .cabinet{
     --accent: var(--cyan);
@@ -1001,6 +1008,14 @@
     </div>
 
     <div class="cabinet-grid" id="cabinet-grid">
+      <!-- ESCAPE 10F: 별도 페이지(escape.html)로 이동하는 링크 카드. 일반 게임/실시간 대전 탭 모두에서 항상 맨 앞에 보임.
+           (index.html 을 새로 받을 때마다 사라지지 않도록 코드에 고정해 둠) -->
+      <a class="cabinet link-cabinet" id="cabinet-escape" href="escape.html" style="--accent:var(--pink)">
+        <div class="cabinet-screen" style="font-size:40px;">🚪</div>
+        <div class="cabinet-label pixel">ESCAPE 10F</div>
+        <div class="cabinet-sub">펜타컴 10층 온라인 방탈출 · 함께 단서를 모아 탈출하세요</div>
+      </a>
+
       <button class="cabinet" data-game="snake" style="--accent:var(--cyan)">
         <div class="cabinet-screen">
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h4v4H4V6zm4 4h4v4H8v-4zm4 4h4v4h-4v-4zm4-8h4v4h-4V6z" fill="#00E5FF"/></svg>
@@ -2128,7 +2143,7 @@
   /* ============ 앱 버전 / 구버전 차단 ============
      APP_BUILD는 배포할 때마다 올립니다(YYYYMMDDNN). 서버(app_config.min_build)가 이 값보다 크면
      구버전으로 보고 게임 대신 '새로고침' 안내만 보여줍니다. 값은 관리자 화면에서 바꿉니다. */
-  const APP_BUILD = 2026102101;
+  const APP_BUILD = 2026102102;
   function appVersionLabel(n){
     const s = String(n);
     return 'v' + s.slice(0,4) + '.' + s.slice(4,6) + '.' + s.slice(6,8) + '-' + s.slice(8);
