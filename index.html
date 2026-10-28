@@ -314,39 +314,42 @@
   .roster-chip .dot{ width:8px; height:8px; border-radius:50%; background:var(--chip-color); box-shadow:0 0 6px var(--chip-color); }
   .roster-chip small{ color:var(--text-dim); font-size:10px; }
 
-  /* ---------- game request board ---------- */
-  .request-panel{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:18px; margin-top:20px; }
-  .request-panel h3{
-    margin:0 0 6px; font-size:13px; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
+  /* ---------- hub chat + online users ---------- */
+  .chat-panel{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:18px; margin-top:20px; }
+  .chat-panel h3{
+    margin:0 0 10px; font-size:13px; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
     display:flex; justify-content:space-between; align-items:center;
   }
-  .request-sub{ font-size:11.5px; color:var(--text-dim); margin:0 0 12px; }
-  .request-form{ display:flex; gap:8px; margin-bottom:14px; }
-  .request-form input{
-    flex:1; min-width:0; padding:10px 12px; border-radius:6px; border:1px solid var(--border);
-    background:var(--bg-deep); color:var(--text); font-family:inherit; font-size:13px;
+  .chat-live{ font-size:11px; color:var(--text-dim); text-transform:none; letter-spacing:0; font-weight:500; }
+  .chat-live::before{ content:''; display:inline-block; width:7px; height:7px; border-radius:50%; background:#3ddc84; margin-right:5px; box-shadow:0 0 6px #3ddc84; }
+  .chat-live.off::before{ background:#777; box-shadow:none; }
+  .online-list{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; max-height:84px; overflow-y:auto; }
+  .online-chip{
+    display:inline-flex; align-items:center; gap:5px; background:var(--bg-deep); border:1px solid var(--border);
+    border-radius:20px; padding:4px 10px; font-size:11.5px; color:var(--text);
   }
-  .request-form input:focus-visible{ outline:2px solid var(--cyan); border-color:var(--cyan); }
-  .request-form button{
+  .online-chip.mine{ border-color:var(--cyan); }
+  .online-chip .dot{ width:7px; height:7px; border-radius:50%; background:var(--chip-color,#3ddc84); box-shadow:0 0 5px var(--chip-color,#3ddc84); }
+  .chat-log{
+    display:flex; flex-direction:column; gap:6px; height:300px; overflow-y:auto; background:var(--bg-deep);
+    border-radius:8px; padding:10px; margin-bottom:10px; overscroll-behavior:contain;
+  }
+  .chat-msg{ font-size:13px; line-height:1.45; word-break:break-word; display:flex; gap:6px; align-items:flex-start; }
+  .chat-msg .chat-nick{ font-weight:700; color:var(--chip-color,var(--cyan)); flex-shrink:0; }
+  .chat-msg .chat-text{ color:var(--text); min-width:0; flex:1; }
+  .chat-msg .chat-time{ font-size:10px; color:var(--text-dim); flex-shrink:0; margin-top:2px; }
+  .chat-msg.mine .chat-text{ color:var(--cyan); }
+  .chat-del{ background:none; border:none; color:var(--pink); cursor:pointer; font-size:12px; padding:0 2px; flex-shrink:0; touch-action:manipulation; }
+  .chat-form{ display:flex; gap:8px; }
+  .chat-form input{
+    flex:1; min-width:0; padding:10px 12px; border-radius:6px; border:1px solid var(--border);
+    background:var(--bg-deep); color:var(--text); font-family:inherit; font-size:16px;
+  }
+  .chat-form input:focus-visible{ outline:2px solid var(--cyan); border-color:var(--cyan); }
+  .chat-form button{
     background:var(--cyan); color:#04222a; border:none; border-radius:6px; padding:0 16px;
     font-weight:700; font-size:13px; cursor:pointer; touch-action:manipulation; white-space:nowrap;
   }
-  .request-list{ display:flex; flex-direction:column; gap:8px; max-height:360px; overflow-y:auto; }
-  .request-item{
-    display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
-    background:rgba(255,255,255,0.02); border-radius:8px; padding:10px 12px;
-  }
-  .request-item-main{ display:flex; flex-direction:column; gap:3px; min-width:0; }
-  .request-item-content{ font-size:13px; color:var(--text); word-break:break-word; }
-  .request-item-meta{ font-size:10.5px; color:var(--text-dim); }
-  .request-like-btn{
-    display:flex; align-items:center; gap:5px; background:var(--bg-deep); border:1px solid var(--border);
-    border-radius:20px; padding:6px 11px; font-size:12px; color:var(--text-dim); cursor:pointer;
-    flex-shrink:0; touch-action:manipulation; transition:border-color .15s, color .15s;
-  }
-  .request-like-btn:hover{ border-color:var(--pink); }
-  .request-like-btn.liked{ border-color:var(--pink); color:var(--pink); background:rgba(255,46,126,0.12); }
-  .request-like-btn:disabled{ cursor:default; }
 
   /* ---------- announcement popup ---------- */
   .announce-list{ display:flex; flex-direction:column; gap:14px; max-height:60vh; overflow-y:auto; }
@@ -1216,14 +1219,14 @@
       <div class="roster-list" id="roster-list"><p class="lb-empty">불러오는 중...</p></div>
     </div>
 
-    <div class="request-panel">
-      <h3><span>🎮 게임 신청</span><button class="refresh-btn" id="request-refresh-btn" aria-label="게임 신청 새로고침">⟳</button></h3>
-      <p class="request-sub">만들어졌으면 하는 게임을 남겨주세요 · 다른 사람 의견엔 👍를 눌러 힘을 보태주세요</p>
-      <form class="request-form" id="request-form">
-        <input type="text" id="request-input" maxlength="200" placeholder="예: 체스, 카드게임, 좀비 슈팅 등..." autocomplete="off" />
-        <button type="submit">등록</button>
+    <div class="chat-panel">
+      <h3><span>💬 실시간 채팅</span><span class="chat-live" id="chat-live">접속 <b id="online-count">0</b>명</span></h3>
+      <div class="online-list" id="online-list"></div>
+      <div class="chat-log" id="chat-log"><p class="lb-empty">불러오는 중...</p></div>
+      <form class="chat-form" id="chat-form">
+        <input type="text" id="chat-input" maxlength="200" placeholder="메시지를 입력하세요" autocomplete="off" />
+        <button type="submit">전송</button>
       </form>
-      <div class="request-list" id="request-list"><p class="lb-empty">불러오는 중...</p></div>
     </div>
 
     <footer class="hub-footer">게임을 선택해서 팀 대항전에 힘을 보태주세요<span class="app-version" id="app-version"></span></footer>
@@ -2143,7 +2146,7 @@
   /* ============ 앱 버전 / 구버전 차단 ============
      APP_BUILD는 배포할 때마다 올립니다(YYYYMMDDNN). 서버(app_config.min_build)가 이 값보다 크면
      구버전으로 보고 게임 대신 '새로고침' 안내만 보여줍니다. 값은 관리자 화면에서 바꿉니다. */
-  const APP_BUILD = 2026102102;
+  const APP_BUILD = 2026102801;
   function appVersionLabel(n){
     const s = String(n);
     return 'v' + s.slice(0,4) + '.' + s.slice(4,6) + '.' + s.slice(6,8) + '-' + s.slice(8);
@@ -2651,97 +2654,132 @@
     openAnnounceModal();
   });
 
-  /* ============ game request board (게임 신청 게시판) ============ */
-  let likedRequestIds = new Set();
+  /* ============ 허브 실시간 채팅 + 접속자 ============ */
+  const CHAT_MAX_LOG = 150;
+  let chatDbChannel = null, chatPresenceChannel = null, chatSeenIds = new Set(), chatLastSendAt = 0, chatTrackedPid = null;
 
-  async function fetchGameRequests(){
+  function chatTimeLabel(iso){
+    const d = iso ? new Date(iso) : new Date();
+    return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  }
+  function chatTeamColor(t){ return (typeof TEAM_COLORS !== 'undefined' && TEAM_COLORS[t]) || '#7df9ff'; }
+  function chatMsgHtml(m){
+    const mine = m.player_id && m.player_id === playerId;
+    return '<div class="chat-msg'+(mine?' mine':'')+'" data-id="'+escapeHtml(String(m.id))+'" style="--chip-color:'+escapeHtml(chatTeamColor(m.team))+'">'
+      + '<span class="chat-nick">'+escapeHtml(m.nickname || '???')+'</span>'
+      + '<span class="chat-text">'+escapeHtml(m.content)+'</span>'
+      + '<span class="chat-time">'+chatTimeLabel(m.created_at)+'</span>'
+      + (adminAuthUser ? '<button type="button" class="chat-del" data-id="'+escapeHtml(String(m.id))+'" aria-label="삭제">✕</button>' : '')
+      + '</div>';
+  }
+  function chatScrollBottom(){
+    const log = document.getElementById('chat-log');
+    if(log) log.scrollTop = log.scrollHeight;
+  }
+  async function loadChatHistory(){
+    const log = document.getElementById('chat-log');
+    if(!log) return;
     try{
-      const { data, error } = await sb.from('game_requests').select('id, player_id, nickname, content, created_at').order('created_at', { ascending:false }).limit(100);
-      if(error || !data) return [];
-      return data;
-    }catch(e){ return []; }
-  }
-  async function fetchGameRequestLikes(){
-    try{
-      const { data, error } = await sb.from('game_request_likes').select('request_id, player_id');
-      if(error || !data) return [];
-      return data;
-    }catch(e){ return []; }
-  }
-  function timeAgoLabel(iso){
-    if(!iso) return '';
-    const diffMs = Date.now() - new Date(iso).getTime();
-    const min = Math.floor(diffMs/60000);
-    if(min < 1) return '방금 전';
-    if(min < 60) return min+'분 전';
-    const hr = Math.floor(min/60);
-    if(hr < 24) return hr+'시간 전';
-    const day = Math.floor(hr/24);
-    return day+'일 전';
-  }
-  async function renderGameRequests(){
-    const el = document.getElementById('request-list');
-    if(!el) return;
-    const results = await Promise.all([fetchGameRequests(), fetchGameRequestLikes()]);
-    const requests = results[0], likes = results[1];
-    const countByRequest = {};
-    likedRequestIds = new Set();
-    likes.forEach(function(l){
-      countByRequest[l.request_id] = (countByRequest[l.request_id] || 0) + 1;
-      if(l.player_id === playerId) likedRequestIds.add(l.request_id);
-    });
-    if(requests.length === 0){
-      el.innerHTML = '<p class="lb-empty">아직 등록된 신청이 없어요 · 첫 게임을 신청해보세요!</p>';
-      return;
+      const { data, error } = await sb.from('chat_messages').select('id, player_id, nickname, team, content, created_at').order('created_at', { ascending:false }).limit(60);
+      if(error || !data) throw error || new Error('x');
+      chatSeenIds = new Set(data.map(function(m){ return String(m.id); }));
+      const rows = data.slice().reverse();
+      log.innerHTML = rows.length ? rows.map(chatMsgHtml).join('') : '<p class="lb-empty">아직 대화가 없어요 · 첫 인사를 남겨보세요!</p>';
+      chatScrollBottom();
+    }catch(e){
+      log.innerHTML = '<p class="lb-empty">채팅을 불러오지 못했어요</p>';
     }
-    el.innerHTML = requests.map(function(r){
-      const count = countByRequest[r.id] || 0;
-      const liked = likedRequestIds.has(r.id);
-      return '<div class="request-item">'
-        + '<div class="request-item-main">'
-        + '<div class="request-item-content">'+escapeHtml(r.content)+'</div>'
-        + '<div class="request-item-meta">'+escapeHtml(r.nickname || '???')+' · '+timeAgoLabel(r.created_at)+'</div>'
-        + '</div>'
-        + '<button type="button" class="request-like-btn'+(liked?' liked':'')+'" data-id="'+r.id+'"'+(liked?' disabled':'')+'>👍 <span>'+count+'</span></button>'
-        + '</div>';
+  }
+  function appendChatMessage(m){
+    const log = document.getElementById('chat-log');
+    if(!log || !m) return;
+    const key = String(m.id);
+    if(chatSeenIds.has(key)) return;
+    chatSeenIds.add(key);
+    const empty = log.querySelector('.lb-empty');
+    if(empty) empty.remove();
+    const nearBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 80;
+    log.insertAdjacentHTML('beforeend', chatMsgHtml(m));
+    while(log.children.length > CHAT_MAX_LOG) log.removeChild(log.firstChild);
+    if(nearBottom || (m.player_id && m.player_id === playerId)) chatScrollBottom();
+  }
+  function removeChatMessage(id){
+    const log = document.getElementById('chat-log');
+    if(!log) return;
+    const el = log.querySelector('.chat-msg[data-id="'+String(id).replace(/[^0-9]/g,'')+'"]');
+    if(el) el.remove();
+  }
+  function renderOnlineUsers(){
+    const listEl = document.getElementById('online-list');
+    const cntEl = document.getElementById('online-count');
+    if(!listEl || !cntEl || !chatPresenceChannel) return;
+    const state = chatPresenceChannel.presenceState();
+    const users = [];
+    Object.keys(state).forEach(function(key){
+      const metas = state[key];
+      if(metas && metas.length) users.push(metas[0]);
+    });
+    users.sort(function(a,b){
+      if(a.playerId === playerId) return -1;
+      if(b.playerId === playerId) return 1;
+      return String(a.nickname).localeCompare(String(b.nickname));
+    });
+    cntEl.textContent = String(users.length);
+    listEl.innerHTML = users.map(function(u){
+      return '<span class="online-chip'+(u.playerId===playerId?' mine':'')+'" style="--chip-color:'+escapeHtml(chatTeamColor(u.team))+'"><span class="dot"></span>'+escapeHtml(u.nickname || '???')+'</span>';
     }).join('');
   }
-  async function submitGameRequest(content){
-    if(!playerId || !content) return;
-    try{
-      await arcadeRpc('arcade_post_request', { p_code: playerCode, p_content: content });
-    }catch(e){ /* ignore */ }
-    renderGameRequests();
+  function stopHubChat(){
+    if(chatDbChannel){ try{ sb.removeChannel(chatDbChannel); }catch(e){} chatDbChannel = null; }
+    if(chatPresenceChannel){ try{ sb.removeChannel(chatPresenceChannel); }catch(e){} chatPresenceChannel = null; }
   }
-  async function likeGameRequest(requestId, btn){
-    if(!playerId || likedRequestIds.has(requestId)) return;
-    likedRequestIds.add(requestId);
-    if(btn){
-      btn.disabled = true;
-      btn.classList.add('liked');
-      const countEl = btn.querySelector('span');
-      if(countEl) countEl.textContent = String(Number(countEl.textContent)+1);
+  function startHubChat(){
+    if(!document.getElementById('chat-log')) return;
+    loadChatHistory();
+    if(chatDbChannel && chatPresenceChannel){
+      if(chatTrackedPid !== (playerId || null)) stopHubChat(); else return; // 가입/로그인 후 ID가 바뀌면 재구독
     }
-    try{
-      const ok = await arcadeRpc('arcade_like_request', { p_code: playerCode, p_request_id: requestId });
-      if(!ok){ renderGameRequests(); }
-    }catch(e){ renderGameRequests(); }
+    chatTrackedPid = playerId || null;
+    const liveEl = document.getElementById('chat-live');
+    chatDbChannel = sb.channel('hub-chat-db')
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'chat_messages' }, function(payload){
+        appendChatMessage(payload.new);
+      })
+      .on('postgres_changes', { event:'DELETE', schema:'public', table:'chat_messages' }, function(payload){
+        if(payload.old && payload.old.id != null) removeChatMessage(payload.old.id);
+      })
+      .subscribe();
+    chatPresenceChannel = sb.channel('hub-presence', { config: { presence: { key: playerId || ('anon-'+Math.random()) } } });
+    chatPresenceChannel
+      .on('presence', { event:'sync' }, renderOnlineUsers)
+      .subscribe(async function(status){
+        if(liveEl) liveEl.classList.toggle('off', status !== 'SUBSCRIBED');
+        if(status === 'SUBSCRIBED' && playerId){
+          try{ await chatPresenceChannel.track({ playerId: playerId, nickname: nickname || '??', team: team || '' }); }catch(e){}
+        }
+      });
   }
-  document.getElementById('request-form').addEventListener('submit', function(e){
+  async function sendChatMessage(text){
+    if(!playerId || !playerCode || !text) return;
+    const now = Date.now();
+    if(now - chatLastSendAt < 1500) return;
+    chatLastSendAt = now;
+    try{
+      await arcadeRpc('arcade_send_chat', { p_code: playerCode, p_content: text });
+    }catch(e){ /* ignore */ }
+  }
+  document.getElementById('chat-form').addEventListener('submit', function(e){
     e.preventDefault();
-    const input = document.getElementById('request-input');
+    const input = document.getElementById('chat-input');
     const val = input.value.trim();
     if(!val) return;
     input.value = '';
-    submitGameRequest(val);
+    sendChatMessage(val);
   });
-  document.getElementById('request-refresh-btn').addEventListener('click', function(){
-    renderGameRequests();
-  });
-  document.getElementById('request-list').addEventListener('click', function(e){
-    const btn = e.target.closest('.request-like-btn');
-    if(!btn || btn.disabled) return;
-    likeGameRequest(btn.dataset.id, btn);
+  document.getElementById('chat-log').addEventListener('click', function(e){
+    const btn = e.target.closest('.chat-del');
+    if(!btn || !adminAuthUser) return;
+    arcadeRpc('arcade_admin_delete_chat', { p_id: Number(btn.dataset.id) }).then(function(){ removeChatMessage(btn.dataset.id); }).catch(function(){});
   });
 
   document.querySelectorAll('.hub-tab').forEach(function(tab){
@@ -2866,7 +2904,7 @@
       runStorageHealthCheck();
       renderTeamBattle();
       renderRoster();
-      renderGameRequests();
+      startHubChat();
       initCabinetLeaderSlots();
       renderCabinetLeaders();
     }
@@ -8422,7 +8460,15 @@
     sceneImageCache[src] = entry;
     const img = new Image();
     img.onload = function(){ entry.loaded = true; onEmojiImageReady(); };
-    img.onerror = function(){ entry.failed = true; onEmojiImageReady(); };
+    img.onerror = function(){
+      // assets/hiddenpic/ 폴더에 없으면 저장소 맨 위(index.html 옆)의 같은 이름 파일로 한 번 더 시도
+      if(!entry.triedRoot && src.indexOf('assets/hiddenpic/') === 0){
+        entry.triedRoot = true;
+        img.src = src.replace('assets/hiddenpic/', '');
+        return;
+      }
+      entry.failed = true; onEmojiImageReady();
+    };
     img.src = src;
     entry.img = img;
     return entry;
@@ -10002,7 +10048,7 @@
     checkAppVersion();
     renderTeamBattle();
     renderRoster();
-    renderGameRequests();
+    startHubChat();
     initCabinetLeaderSlots();
     renderCabinetLeaders();
     checkAnnouncementsOnLoad();
