@@ -519,6 +519,8 @@
   .title-row{ display:flex; align-items:center; gap:10px; background:var(--bg-deep); border:1px solid var(--border); border-radius:8px; padding:9px 12px; }
   .title-row.equipped{ border-color:var(--yellow); }
   .title-row.locked{ opacity:.45; }
+  .title-row.hidden-title{ border-style:dashed; }
+  .title-row.hidden-title.locked{ opacity:.6; }
   .title-row .tr-main{ flex:1; min-width:0; }
   .title-row .tr-cond{ font-size:11px; color:var(--text-dim); margin-top:3px; }
   .title-row button{ flex-shrink:0; background:var(--pink); color:#fff; border:none; border-radius:6px; padding:6px 12px; font-weight:700; font-size:12px; cursor:pointer; font-family:inherit; }
@@ -2454,7 +2456,7 @@
   /* ============ 앱 버전 / 구버전 차단 ============
      APP_BUILD는 배포할 때마다 올립니다(YYYYMMDDNN). 서버(app_config.min_build)가 이 값보다 크면
      구버전으로 보고 게임 대신 '새로고침' 안내만 보여줍니다. 값은 관리자 화면에서 바꿉니다. */
-  const APP_BUILD = 2026110504;
+  const APP_BUILD = 2026110505;
   function appVersionLabel(n){
     const s = String(n);
     return 'v' + s.slice(0,4) + '.' + s.slice(4,6) + '.' + s.slice(6,8) + '-' + s.slice(8);
@@ -2991,7 +2993,11 @@
       case 'daily_top': return '🔥 '+nick+'님이 오늘의 챌린지 '+game+' 1위! ('+sc+')';
       case 'pvp_win':   return '⚔️ '+nick+'님이 '+game+'에서 승리했어요';
       case 'join':      return '👋 '+nick+'님('+escapeHtml(f.team || '')+')이 오락실에 처음 왔어요';
-      case 'badge':     { const b = BADGE_BY_ID[f.extra]; return (b ? b.icon : '🏅')+' '+nick+'님이 <span class="feed-game">'+escapeHtml(b ? b.name : '새')+'</span> 뱃지를 받았어요'; }
+      case 'badge':     if(f.extra && f.extra.indexOf('h_') === 0){
+                          const ht = TITLES.filter(function(t){ return t.badge === f.extra; })[0];
+                          return '🕵️ '+nick+'님이 히든 칭호 '+(ht ? '<span class="ttl r-'+ht.rarity+'">'+escapeHtml(ht.name)+'</span>' : '')+'을(를) 발견했어요!';
+                        }
+                        { const b = BADGE_BY_ID[f.extra]; return (b ? b.icon : '🏅')+' '+nick+'님이 <span class="feed-game">'+escapeHtml(b ? b.name : '새')+'</span> 뱃지를 받았어요'; }
       case 'duel_win':  return '🤺 '+nick+'님이 도전장 승리! '+escapeHtml(f.extra || '')+'님의 '+game+' 기록 돌파 ('+sc+')';
       case 'raid_kill': return '💥 '+escapeHtml(f.team || '')+' 팀이 보스 <span class="feed-game">'+escapeHtml(raidBoss(f.extra).name)+'</span> 처치! ('+(f.rank||'?')+'등) · 막타 '+nick;
       case 'raid_half': return raidBoss(f.extra).icon+' '+escapeHtml(f.team || '')+' 팀 보스 체력 50% 돌파! ('+nick+'님의 일격)';
@@ -3052,7 +3058,8 @@
     if(f.kind === 'daily_top' || (dailyInfo && f.game === dailyInfo.game)) scheduleDailyRefresh();
     if(f.kind === 'badge' && f.player_id && f.player_id === playerId){
       const nt = TITLES.filter(function(t){ return t.badge === f.extra && t.min === 1; })[0];
-      if(nt) showToast('🎖️ 새 칭호 <span class="ttl r-'+nt.rarity+'">'+escapeHtml(nt.name)+'</span>이(가) 열렸어요!', '장착하러 가기', function(){ openBadgeModal(playerId, nickname || '').then(function(){ setBadgeModalTab('titles'); }); });
+      if(nt && nt.hidden) showToast('🕵️ 히든 칭호 <span class="ttl r-'+nt.rarity+'">'+escapeHtml(nt.name)+'</span>을(를) 발견했어요!', '장착하러 가기', function(){ openBadgeModal(playerId, nickname || '').then(function(){ setBadgeModalTab('titles'); }); });
+      else if(nt) showToast('🎖️ 새 칭호 <span class="ttl r-'+nt.rarity+'">'+escapeHtml(nt.name)+'</span>이(가) 열렸어요!', '장착하러 가기', function(){ openBadgeModal(playerId, nickname || '').then(function(){ setBadgeModalTab('titles'); }); });
     }
     if(f.kind === 'badge' && f.player_id){
       const list = badgeMap[f.player_id] = badgeMap[f.player_id] || [];
@@ -3658,7 +3665,23 @@
     { id:'lunch',       name:'점심시간 사냥꾼',   badge:'lunch',        min:1, rarity:'common' },
     { id:'night',       name:'야근 요정',         badge:'night_owl',    min:1, rarity:'common' },
     { id:'coin',        name:'동전 넣은 자',      badge:'first_coin',   min:1, rarity:'common' },
-    { id:'rookie',      name:'수습 게이머',       badge:null,           min:1, rarity:'common' }
+    { id:'rookie',      name:'수습 게이머',       badge:null,           min:1, rarity:'common' },
+    /* ---- 히든 칭호: 조건은 비공개, hint 만 보여줌 (판정은 서버 23번 섹션) ---- */
+    { id:'x_100',        name:'일은 언제 하세요?', badge:'h_100',        min:1, rarity:'legend', hidden:true, hint:'하루를 통째로 오락실에 바친다면' },
+    { id:'x_oneman',     name:'원맨 레이드',       badge:'h_oneman',     min:1, rarity:'legend', hidden:true, hint:'팀 보스를 거의 혼자서' },
+    { id:'x_lastchance', name:'삼세판의 기적',     badge:'h_lastchance', min:1, rarity:'legend', hidden:true, hint:'마지막 기회에서 뒤집기' },
+    { id:'x_777',        name:'럭키 세븐',         badge:'h_777',        min:1, rarity:'epic',   hidden:true, hint:'행운의 숫자를 노려보세요' },
+    { id:'x_dejavu',     name:'데자뷰',            badge:'h_dejavu',     min:1, rarity:'epic',   hidden:true, hint:'어디서 본 듯한 점수…' },
+    { id:'x_photo',      name:'간발의 차',         badge:'h_photo',      min:1, rarity:'epic',   hidden:true, hint:'아슬아슬하게 넘어서면' },
+    { id:'x_3am',        name:'새벽 3시의 유령',   badge:'h_3am',        min:1, rarity:'epic',   hidden:true, hint:'모두가 잠든 시간' },
+    { id:'x_second',     name:'영원한 2인자',      badge:'h_second',     min:1, rarity:'epic',   hidden:true, hint:'1등은 아니지만 늘 그 근처' },
+    { id:'x_one',        name:'1점의 미학',        badge:'h_one',        min:1, rarity:'rare',   hidden:true, hint:'가끔은 내려놓는 것도 기록이에요' },
+    { id:'x_palin',      name:'데칼코마니',        badge:'h_palin',      min:1, rarity:'rare',   hidden:true, hint:'앞으로 읽어도 뒤로 읽어도' },
+    { id:'x_grind',      name:'한 우물 장인',      badge:'h_grind',      min:1, rarity:'rare',   hidden:true, hint:'하루에 한 게임만 판다면' },
+    { id:'x_friday',     name:'퇴근 거부자',       badge:'h_friday',     min:1, rarity:'rare',   hidden:true, hint:'불금인데 아직도 사무실?' },
+    { id:'x_nick',       name:'정체성 혼란',       badge:'h_nick',       min:1, rarity:'rare',   hidden:true, hint:'나는 누구인가' },
+    { id:'x_chat',       name:'오락실 아나운서',   badge:'h_chat',       min:1, rarity:'rare',   hidden:true, hint:'게임보다 말이 많다면' },
+    { id:'x_weekend',    name:'주말 출근러',       badge:'h_weekend',    min:1, rarity:'common', hidden:true, hint:'쉬는 날에도…' }
   ];
   const TITLE_BY_ID = {};
   TITLES.forEach(function(t){ TITLE_BY_ID[t.id] = t; });
@@ -3696,14 +3719,21 @@
     const cur = titleMap[badgeModalPid] || '';
     const list = TITLES.map(function(t){ return { t:t, ok:titleUnlocked(t, badgeModalOwned) }; })
       .filter(function(x){ return isMe || x.ok; })
-      .sort(function(a,b){ return (b.ok - a.ok) || 0; });
-    const opened = TITLES.filter(function(t){ return titleUnlocked(t, badgeModalOwned); }).length;
-    document.getElementById('badge-summary').innerHTML = '열린 칭호 <b>'+opened+'</b> / '+TITLES.length + (cur ? ' · 장착 중 ' + titleHtml(badgeModalPid) : '');
+      .sort(function(a,b){ return (b.ok - a.ok) || ((a.t.hidden ? 1 : 0) - (b.t.hidden ? 1 : 0)); });
+    const opened = TITLES.filter(function(t){ return !t.hidden && titleUnlocked(t, badgeModalOwned); }).length;
+    const hiddenAll = TITLES.filter(function(t){ return t.hidden; });
+    const hiddenOpened = hiddenAll.filter(function(t){ return titleUnlocked(t, badgeModalOwned); }).length;
+    document.getElementById('badge-summary').innerHTML = '열린 칭호 <b>'+opened+'</b> / '+(TITLES.length - hiddenAll.length) +
+      ' · 🕵️ 히든 <b>'+hiddenOpened+'</b> / '+hiddenAll.length + (cur ? ' · 장착 중 ' + titleHtml(badgeModalPid) : '');
     grid.innerHTML = list.map(function(x){
       const t = x.t, eq = cur === t.id;
       const btn = !isMe ? '' : (eq ? '<button type="button" class="off" data-title-set="">해제</button>'
         : (x.ok ? '<button type="button" data-title-set="'+t.id+'">장착</button>' : ''));
-      return '<div class="title-row'+(eq ? ' equipped' : '')+(x.ok ? '' : ' locked')+'"><div class="tr-main"><span class="ttl r-'+t.rarity+'">'+escapeHtml(t.name)+'</span> <span style="font-size:10px;color:var(--text-dim)">'+RARITY_LABEL[t.rarity]+'</span><div class="tr-cond">'+(x.ok ? (eq ? '장착 중' : '사용 가능') : '🔒 ' + titleCondText(t))+'</div></div>'+btn+'</div>';
+      const secret = t.hidden && !x.ok;
+      const nameHtml = secret ? '<span class="ttl r-'+t.rarity+'">???</span>' : '<span class="ttl r-'+t.rarity+'">'+escapeHtml(t.name)+'</span>';
+      const tag = '<span style="font-size:10px;color:var(--text-dim)">'+(t.hidden ? '🕵️ 히든 · ' : '')+RARITY_LABEL[t.rarity]+'</span>';
+      const cond = x.ok ? (eq ? '장착 중' : (t.hidden ? '발견! · 사용 가능' : '사용 가능')) : (secret ? '💭 ' + escapeHtml(t.hint || '') : '🔒 ' + titleCondText(t));
+      return '<div class="title-row'+(eq ? ' equipped' : '')+(x.ok ? '' : ' locked')+(t.hidden ? ' hidden-title' : '')+'"><div class="tr-main">'+nameHtml+' '+tag+'<div class="tr-cond">'+cond+'</div></div>'+btn+'</div>';
     }).join('') || '<p class="lb-empty">아직 열린 칭호가 없어요</p>';
   }
   function setBadgeModalTab(tab){
