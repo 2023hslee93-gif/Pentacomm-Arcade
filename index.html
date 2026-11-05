@@ -351,6 +351,75 @@
     font-weight:700; font-size:13px; cursor:pointer; touch-action:manipulation; white-space:nowrap;
   }
 
+  /* ---------- LIVE 피드 티커 + 오늘의 챌린지 (1차 업데이트) ---------- */
+  .live-ticker{
+    display:flex; align-items:center; gap:10px; margin:18px 0 0; padding:9px 12px;
+    background:var(--card); border:1px solid var(--border); border-radius:10px; cursor:pointer;
+    overflow:hidden; position:relative; user-select:none;
+  }
+  .live-ticker.flash{ animation:tickerFlash 1.2s ease; }
+  @keyframes tickerFlash{ 0%{ border-color:var(--pink); box-shadow:0 0 16px rgba(255,46,126,.45); } 100%{ border-color:var(--border); box-shadow:none; } }
+  .live-tag{
+    flex-shrink:0; font-family:'Press Start 2P',monospace; font-size:9px; color:#fff; background:var(--pink);
+    padding:4px 6px; border-radius:4px; letter-spacing:1px;
+  }
+  .live-tag::before{ content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:#fff; margin-right:5px; vertical-align:1px; animation:livePulse 1.4s infinite; }
+  @keyframes livePulse{ 50%{ opacity:.25; } }
+  .live-viewport{ flex:1; min-width:0; height:20px; position:relative; overflow:hidden; }
+  .live-item{
+    position:absolute; inset:0; display:flex; align-items:center; gap:6px; font-size:13px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:transform .45s ease, opacity .45s ease;
+  }
+  .live-item.enter{ transform:translateY(100%); opacity:0; }
+  .live-item.leave{ transform:translateY(-100%); opacity:0; }
+  .live-item .feed-text{ overflow:hidden; text-overflow:ellipsis; }
+  .live-ago{ flex-shrink:0; font-size:10.5px; color:var(--text-dim); }
+  .live-more{ flex-shrink:0; font-size:11px; color:var(--text-dim); }
+  .feed-nick{ font-weight:700; color:var(--chip-color, var(--cyan)); }
+  .feed-game{ font-weight:700; color:var(--yellow); }
+  .feed-list{ display:flex; flex-direction:column; gap:2px; max-height:60vh; overflow-y:auto; }
+  .feed-row{ display:flex; gap:8px; align-items:baseline; font-size:13px; padding:8px 4px; border-bottom:1px solid var(--border); line-height:1.45; }
+  .feed-row:last-child{ border-bottom:none; }
+  .feed-row .feed-text{ flex:1; min-width:0; word-break:keep-all; }
+
+  .daily-panel{
+    background:linear-gradient(135deg, rgba(255,46,126,.14), rgba(255,46,126,0) 60%), var(--card);
+    border:1px solid rgba(255,46,126,.45); border-radius:12px; padding:20px 22px; margin-top:20px;
+  }
+  .daily-panel h2{ margin:0 0 4px; font-size:14px; font-weight:800; letter-spacing:.5px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .daily-countdown{ font-family:'Press Start 2P',monospace; font-size:10px; color:var(--pink); font-weight:400; white-space:nowrap; }
+  .daily-sub{ font-size:12px; color:var(--text-dim); margin:0 0 14px; }
+  .daily-body{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); gap:16px; }
+  @media (max-width:640px){ .daily-body{ grid-template-columns:1fr; } }
+  .daily-game{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center;
+    background:var(--bg-deep); border:1px solid var(--border); border-radius:10px; padding:16px 12px;
+  }
+  .daily-game-icon{ font-size:40px; line-height:1; }
+  .daily-game-label{ font-family:'Press Start 2P',monospace; font-size:13px; color:var(--accent, var(--pink)); }
+  .daily-me{ font-size:12px; color:var(--text-dim); }
+  .daily-me b{ color:var(--yellow); }
+  .daily-dots{ display:inline-flex; gap:4px; vertical-align:middle; margin-left:4px; }
+  .daily-dots i{ width:9px; height:9px; border-radius:50%; background:var(--pink); box-shadow:0 0 6px var(--pink); display:inline-block; }
+  .daily-dots i.used{ background:#3a3a52; box-shadow:none; }
+  .daily-play{
+    background:var(--pink); color:#fff; border:none; border-radius:8px; padding:10px 22px; font-weight:800;
+    font-size:14px; cursor:pointer; font-family:inherit; touch-action:manipulation;
+  }
+  .daily-play.practice{ background:transparent; border:1px solid var(--border); color:var(--text-dim); }
+  .daily-play:disabled{ opacity:.45; cursor:default; }
+  .daily-rank-title{ font-size:11px; color:var(--text-dim); margin:0 0 6px; text-transform:uppercase; letter-spacing:.5px; }
+  .daily-yesterday{ margin-top:12px; font-size:12px; color:var(--text-dim); border-top:1px dashed var(--border); padding-top:10px; }
+  .daily-yesterday b{ color:var(--text); }
+  .daily-ingame{
+    display:flex; align-items:center; justify-content:center; gap:8px; margin:-8px 0 14px; padding:7px 12px;
+    border:1px solid rgba(255,46,126,.45); background:rgba(255,46,126,.1); border-radius:8px; font-size:12.5px; color:var(--text);
+  }
+  .daily-ingame.spent{ border-color:var(--border); background:rgba(255,255,255,.03); color:var(--text-dim); }
+  @media (prefers-reduced-motion: reduce){
+    .live-item{ transition:none; } .live-tag::before, .live-ticker.flash{ animation:none; }
+  }
+
   /* ---------- announcement popup ---------- */
   .announce-list{ display:flex; flex-direction:column; gap:14px; max-height:60vh; overflow-y:auto; }
   .announce-item{ border-bottom:1px solid var(--border); padding-bottom:14px; }
@@ -964,6 +1033,21 @@
   </div>
 </div>
 
+<!-- 1차 업데이트: 실시간 소식 전체 보기 -->
+<div class="game-info-modal hidden" id="feed-modal">
+  <div class="game-info-box">
+    <button type="button" class="modal-close" id="feed-close" aria-label="닫기">✕</button>
+    <div class="game-info-header">
+      <span class="game-info-icon">📡</span>
+      <div>
+        <div class="game-info-title pixel">LIVE</div>
+        <div class="game-info-desc">오락실에서 방금 일어난 일들</div>
+      </div>
+    </div>
+    <div class="feed-list" id="feed-list"><p class="lb-empty">불러오는 중...</p></div>
+  </div>
+</div>
+
 <div class="game-info-modal hidden" id="announce-modal">
   <div class="game-info-box">
     <button type="button" class="modal-close" id="announce-close" aria-label="닫기">✕</button>
@@ -997,6 +1081,34 @@
       <h1 class="logo pixel">NEON<span>ARCADE</span></h1>
       <p class="tagline">동전을 넣고 게임을 선택하세요</p>
     </header>
+
+    <!-- 1차 업데이트: 실시간 소식 티커 (누르면 최근 소식 전체 보기) -->
+    <div class="live-ticker" id="live-ticker" role="button" tabindex="0" aria-label="실시간 소식 전체 보기">
+      <span class="live-tag">LIVE</span>
+      <div class="live-viewport" id="live-viewport">
+        <div class="live-item"><span class="feed-text" style="color:var(--text-dim)">소식을 불러오는 중...</span></div>
+      </div>
+      <span class="live-more">전체 ›</span>
+    </div>
+
+    <!-- 1차 업데이트: 오늘의 챌린지 -->
+    <div class="daily-panel" id="daily-panel">
+      <h2><span>🔥 오늘의 챌린지</span><span class="daily-countdown" id="daily-countdown">--:--:--</span></h2>
+      <p class="daily-sub">매일 자정 게임이 바뀌어요 · 하루 3번 도전 · 가장 높은 기록으로 순위 결정</p>
+      <div class="daily-body">
+        <div class="daily-game" id="daily-game-box">
+          <div class="daily-game-icon" id="daily-game-icon">🎲</div>
+          <div class="daily-game-label" id="daily-game-label">LOADING</div>
+          <div class="daily-me" id="daily-me">&nbsp;</div>
+          <button type="button" class="daily-play" id="daily-play-btn" disabled>도전하기 ▶</button>
+        </div>
+        <div>
+          <p class="daily-rank-title">오늘의 순위</p>
+          <ol class="rank-list" id="daily-rank-list"><li class="lb-empty">불러오는 중...</li></ol>
+        </div>
+      </div>
+      <div class="daily-yesterday" id="daily-yesterday">어제의 챌린지 기록이 없어요</div>
+    </div>
 
     <div class="team-battle-panel">
       <h2><span>🏆 팀 대항전</span><button class="refresh-btn" data-refresh-team aria-label="팀 순위 새로고침">⟳</button></h2>
@@ -2146,7 +2258,7 @@
   /* ============ 앱 버전 / 구버전 차단 ============
      APP_BUILD는 배포할 때마다 올립니다(YYYYMMDDNN). 서버(app_config.min_build)가 이 값보다 크면
      구버전으로 보고 게임 대신 '새로고침' 안내만 보여줍니다. 값은 관리자 화면에서 바꿉니다. */
-  const APP_BUILD = 2026102801;
+  const APP_BUILD = 2026110501;
   function appVersionLabel(n){
     const s = String(n);
     return 'v' + s.slice(0,4) + '.' + s.slice(4,6) + '.' + s.slice(6,8) + '-' + s.slice(8);
@@ -2361,6 +2473,7 @@
     closeNicknameModal();
     renderTeamBattle();
     renderRoster();
+    renderDaily();
   }
   document.getElementById('nickname-confirm').addEventListener('click', confirmNickname);
   document.getElementById('nickname-input').addEventListener('keydown', function(e){
@@ -2654,6 +2767,238 @@
     openAnnounceModal();
   });
 
+  /* ============ 1차 업데이트: 실시간 소식(LIVE 티커) ============
+     activity_feed 테이블은 서버(트리거/함수)만 기록하고, 여기서는 읽기 + Realtime 구독만 한다. */
+  const FEED_KEEP = 30;
+  let feedItems = [], feedIdx = 0, feedTimer = null, feedChannel = null, feedSeen = new Set();
+
+  function feedAgo(iso){
+    const sec = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
+    if(sec < 60) return '방금';
+    if(sec < 3600) return Math.floor(sec/60) + '분 전';
+    if(sec < 86400) return Math.floor(sec/3600) + '시간 전';
+    return Math.floor(sec/86400) + '일 전';
+  }
+  function feedText(f){
+    const nick = '<span class="feed-nick" style="--chip-color:'+(TEAM_COLORS[f.team]||'var(--cyan)')+'">'+escapeHtml(f.nickname || '???')+'</span>';
+    const game = f.game ? '<span class="feed-game">'+escapeHtml(gameLabel(f.game))+'</span>' : '';
+    const sc = (typeof f.score === 'number') ? Number(f.score).toLocaleString() + '점' : '';
+    switch(f.kind){
+      case 'hof':       return '👑 '+nick+'님이 '+game+' 역대 최고기록 경신! ('+sc+')';
+      case 'top1':      return '🥇 '+nick+'님이 '+game+' 1위 등극! ('+sc+')';
+      case 'rank':      return (f.rank === 2 ? '🥈 ' : '🥉 ')+nick+'님이 '+game+' '+f.rank+'위로 올라섰어요 ('+sc+')';
+      case 'daily_top': return '🔥 '+nick+'님이 오늘의 챌린지 '+game+' 1위! ('+sc+')';
+      case 'pvp_win':   return '⚔️ '+nick+'님이 '+game+'에서 승리했어요';
+      case 'join':      return '👋 '+nick+'님('+escapeHtml(f.team || '')+')이 오락실에 처음 왔어요';
+      default:          return nick + ' · ' + game + ' ' + sc;
+    }
+  }
+  function feedItemHtml(f){
+    return '<span class="feed-text">'+feedText(f)+'</span><span class="live-ago">'+feedAgo(f.created_at)+'</span>';
+  }
+  function feedShow(idx, animate){
+    const vp = document.getElementById('live-viewport');
+    if(!vp) return;
+    if(feedItems.length === 0){
+      vp.innerHTML = '<div class="live-item"><span class="feed-text" style="color:var(--text-dim)">아직 소식이 없어요 · 첫 기록의 주인공이 되어보세요!</span></div>';
+      return;
+    }
+    feedIdx = ((idx % feedItems.length) + feedItems.length) % feedItems.length;
+    const next = document.createElement('div');
+    next.className = 'live-item' + (animate ? ' enter' : '');
+    next.innerHTML = feedItemHtml(feedItems[feedIdx]);
+    const prev = Array.prototype.slice.call(vp.children);
+    vp.appendChild(next);
+    if(animate){
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ next.classList.remove('enter'); }); });
+      prev.forEach(function(el){ el.classList.add('leave'); setTimeout(function(){ el.remove(); }, 500); });
+    }else{
+      prev.forEach(function(el){ el.remove(); });
+    }
+  }
+  function feedStartRotation(){
+    if(feedTimer) clearInterval(feedTimer);
+    feedTimer = setInterval(function(){
+      if(document.hidden || currentScreen !== 'hub' || feedItems.length < 2) return;
+      feedShow(feedIdx + 1, true);
+    }, 4500);
+  }
+  async function loadFeed(){
+    try{
+      const { data, error } = await sb.from('activity_feed').select('id, kind, nickname, team, game, score, rank, created_at').order('id', { ascending:false }).limit(FEED_KEEP);
+      if(error || !data) throw error || new Error('x');
+      feedItems = data;
+      feedSeen = new Set(data.map(function(f){ return f.id; }));
+    }catch(e){ feedItems = []; }
+    feedShow(0, false);
+  }
+  function onFeedInsert(f){
+    if(!f || feedSeen.has(f.id)) return;
+    feedSeen.add(f.id);
+    feedItems.unshift(f);
+    if(feedItems.length > FEED_KEEP) feedItems.length = FEED_KEEP;
+    feedShow(0, true);
+    feedStartRotation();   // 새 소식은 4.5초 동안 그대로 보여줌
+    const t = document.getElementById('live-ticker');
+    if(t){ t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); }
+    if(f.kind === 'daily_top' || (dailyInfo && f.game === dailyInfo.game)) scheduleDailyRefresh();
+  }
+  function onFeedUpdate(f){
+    if(!f) return;
+    const i = feedItems.findIndex(function(x){ return x.id === f.id; });
+    if(i >= 0){ feedItems[i] = f; if(i === feedIdx) feedShow(feedIdx, false); }
+  }
+  function startFeed(){
+    loadFeed();
+    feedStartRotation();
+    if(feedChannel) return;
+    feedChannel = sb.channel('hub-activity-feed')
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'activity_feed' }, function(payload){ onFeedInsert(payload.new); })
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'activity_feed' }, function(payload){ onFeedUpdate(payload.new); })
+      .subscribe();
+  }
+  function openFeedModal(){
+    const list = document.getElementById('feed-list');
+    list.innerHTML = feedItems.length
+      ? feedItems.map(function(f){ return '<div class="feed-row">'+feedItemHtml(f)+'</div>'; }).join('')
+      : '<p class="lb-empty">아직 소식이 없어요</p>';
+    document.getElementById('feed-modal').classList.remove('hidden');
+  }
+  document.getElementById('live-ticker').addEventListener('click', openFeedModal);
+  document.getElementById('live-ticker').addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openFeedModal(); } });
+  document.getElementById('feed-close').addEventListener('click', function(){ document.getElementById('feed-modal').classList.add('hidden'); });
+  document.getElementById('feed-modal').addEventListener('click', function(e){ if(e.target === this) this.classList.add('hidden'); });
+
+  /* ============ 1차 업데이트: 오늘의 챌린지 ============
+     게임 선정·기록·도전 횟수는 모두 서버가 관리(arcade_daily_info / arcade_submit_score).
+     화면은 결과를 보여주고, 자정(한국시간) 카운트다운만 계산한다. */
+  let dailyInfo = null, dailyClockOffset = 0, dailyCountdownTimer = null, dailyRefreshTimer = null;
+
+  async function fetchDailyInfo(){
+    try{
+      const data = await arcadeRpc('arcade_daily_info', { p_pid: playerId || null });
+      if(!data || !data.game) return null;
+      if(data.server_now) dailyClockOffset = new Date(data.server_now).getTime() - Date.now();
+      dailyInfo = data;
+      return data;
+    }catch(e){ return null; }
+  }
+  function dailyAttemptsUsed(){ return (dailyInfo && dailyInfo.me && dailyInfo.me.attempts) || 0; }
+  function dailyMaxAttempts(){ return (dailyInfo && dailyInfo.max_attempts) || 3; }
+  function dailyMyRank(){
+    if(!dailyInfo || !dailyInfo.top) return 0;
+    const i = dailyInfo.top.findIndex(function(t){ return t.player_id === playerId; });
+    return i >= 0 ? i + 1 : 0;
+  }
+  function dailyMsLeft(){
+    if(!dailyInfo || !dailyInfo.day) return 0;
+    const p = String(dailyInfo.day).split('-').map(Number);
+    const nextMidnightKst = Date.UTC(p[0], p[1]-1, p[2]+1) - 9*3600*1000;
+    return nextMidnightKst - (Date.now() + dailyClockOffset);
+  }
+  function tickDailyCountdown(){
+    const el = document.getElementById('daily-countdown');
+    if(!el || !dailyInfo) return;
+    const ms = dailyMsLeft();
+    if(ms <= 0){
+      el.textContent = '00:00:00';
+      if(!tickDailyCountdown.refetching){
+        tickDailyCountdown.refetching = true;
+        setTimeout(function(){ renderDaily().finally(function(){ tickDailyCountdown.refetching = false; }); }, 1500);
+      }
+      return;
+    }
+    const t = Math.floor(ms/1000);
+    el.textContent = '마감까지 ' + String(Math.floor(t/3600)).padStart(2,'0') + ':' + String(Math.floor(t%3600/60)).padStart(2,'0') + ':' + String(t%60).padStart(2,'0');
+  }
+  function renderDailyPanel(){
+    if(!dailyInfo) return;
+    const g = GAMES.find(function(x){ return x.id === dailyInfo.game; }) || { id:dailyInfo.game, label:dailyInfo.game, icon:'🎲', color:'var(--pink)' };
+    document.getElementById('daily-game-box').style.setProperty('--accent', g.color);
+    document.getElementById('daily-game-icon').textContent = g.icon;
+    document.getElementById('daily-game-label').textContent = g.label;
+
+    const used = dailyAttemptsUsed(), max = dailyMaxAttempts();
+    let dots = '';
+    for(let i=0;i<max;i++) dots += '<i class="'+(i < used ? 'used' : '')+'"></i>';
+    const best = dailyInfo.me ? dailyInfo.me.best : null;
+    const rank = dailyMyRank();
+    document.getElementById('daily-me').innerHTML =
+      (best != null ? '내 기록 <b>'+Number(best).toLocaleString()+'</b>' + (rank ? ' · '+rank+'위' : '') + ' · ' : '') +
+      '남은 도전 <span class="daily-dots">'+dots+'</span>';
+
+    const btn = document.getElementById('daily-play-btn');
+    const off = gameSettingsMap[g.id] === false;
+    btn.disabled = off || !playerId;
+    btn.classList.toggle('practice', used >= max);
+    btn.textContent = off ? '점검중' : (used >= max ? '연습하기 (기록 미반영)' : (used ? '다시 도전 ▶' : '도전하기 ▶'));
+
+    const list = document.getElementById('daily-rank-list');
+    const top = dailyInfo.top || [];
+    list.innerHTML = top.length ? top.slice(0, 5).map(function(t, i){
+      const mine = t.player_id === playerId ? ' class="lb-mine"' : '';
+      const teamTag = t.team ? ' <span class="lb-team" style="color:'+(TEAM_COLORS[t.team]||'var(--text-dim)')+'">· '+escapeHtml(t.team)+'</span>' : '';
+      return '<li'+mine+'><span class="lb-rank">'+(i+1)+'</span><span class="lb-name">'+escapeHtml(t.nickname)+teamTag+'</span><span class="lb-score">'+Number(t.best).toLocaleString()+'</span></li>';
+    }).join('') + (rank > 5 ? '<li class="lb-mine"><span class="lb-rank">'+rank+'</span><span class="lb-name">'+escapeHtml(nickname || '나')+'</span><span class="lb-score">'+Number(best).toLocaleString()+'</span></li>' : '')
+    : '<li class="lb-empty">아직 도전자가 없어요 · 지금 1등을 노려보세요!</li>';
+
+    const y = dailyInfo.yesterday;
+    document.getElementById('daily-yesterday').innerHTML = y
+      ? '🏆 어제의 챌린지 우승 · <b style="color:'+(TEAM_COLORS[y.team]||'var(--text)')+'">'+escapeHtml(y.nickname)+'</b> ('+escapeHtml(y.team)+') · '+escapeHtml(gameLabel(y.game))+' '+Number(y.best).toLocaleString()+'점'
+      : '어제의 챌린지 기록이 없어요';
+    updateDailyIngameBadge();
+  }
+  async function renderDaily(){
+    const data = await fetchDailyInfo();
+    const panel = document.getElementById('daily-panel');
+    if(!data){ if(panel && !dailyInfo) panel.style.display = 'none'; return; }   // SQL 미실행 시 패널 숨김
+    if(panel) panel.style.display = '';
+    renderDailyPanel();
+    tickDailyCountdown();
+    if(!dailyCountdownTimer) dailyCountdownTimer = setInterval(tickDailyCountdown, 1000);
+  }
+  function scheduleDailyRefresh(){
+    if(dailyRefreshTimer) return;
+    dailyRefreshTimer = setTimeout(function(){ dailyRefreshTimer = null; if(currentScreen === 'hub') renderDaily(); }, 800);
+  }
+  function updateDailyIngameBadge(){
+    let badge = document.getElementById('daily-ingame');
+    const isDaily = dailyInfo && currentScreen === dailyInfo.game;
+    if(!isDaily){ if(badge) badge.remove(); return; }
+    const screen = document.getElementById('screen-' + currentScreen);
+    const topbar = screen && screen.querySelector('.game-topbar');
+    if(!topbar) return;
+    if(!badge){ badge = document.createElement('div'); badge.id = 'daily-ingame'; badge.className = 'daily-ingame'; }
+    if(badge.previousElementSibling !== topbar) topbar.insertAdjacentElement('afterend', badge);
+    const left = Math.max(0, dailyMaxAttempts() - dailyAttemptsUsed());
+    badge.classList.toggle('spent', left === 0);
+    badge.textContent = left > 0
+      ? '🔥 오늘의 챌린지 진행 중 · 남은 도전 ' + left + '/' + dailyMaxAttempts() + ' · 이번 판 기록이 챌린지에 반영돼요'
+      : '오늘의 챌린지 도전 기회를 모두 썼어요 · 지금은 일반 기록만 저장돼요';
+  }
+  document.getElementById('daily-play-btn').addEventListener('click', function(){
+    if(!dailyInfo || this.disabled) return;
+    openGameInfoModal(dailyInfo.game);
+  });
+
+  /* 게임 종료 후 결과 문구에 챌린지 결과를 덧붙임 */
+  async function appendDailyResult(game, overlay){
+    if(!dailyInfo || dailyInfo.game !== game) return;
+    const usedBefore = dailyAttemptsUsed();
+    const data = await fetchDailyInfo();
+    if(!data || data.game !== game) return;
+    renderDailyPanel();
+    if(!overlay) return;
+    const msgEl = overlay.querySelector('.overlay-msg');
+    if(!msgEl) return;
+    const left = Math.max(0, dailyMaxAttempts() - dailyAttemptsUsed());
+    const rank = dailyMyRank();
+    let extra;
+    if(usedBefore >= dailyMaxAttempts()) extra = '🔥 챌린지 기회 소진 (일반 기록만 저장)';
+    else extra = '🔥 챌린지 ' + (rank ? rank + '위' : '기록 반영') + ' · 남은 도전 ' + left + '회';
+    msgEl.textContent = msgEl.textContent + ' · ' + extra;
+  }
+
   /* ============ 허브 실시간 채팅 + 접속자 ============ */
   const CHAT_MAX_LOG = 150;
   let chatDbChannel = null, chatPresenceChannel = null, chatSeenIds = new Set(), chatLastSendAt = 0, chatTrackedPid = null;
@@ -2799,6 +3144,7 @@
     }
     loadMyBest(game);
     renderTeamBattle();
+    appendDailyResult(game, overlay);
   }
 
   /* ============ screen management ============ */
@@ -2907,7 +3253,10 @@
       startHubChat();
       initCabinetLeaderSlots();
       renderCabinetLeaders();
+      renderDaily();
+      feedShow(0, false);
     }
+    updateDailyIngameBadge();
     if(id === 'snake') prepareSnake();
     if(id === 'tetris') prepareTetris();
     if(id === 'shisen') prepareShisen();
@@ -10052,7 +10401,8 @@
     initCabinetLeaderSlots();
     renderCabinetLeaders();
     checkAnnouncementsOnLoad();
-    fetchGameSettings().then(applyGameSettingsToHub);
+    fetchGameSettings().then(function(){ applyGameSettingsToHub(); renderDaily(); });
+    startFeed();
   });
 })();
 </script>
