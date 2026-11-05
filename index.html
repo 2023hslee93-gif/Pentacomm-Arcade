@@ -506,6 +506,24 @@
   .toast .t-x{ background:none; color:var(--text-dim); padding:0 2px; }
   @keyframes toastIn{ from{ transform:translateY(16px); opacity:0; } }
 
+  /* ---------- 칭호 ---------- */
+  .ttl{ display:inline-block; font-size:10px; font-weight:800; padding:1px 6px; border-radius:4px; margin-right:5px; vertical-align:1px; white-space:nowrap; border:1px solid currentColor; line-height:1.5; }
+  .ttl.r-common{ color:#A9A9C2; }
+  .ttl.r-rare{ color:var(--cyan); }
+  .ttl.r-epic{ color:var(--pink); text-shadow:0 0 6px rgba(255,46,126,.5); }
+  .ttl.r-legend{ color:#1a1300; border-color:transparent; background:linear-gradient(90deg, #FFD23F, #FF9F43, #FFD23F); background-size:200% 100%; animation:ttlShine 3s linear infinite; }
+  @keyframes ttlShine{ to{ background-position:-200% 0; } }
+  @media (prefers-reduced-motion: reduce){ .ttl.r-legend{ animation:none; } }
+  .badge-tabs{ display:flex; gap:6px; margin-bottom:10px; }
+  .title-grid{ display:flex; flex-direction:column; gap:6px; max-height:56vh; overflow-y:auto; }
+  .title-row{ display:flex; align-items:center; gap:10px; background:var(--bg-deep); border:1px solid var(--border); border-radius:8px; padding:9px 12px; }
+  .title-row.equipped{ border-color:var(--yellow); }
+  .title-row.locked{ opacity:.45; }
+  .title-row .tr-main{ flex:1; min-width:0; }
+  .title-row .tr-cond{ font-size:11px; color:var(--text-dim); margin-top:3px; }
+  .title-row button{ flex-shrink:0; background:var(--pink); color:#fff; border:none; border-radius:6px; padding:6px 12px; font-weight:700; font-size:12px; cursor:pointer; font-family:inherit; }
+  .title-row button.off{ background:transparent; border:1px solid var(--border); color:var(--text-dim); }
+
   /* ---------- announcement popup ---------- */
   .announce-list{ display:flex; flex-direction:column; gap:14px; max-height:60vh; overflow-y:auto; }
   .announce-item{ border-bottom:1px solid var(--border); padding-bottom:14px; }
@@ -1151,8 +1169,13 @@
         <div class="game-info-desc">플레이하면서 조건을 채우면 자동으로 받아요</div>
       </div>
     </div>
+    <div class="badge-tabs">
+      <button type="button" class="duel-tab active" data-badge-tab="badges">🏅 뱃지</button>
+      <button type="button" class="duel-tab" data-badge-tab="titles">🎖️ 칭호</button>
+    </div>
     <p class="badge-summary" id="badge-summary"></p>
     <div class="badge-grid" id="badge-grid"><p class="lb-empty">불러오는 중...</p></div>
+    <div class="title-grid hidden" id="title-grid" style="display:none"></div>
   </div>
 </div>
 
@@ -2431,7 +2454,7 @@
   /* ============ 앱 버전 / 구버전 차단 ============
      APP_BUILD는 배포할 때마다 올립니다(YYYYMMDDNN). 서버(app_config.min_build)가 이 값보다 크면
      구버전으로 보고 게임 대신 '새로고침' 안내만 보여줍니다. 값은 관리자 화면에서 바꿉니다. */
-  const APP_BUILD = 2026110503;
+  const APP_BUILD = 2026110504;
   function appVersionLabel(n){
     const s = String(n);
     return 'v' + s.slice(0,4) + '.' + s.slice(4,6) + '.' + s.slice(6,8) + '-' + s.slice(8);
@@ -2535,7 +2558,7 @@
   let pendingRecoveryId = null;
 
   function updatePlayerBadge(){
-    document.getElementById('player-name-display').textContent = '🎮 ' + (nickname || '-');
+    document.getElementById('player-name-display').innerHTML = '🎮 ' + (typeof titleHtml === 'function' ? titleHtml(playerId) : '') + escapeHtml(nickname || '-');
     const teamEl = document.getElementById('player-team-display');
     if(team){
       teamEl.textContent = team;
@@ -2780,7 +2803,7 @@
         : '<span></span>') : '';
       const mine = e.playerId === playerId ? ' class="lb-mine"' : '';
       const teamTag = e.team ? ' <span class="lb-team" style="color:'+(TEAM_COLORS[e.team]||'var(--text-dim)')+'">· '+escapeHtml(e.team)+'</span>' : '';
-      return '<li'+mine+'><span class="lb-rank">'+(i+1)+'</span><span class="lb-name">'+escapeHtml(e.name)+badgeIconsHtml(e.playerId, 2)+teamTag+'</span><span class="lb-score">'+e.score+'</span>'+duelCell+'</li>';
+      return '<li'+mine+'><span class="lb-rank">'+(i+1)+'</span><span class="lb-name">'+titleHtml(e.playerId)+escapeHtml(e.name)+badgeIconsHtml(e.playerId, 2)+teamTag+'</span><span class="lb-score">'+e.score+'</span>'+duelCell+'</li>';
     }).join('');
   }
 
@@ -2871,7 +2894,7 @@
       const color = TEAM_COLORS[p.team] || 'var(--text-dim)';
       const mine = p.playerId === playerId ? ' mine' : '';
       const teamLabel = p.team ? escapeHtml(p.team) : '팀 미정';
-      return '<span class="roster-chip'+mine+'" data-pid="'+escapeHtml(p.playerId)+'" data-name="'+escapeHtml(p.name)+'" style="--chip-color:'+color+'"><span class="dot"></span>'+escapeHtml(p.name)+badgeIconsHtml(p.playerId, 3)+' <small>'+teamLabel+'</small></span>';
+      return '<span class="roster-chip'+mine+'" data-pid="'+escapeHtml(p.playerId)+'" data-name="'+escapeHtml(p.name)+'" style="--chip-color:'+color+'"><span class="dot"></span>'+titleHtml(p.playerId)+escapeHtml(p.name)+badgeIconsHtml(p.playerId, 3)+' <small>'+teamLabel+'</small></span>';
     }).join('');
   }
 
@@ -3027,6 +3050,10 @@
     const t = document.getElementById('live-ticker');
     if(t){ t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); }
     if(f.kind === 'daily_top' || (dailyInfo && f.game === dailyInfo.game)) scheduleDailyRefresh();
+    if(f.kind === 'badge' && f.player_id && f.player_id === playerId){
+      const nt = TITLES.filter(function(t){ return t.badge === f.extra && t.min === 1; })[0];
+      if(nt) showToast('🎖️ 새 칭호 <span class="ttl r-'+nt.rarity+'">'+escapeHtml(nt.name)+'</span>이(가) 열렸어요!', '장착하러 가기', function(){ openBadgeModal(playerId, nickname || '').then(function(){ setBadgeModalTab('titles'); }); });
+    }
     if(f.kind === 'badge' && f.player_id){
       const list = badgeMap[f.player_id] = badgeMap[f.player_id] || [];
       if(!list.some(function(b){ return b.badge === f.extra; }) && BADGE_BY_ID[f.extra]){
@@ -3134,7 +3161,7 @@
     list.innerHTML = top.length ? top.slice(0, 5).map(function(t, i){
       const mine = t.player_id === playerId ? ' class="lb-mine"' : '';
       const teamTag = t.team ? ' <span class="lb-team" style="color:'+(TEAM_COLORS[t.team]||'var(--text-dim)')+'">· '+escapeHtml(t.team)+'</span>' : '';
-      return '<li'+mine+'><span class="lb-rank">'+(i+1)+'</span><span class="lb-name">'+escapeHtml(t.nickname)+badgeIconsHtml(t.player_id, 2)+teamTag+'</span><span class="lb-score">'+Number(t.best).toLocaleString()+'</span></li>';
+      return '<li'+mine+'><span class="lb-rank">'+(i+1)+'</span><span class="lb-name">'+titleHtml(t.player_id)+escapeHtml(t.nickname)+badgeIconsHtml(t.player_id, 2)+teamTag+'</span><span class="lb-score">'+Number(t.best).toLocaleString()+'</span></li>';
     }).join('') + (rank > 5 ? '<li class="lb-mine"><span class="lb-rank">'+rank+'</span><span class="lb-name">'+escapeHtml(nickname || '나')+'</span><span class="lb-score">'+Number(best).toLocaleString()+'</span></li>' : '')
     : '<li class="lb-empty">아직 도전자가 없어요 · 지금 1등을 노려보세요!</li>';
 
@@ -3250,6 +3277,8 @@
     document.getElementById('badge-modal-title').textContent = isMe ? '내 뱃지' : (name + '님의 뱃지');
     document.getElementById('badge-summary').textContent = '';
     grid.innerHTML = '<p class="lb-empty">불러오는 중...</p>';
+    badgeModalOwned = {}; badgeModalPid = pid; badgeModalSummaryHtml = '';
+    setBadgeModalTab('badges');
     modal.classList.remove('hidden');
     if(!pid){ grid.innerHTML = '<p class="lb-empty">닉네임을 먼저 등록해주세요</p>'; return; }
     let owned = {}, st = {};
@@ -3273,10 +3302,12 @@
     }catch(e){
       grid.innerHTML = '<p class="lb-empty">뱃지를 불러오지 못했어요</p>'; return;
     }
+    badgeModalOwned = owned; badgeModalPid = pid;
     const earned = BADGES.filter(function(b){ return owned[b.id]; }).length;
     document.getElementById('badge-summary').innerHTML = '모은 뱃지 <b>'+earned+'</b> / '+BADGES.length +
       (st.plays ? ' · 누적 '+Number(st.plays).toLocaleString()+'판' : '') +
       (st.streak ? ' · 현재 연속 '+st.streak+'일' : '') + (st.best_streak > 1 ? ' (최고 '+st.best_streak+'일)' : '');
+    badgeModalSummaryHtml = document.getElementById('badge-summary').innerHTML;
     const ordered = BADGES.slice().sort(function(a,b){
       const ea = owned[a.id] ? 0 : 1, eb = owned[b.id] ? 0 : 1;
       return ea - eb || a.rank - b.rank;
@@ -3603,6 +3634,104 @@
     else if(d.me.today >= (d.cap || 150)) msgEl.textContent = msgEl.textContent + ' · 👾 오늘 데미지 상한 도달';
   }
 
+  /* ============ 칭호 시스템 ============
+     조건(어떤 뱃지를 몇 번)은 서버 title_defs 와 같아야 한다. 장착은 arcade_set_title()로만 가능(서버가 검증). */
+  const TITLES = [
+    { id:'dynasty',     name:'왕조 건설자',       badge:'season_champ', min:3, rarity:'legend' },
+    { id:'legend',      name:'살아있는 전설',     badge:'legend',       min:1, rarity:'legend' },
+    { id:'daily_king',  name:'챌린지 제왕',       badge:'daily_win',    min:5, rarity:'legend' },
+    { id:'slayer',      name:'괴물 퇴치 전문가',  badge:'raid_kill',    min:4, rarity:'legend' },
+    { id:'champion',    name:'시즌 챔피언',       badge:'season_champ', min:1, rarity:'epic' },
+    { id:'fixture',     name:'오락실 붙박이',     badge:'streak20',     min:1, rarity:'epic' },
+    { id:'ring',        name:'우승 반지 보유자',  badge:'season_team',  min:1, rarity:'epic' },
+    { id:'last_hit',    name:'막타 장인',         badge:'last_hit',     min:1, rarity:'epic' },
+    { id:'all_rounder', name:'만능 엔터테이너',   badge:'all_rounder',  min:1, rarity:'epic' },
+    { id:'daily_hero',  name:'오늘의 주인공',     badge:'daily_win',    min:1, rarity:'rare' },
+    { id:'summit',      name:'정상에 선 자',      badge:'top1',         min:1, rarity:'rare' },
+    { id:'veteran',     name:'백전노장',          badge:'pvp_10',       min:1, rarity:'rare' },
+    { id:'duelist',     name:'결투의 달인',       badge:'duel_3',       min:1, rarity:'rare' },
+    { id:'hunter',      name:'보스 사냥꾼',       badge:'raid_kill',    min:1, rarity:'rare' },
+    { id:'attendance',  name:'개근상 수상자',     badge:'streak5',      min:1, rarity:'rare' },
+    { id:'regular',     name:'챌린지 단골손님',   badge:'daily_5',      min:1, rarity:'rare' },
+    { id:'explorer',    name:'오락실 탐험가',     badge:'explorer',     min:1, rarity:'common' },
+    { id:'steady',      name:'꾸준함의 아이콘',   badge:'streak3',      min:1, rarity:'common' },
+    { id:'lunch',       name:'점심시간 사냥꾼',   badge:'lunch',        min:1, rarity:'common' },
+    { id:'night',       name:'야근 요정',         badge:'night_owl',    min:1, rarity:'common' },
+    { id:'coin',        name:'동전 넣은 자',      badge:'first_coin',   min:1, rarity:'common' },
+    { id:'rookie',      name:'수습 게이머',       badge:null,           min:1, rarity:'common' }
+  ];
+  const TITLE_BY_ID = {};
+  TITLES.forEach(function(t){ TITLE_BY_ID[t.id] = t; });
+  const RARITY_LABEL = { legend:'전설', epic:'에픽', rare:'레어', common:'일반' };
+  let titleMap = {};   // player_id -> title id
+
+  async function loadTitles(){
+    try{
+      const { data, error } = await sb.from('players').select('id, title').not('title', 'is', null);
+      if(error || !data) return;
+      const m = {};
+      data.forEach(function(r){ if(TITLE_BY_ID[r.title]) m[r.id] = r.title; });
+      titleMap = m;
+      updatePlayerBadge();
+    }catch(e){ /* 22번 SQL 실행 전이면 조용히 무시 */ }
+  }
+  function titleHtml(pid){
+    const t = pid && TITLE_BY_ID[titleMap[pid]];
+    return t ? '<span class="ttl r-'+t.rarity+'" title="'+RARITY_LABEL[t.rarity]+' 칭호">'+escapeHtml(t.name)+'</span>' : '';
+  }
+  function titleUnlocked(t, owned){
+    if(!t.badge) return true;
+    const b = owned[t.badge];
+    return !!(b && (b.cnt || 1) >= t.min);
+  }
+  function titleCondText(t){
+    if(!t.badge) return '누구나 사용 가능';
+    const b = BADGE_BY_ID[t.badge];
+    return (b ? b.icon + ' ' + b.name : t.badge) + ' 뱃지' + (t.min > 1 ? ' ' + t.min + '회' : '') + ' 획득 시';
+  }
+  let badgeModalOwned = {}, badgeModalPid = null, badgeModalTab = 'badges';
+  function renderTitleTab(){
+    const grid = document.getElementById('title-grid');
+    const isMe = badgeModalPid === playerId;
+    const cur = titleMap[badgeModalPid] || '';
+    const list = TITLES.map(function(t){ return { t:t, ok:titleUnlocked(t, badgeModalOwned) }; })
+      .filter(function(x){ return isMe || x.ok; })
+      .sort(function(a,b){ return (b.ok - a.ok) || 0; });
+    const opened = TITLES.filter(function(t){ return titleUnlocked(t, badgeModalOwned); }).length;
+    document.getElementById('badge-summary').innerHTML = '열린 칭호 <b>'+opened+'</b> / '+TITLES.length + (cur ? ' · 장착 중 ' + titleHtml(badgeModalPid) : '');
+    grid.innerHTML = list.map(function(x){
+      const t = x.t, eq = cur === t.id;
+      const btn = !isMe ? '' : (eq ? '<button type="button" class="off" data-title-set="">해제</button>'
+        : (x.ok ? '<button type="button" data-title-set="'+t.id+'">장착</button>' : ''));
+      return '<div class="title-row'+(eq ? ' equipped' : '')+(x.ok ? '' : ' locked')+'"><div class="tr-main"><span class="ttl r-'+t.rarity+'">'+escapeHtml(t.name)+'</span> <span style="font-size:10px;color:var(--text-dim)">'+RARITY_LABEL[t.rarity]+'</span><div class="tr-cond">'+(x.ok ? (eq ? '장착 중' : '사용 가능') : '🔒 ' + titleCondText(t))+'</div></div>'+btn+'</div>';
+    }).join('') || '<p class="lb-empty">아직 열린 칭호가 없어요</p>';
+  }
+  function setBadgeModalTab(tab){
+    badgeModalTab = tab;
+    document.querySelectorAll('[data-badge-tab]').forEach(function(b){ b.classList.toggle('active', b.dataset.badgeTab === tab); });
+    document.getElementById('badge-grid').style.display = tab === 'badges' ? '' : 'none';
+    document.getElementById('title-grid').style.display = tab === 'titles' ? '' : 'none';
+    if(tab === 'titles') renderTitleTab(); else if(badgeModalSummaryHtml) document.getElementById('badge-summary').innerHTML = badgeModalSummaryHtml;
+  }
+  let badgeModalSummaryHtml = '';
+  document.querySelectorAll('[data-badge-tab]').forEach(function(b){ b.addEventListener('click', function(){ setBadgeModalTab(b.dataset.badgeTab); }); });
+  document.getElementById('title-grid').addEventListener('click', async function(e){
+    const btn = e.target.closest('[data-title-set]');
+    if(!btn || !playerCode) return;
+    const id = btn.dataset.titleSet;
+    btn.disabled = true;
+    try{
+      const ok = await arcadeRpc('arcade_set_title', { p_code: playerCode, p_title: id });
+      if(ok){
+        if(id) titleMap[playerId] = id; else delete titleMap[playerId];
+        updatePlayerBadge(); renderTitleTab(); renderRoster(); renderDailyPanel();
+        showToast(id ? '🎖️ 칭호 ' + titleHtml(playerId) + '장착 완료!' : '칭호를 해제했어요', null, null, 4000);
+      }else{
+        showToast('😅 아직 열리지 않은 칭호예요'); btn.disabled = false;
+      }
+    }catch(err){ showToast('😅 칭호를 바꾸지 못했어요 (최신 SQL 22번 섹션 실행 여부 확인)'); btn.disabled = false; }
+  });
+
   /* ============ 허브 실시간 채팅 + 접속자 ============ */
   const CHAT_MAX_LOG = 150;
   let chatDbChannel = null, chatPresenceChannel = null, chatSeenIds = new Set(), chatLastSendAt = 0, chatTrackedPid = null;
@@ -3615,7 +3744,7 @@
   function chatMsgHtml(m){
     const mine = m.player_id && m.player_id === playerId;
     return '<div class="chat-msg'+(mine?' mine':'')+'" data-id="'+escapeHtml(String(m.id))+'" style="--chip-color:'+escapeHtml(chatTeamColor(m.team))+'">'
-      + '<span class="chat-nick">'+escapeHtml(m.nickname || '???')+'</span>'
+      + '<span class="chat-nick">'+titleHtml(m.player_id)+escapeHtml(m.nickname || '???')+'</span>'
       + '<span class="chat-text">'+escapeHtml(m.content)+'</span>'
       + '<span class="chat-time">'+chatTimeLabel(m.created_at)+'</span>'
       + (adminAuthUser ? '<button type="button" class="chat-del" data-id="'+escapeHtml(String(m.id))+'" aria-label="삭제">✕</button>' : '')
@@ -3675,7 +3804,7 @@
     });
     cntEl.textContent = String(users.length);
     listEl.innerHTML = users.map(function(u){
-      return '<span class="online-chip'+(u.playerId===playerId?' mine':'')+'" style="--chip-color:'+escapeHtml(chatTeamColor(u.team))+'"><span class="dot"></span>'+escapeHtml(u.nickname || '???')+'</span>';
+      return '<span class="online-chip'+(u.playerId===playerId?' mine':'')+'" style="--chip-color:'+escapeHtml(chatTeamColor(u.team))+'"><span class="dot"></span>'+titleHtml(u.playerId)+escapeHtml(u.nickname || '???')+'</span>';
     }).join('');
   }
   function stopHubChat(){
@@ -3864,6 +3993,7 @@
       loadAllBadges().then(function(){ renderRoster(); renderDailyPanel(); });
       renderRaid();
       refreshDuelCount();
+      loadTitles().then(function(){ renderRoster(); renderDailyPanel(); });
     }
     updateDailyIngameBadge();
     if(id === 'snake') prepareSnake();
@@ -11062,6 +11192,7 @@
     loadAllBadges().then(function(){ renderRoster(); renderDailyPanel(); });
     renderRaid();
     startDuelWatch();
+    loadTitles().then(function(){ renderRoster(); renderDailyPanel(); });
   });
 })();
 </script>
