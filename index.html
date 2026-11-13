@@ -697,6 +697,40 @@
     pointer-events:none; display:none;
   }
 
+  #shisen-board.auto-shuffled{ animation:shisenShuffleFlash .6s ease; }
+  @keyframes shisenShuffleFlash{ 0%{ filter:brightness(1.8); transform:scale(.98); } 100%{ filter:none; transform:none; } }
+
+  /* ---------- ANIPOP (3매치 퍼즐) ---------- */
+  .ap-timebar{ width:100%; max-width:420px; height:8px; margin:0 auto 10px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .ap-timebar-fill{ height:100%; width:100%; background:var(--green); border-radius:4px; transition:width .1s linear; }
+  .ap-timebar-fill.low{ background:var(--red); }
+  .ap-board{
+    position:relative; width:min(92vw, 420px); aspect-ratio:1/1; margin:0 auto; background:var(--bg-deep);
+    border:1px solid var(--border); border-radius:14px; touch-action:none; overflow:hidden; user-select:none; -webkit-user-select:none;
+  }
+  .ap-board.flash{ animation:shisenShuffleFlash .6s ease; }
+  .ap-tile{
+    position:absolute; padding:3px; box-sizing:border-box; display:flex; align-items:center; justify-content:center;
+    font-size:clamp(22px, 7.4vw, 38px); line-height:1; cursor:pointer;
+    transition:left .15s ease, top .24s cubic-bezier(.35,0,.45,1.25), transform .16s ease, opacity .16s ease;
+  }
+  .ap-in{ width:100%; height:100%; border-radius:12px; background:rgba(255,255,255,.045); display:flex; align-items:center; justify-content:center; position:relative; }
+  .ap-tile.sel .ap-in{ outline:2px solid var(--cyan); background:rgba(0,229,255,.16); }
+  .ap-tile.pop{ transform:scale(0) rotate(25deg); opacity:0; }
+  .ap-tile.sp-h .ap-in{ background:repeating-linear-gradient(0deg, rgba(255,210,63,.32) 0 3px, transparent 3px 8px); box-shadow:inset 0 0 0 2px rgba(255,210,63,.7); }
+  .ap-tile.sp-v .ap-in{ background:repeating-linear-gradient(90deg, rgba(255,210,63,.32) 0 3px, transparent 3px 8px); box-shadow:inset 0 0 0 2px rgba(255,210,63,.7); }
+  .ap-tile.sp-b .ap-in{ background:radial-gradient(circle, rgba(255,46,126,.55), rgba(255,46,126,0) 70%); animation:apPulse 1s ease-in-out infinite; }
+  .ap-tile.hint .ap-in{ animation:apHint .7s ease 3; }
+  @keyframes apPulse{ 50%{ transform:scale(1.08); } }
+  @keyframes apHint{ 50%{ transform:scale(1.15); background:rgba(255,255,255,.22); } }
+  .ap-combo{
+    position:absolute; left:50%; top:42%; transform:translate(-50%,-50%); pointer-events:none; opacity:0; white-space:nowrap;
+    font-family:'Press Start 2P',monospace; font-size:clamp(14px, 4.5vw, 22px); color:var(--yellow); text-shadow:0 0 12px rgba(255,210,63,.8), 0 2px 0 #000; z-index:5;
+  }
+  .ap-combo.show{ animation:apCombo .8s ease; }
+  @keyframes apCombo{ 0%{ opacity:0; transform:translate(-50%,-30%) scale(.6); } 25%{ opacity:1; transform:translate(-50%,-50%) scale(1.15); } 100%{ opacity:0; transform:translate(-50%,-90%) scale(1); } }
+  @media (prefers-reduced-motion: reduce){ .ap-tile.sp-b .ap-in, .ap-tile.hint .ap-in{ animation:none; } }
+
   /* ---------- colorspot ---------- */
   .cs-timebar{ width:100%; max-width:340px; height:8px; margin:0 auto 10px; background:var(--border); border-radius:4px; overflow:hidden; }
   .cs-timebar-fill{ height:100%; width:100%; background:var(--yellow); border-radius:4px; }
@@ -1504,6 +1538,12 @@
         <div class="cabinet-label pixel">COLORSPOT</div>
         <div class="cabinet-sub">색깔이 살짝 다른 칸 하나를 찾아내세요 · 스테이지가 올라갈수록 어려워져요</div>
       </button>
+
+      <button class="cabinet" data-game="anipop" style="--accent:var(--yellow)">
+        <div class="cabinet-screen" style="font-size:40px;">🐰</div>
+        <div class="cabinet-label pixel">ANIPOP</div>
+        <div class="cabinet-sub">이웃한 동물을 바꿔 같은 동물 3마리 이상을 맞추세요 · 60초 동안 콤보를 이어가요</div>
+      </button>
     </div>
 
     <div class="roster-panel">
@@ -2127,6 +2167,29 @@
     <p class="controls-hint">화면에 나온 역 이름을 순서대로 입력하세요 (역 이름만, 예: 강남) · 먼저 끝까지 도착하면 승리! · 틀리면 Esc/Enter로 지우기</p>
   </section>
 
+  <!-- ANIPOP -->
+  <section id="screen-anipop" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>SCORE<b id="anipop-score">0</b></span>
+        <span>COMBO<b id="anipop-combo">0</b></span>
+        <span>TIME<b id="anipop-time">60</b></span>
+        <span>BEST<b id="anipop-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="ap-timebar"><div class="ap-timebar-fill" id="anipop-bar"></div></div>
+      <div class="ap-board" id="anipop-board"><div class="ap-combo" id="anipop-combo-pop"></div></div>
+      <div class="overlay" id="anipop-overlay">
+        <div class="overlay-title pixel">ANIPOP</div>
+        <div class="overlay-msg">같은 동물 3마리를 맞춰 터뜨리세요!</div>
+        <button class="start-btn" id="anipop-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">동물을 옆 칸으로 밀거나(드래그) 두 칸을 차례로 탭해서 바꾸기 · 4개 맞추면 줄무늬 블록(터지면 한 줄 전부 제거) · 5개 이상 / ㄱ·T자 모양이면 💣폭탄(아무 동물과 바꾸면 그 동물 전부 제거) · 빠르게 연속으로 맞추면 콤보 배수 UP</p>
+  </section>
+
   <!-- COLORSPOT -->
   <section id="screen-colorspot" class="screen">
     <div class="game-topbar">
@@ -2451,12 +2514,13 @@
     { id:'sidesort', label:'SIDESORT', icon:'🐱', color:'var(--pink)' },
     { id:'subwayrace', label:'SUBWAY RACE', icon:'🚇', color:'var(--green)' },
     { id:'spintail', label:'SPINTAIL', icon:'🐹', color:'var(--orange)' },
-    { id:'colorspot', label:'COLORSPOT', icon:'🎨', color:'var(--pink)' }
+    { id:'colorspot', label:'COLORSPOT', icon:'🎨', color:'var(--pink)' },
+    { id:'anipop', label:'ANIPOP', icon:'🐰', color:'var(--yellow)' }
   ];
   /* ============ 앱 버전 / 구버전 차단 ============
      APP_BUILD는 배포할 때마다 올립니다(YYYYMMDDNN). 서버(app_config.min_build)가 이 값보다 크면
      구버전으로 보고 게임 대신 '새로고침' 안내만 보여줍니다. 값은 관리자 화면에서 바꿉니다. */
-  const APP_BUILD = 2026110505;
+  const APP_BUILD = 2026111201;
   function appVersionLabel(n){
     const s = String(n);
     return 'v' + s.slice(0,4) + '.' + s.slice(4,6) + '.' + s.slice(6,8) + '-' + s.slice(8);
@@ -4006,6 +4070,11 @@
     if(currentScreen === 'sidesort' && sidesortState){ stopSidesortLoop(); }
     if(currentScreen === 'spintail' && spintailState){ stopSpintailLoop(); }
     if(currentScreen === 'colorspot'){ stopColorspotTimer(); }
+    if(currentScreen === 'anipop' && anipopState){
+      stopAnipopTimer();
+      if(anipopState.running && !anipopState.over && anipopState.score > 0) submitScore('anipop', anipopState.score);
+      anipopState.running = false; anipopState.over = true;
+    }
     currentScreen = id;
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
@@ -4055,6 +4124,7 @@
     if(id === 'sidesort') prepareSidesort();
     if(id === 'spintail') prepareSpintail();
     if(id === 'colorspot') prepareColorspot();
+    if(id === 'anipop') prepareAnipop();
     if(id === 'subwayrace') prepareSubway();
     if(id === 'admin') prepareAdmin();
   }
@@ -4579,6 +4649,7 @@
       mismatches:0, shuffles:0, hints:0,
       startTime:0, elapsed:0, timerId:null, running:false, over:false
     };
+    if(!shisenHasMove()) shisenReshuffleTiles();   // 시작 판에 이을 수 있는 패가 없으면 다시 섞기
     renderShisenBoard();
     document.getElementById('shisen-progress').textContent = '0/' + shisenState.total;
     document.getElementById('shisen-time').textContent = '00:00';
@@ -4692,28 +4763,51 @@
       if(s.matched >= s.total){
         finishShisen();
       }else if(!shisenHasMove()){
-        stopShisenTimer(); s.running = false;
-        const overlay = document.getElementById('shisen-overlay');
-        overlay.classList.remove('hidden');
-        overlay.querySelector('.overlay-title').textContent = '이동 불가';
-        overlay.querySelector('.overlay-msg').textContent = '가능한 조합이 없어요 · 섞기를 눌러주세요';
+        // 이동 가능한 조합이 없으면 자동으로 섞기 (점수 감점 없음)
+        shisenAutoShuffle();
       }
     }else{
+      // 매칭 실패: 첫 번째로 고른 패는 선택 상태를 그대로 유지하고, 두 번째 패만 흔들어 표시
+      // (첫 패를 해제하려면 같은 패를 한 번 더 누르면 됨)
       s.mismatches++;
-      if(prevBtn) prevBtn.classList.remove('selected');
+      btn.classList.remove('shake'); void btn.offsetWidth;
       btn.classList.add('shake');
       setTimeout(function(){ btn.classList.remove('shake'); }, 300);
-      s.selected = null;
     }
+  }
+
+  /* 남은 패를 섞되, 최소 한 쌍은 연결 가능한 배치가 나올 때까지 다시 섞는다 */
+  function shisenReshuffleTiles(){
+    const s = shisenState;
+    const positions = [], values = [];
+    for(let r=0;r<s.rows;r++) for(let c=0;c<s.cols;c++) if(s.board[r][c]){ positions.push({r:r,c:c}); values.push(s.board[r][c]); }
+    if(values.length < 2) return;
+    for(let tries=0; tries<200; tries++){
+      for(let i=values.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=values[i]; values[i]=values[j]; values[j]=t; }
+      positions.forEach(function(p,i){ s.board[p.r][p.c] = values[i]; });
+      if(shisenHasMove()) return;
+    }
+    // 200번 안에 못 찾으면(극히 드묾) 같은 그림 두 장을 서로 붙여 강제로 길을 만든다
+    const a = positions[0], b = positions[1];
+    const v = s.board[a.r][a.c];
+    const twin = positions.slice(1).find(function(p){ return s.board[p.r][p.c] === v; });
+    if(twin){ const t = s.board[b.r][b.c]; s.board[b.r][b.c] = v; s.board[twin.r][twin.c] = t; }
+  }
+  function shisenAutoShuffle(){
+    const s = shisenState;
+    if(!s) return;
+    shisenReshuffleTiles();
+    s.selected = null;
+    renderShisenBoard();
+    const el = document.getElementById('shisen-board');
+    el.classList.remove('auto-shuffled'); void el.offsetWidth; el.classList.add('auto-shuffled');
+    if(typeof showToast === 'function') showToast('🔀 이을 수 있는 패가 없어서 자동으로 섞었어요 (감점 없음)', null, null, 3500);
   }
 
   function shuffleShisen(){
     const s = shisenState;
     if(!s) return;
-    const positions = [], values = [];
-    for(let r=0;r<s.rows;r++) for(let c=0;c<s.cols;c++) if(s.board[r][c]){ positions.push({r:r,c:c}); values.push(s.board[r][c]); }
-    for(let i=values.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=values[i]; values[i]=values[j]; values[j]=t; }
-    positions.forEach(function(p,i){ s.board[p.r][p.c] = values[i]; });
+    shisenReshuffleTiles();
     s.shuffles++;
     s.selected = null;
     renderShisenBoard();
@@ -9898,6 +9992,395 @@
     startColorspot();
   });
 
+
+  /* ============================================================
+     ANIPOP (3매치 퍼즐) — 이웃한 동물을 바꿔 3개 이상 맞추기, 60초
+     특수 블록: 4개 일렬 → 줄 폭탄(h: 가로줄 / v: 세로줄), 5개 이상 또는 ㄱ·T자 → 💣폭탄
+     💣는 아무 동물과 바꾸면 그 동물을 판에서 전부 제거, 💣끼리 바꾸면 판 전체 제거
+  ============================================================= */
+  const AP_N = 7, AP_TIME = 60;
+  const AP_TYPES = ['🐶','🐱','🐰','🐻','🐼','🐸'];
+  let anipopState = null, apTimer = null, apIdSeq = 0;
+
+  function apSleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
+  function apNew(t){ return { id:++apIdSeq, t:(t == null ? Math.floor(Math.random()*AP_TYPES.length) : t), sp:null }; }
+  function stopAnipopTimer(){ if(apTimer){ clearInterval(apTimer); apTimer = null; } }
+
+  function apRunAt(g, r, c){
+    const t = g[r][c] && g[r][c].t; if(t == null || t < 0) return false;
+    let n = 1, i;
+    for(i=c-1; i>=0 && g[r][i] && g[r][i].t===t; i--) n++;
+    for(i=c+1; i<AP_N && g[r][i] && g[r][i].t===t; i++) n++;
+    if(n >= 3) return true;
+    n = 1;
+    for(i=r-1; i>=0 && g[i][c] && g[i][c].t===t; i--) n++;
+    for(i=r+1; i<AP_N && g[i][c] && g[i][c].t===t; i++) n++;
+    return n >= 3;
+  }
+  /* 가능한 이동 하나 찾기 (없으면 null) */
+  function apFindMove(g){
+    for(let r=0;r<AP_N;r++) for(let c=0;c<AP_N;c++){
+      if(g[r][c].sp === 'b') return [[r,c],[r, c+1 < AP_N ? c+1 : c-1]];
+      const dirs = [[0,1],[1,0]];
+      for(const d of dirs){
+        const r2 = r+d[0], c2 = c+d[1];
+        if(r2>=AP_N || c2>=AP_N) continue;
+        const a = g[r][c]; g[r][c] = g[r2][c2]; g[r2][c2] = a;
+        const ok = apRunAt(g, r, c) || apRunAt(g, r2, c2);
+        g[r2][c2] = g[r][c]; g[r][c] = a;
+        if(ok) return [[r,c],[r2,c2]];
+      }
+    }
+    return null;
+  }
+  function apFillNoMatch(g, keepSpecial){
+    for(let r=0;r<AP_N;r++) for(let c=0;c<AP_N;c++){
+      if(keepSpecial && g[r][c] && g[r][c].sp) continue;
+      let t, guard = 0;
+      do{ t = Math.floor(Math.random()*AP_TYPES.length); guard++; }
+      while(guard < 30 && ((c>=2 && g[r][c-1] && g[r][c-2] && g[r][c-1].t===t && g[r][c-2].t===t) ||
+                           (r>=2 && g[r-1][c] && g[r-2][c] && g[r-1][c].t===t && g[r-2][c].t===t)));
+      if(keepSpecial && g[r][c]) g[r][c].t = t; else g[r][c] = apNew(t);
+    }
+  }
+  function apGenBoard(){
+    for(let tries=0; tries<100; tries++){
+      const g = [];
+      for(let r=0;r<AP_N;r++){ g.push(new Array(AP_N).fill(null)); }
+      apFillNoMatch(g, false);
+      if(apFindMove(g)) return g;
+    }
+    const g = []; for(let r=0;r<AP_N;r++){ g.push(new Array(AP_N).fill(null)); } apFillNoMatch(g, false); return g;
+  }
+
+  /* ---------- 렌더링: 칸마다 div 하나, 위치는 % 좌표 + CSS transition 으로 이동/낙하 ---------- */
+  function apCellPct(i){ return (i * 100 / AP_N) + '%'; }
+  function apRender(){
+    const s = anipopState, board = document.getElementById('anipop-board');
+    const seen = {};
+    s.pos = {};
+    for(let r=0;r<AP_N;r++) for(let c=0;c<AP_N;c++){
+      const cell = s.g[r][c]; if(!cell) continue;
+      seen[cell.id] = true;
+      s.pos[cell.id] = [r, c];
+      let el = s.els[cell.id];
+      if(!el){
+        el = document.createElement('div');
+        el.className = 'ap-tile';
+        el.dataset.id = cell.id;
+        el.style.width = el.style.height = (100 / AP_N) + '%';
+        el.innerHTML = '<div class="ap-in"></div>';
+        el.style.left = apCellPct(c);
+        el.style.top = apCellPct(cell.from != null ? cell.from : r);
+        board.appendChild(el);
+        s.els[cell.id] = el;
+        void el.offsetWidth;   // 시작 위치를 먼저 그린 뒤 목적지로 이동 (낙하 애니메이션)
+      }
+      delete cell.from;
+      el.firstChild.textContent = cell.sp === 'b' ? '💣' : AP_TYPES[cell.t];
+      el.classList.toggle('sp-h', cell.sp === 'h');
+      el.classList.toggle('sp-v', cell.sp === 'v');
+      el.classList.toggle('sp-b', cell.sp === 'b');
+      el.style.left = apCellPct(c);
+      el.style.top = apCellPct(r);
+    }
+    Object.keys(s.els).forEach(function(id){
+      if(!seen[id]){ s.els[id].remove(); delete s.els[id]; }
+    });
+  }
+  function apHud(){
+    const s = anipopState; if(!s) return;
+    document.getElementById('anipop-score').textContent = s.score;
+    document.getElementById('anipop-combo').textContent = s.combo;
+  }
+  function apShowCombo(text){
+    const el = document.getElementById('anipop-combo-pop');
+    el.textContent = text;
+    el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+  }
+
+  function prepareAnipop(){
+    stopAnipopTimer();
+    const board = document.getElementById('anipop-board');
+    board.querySelectorAll('.ap-tile').forEach(function(el){ el.remove(); });
+    anipopState = { g:apGenBoard(), els:{}, pos:{}, score:0, combo:0, maxCombo:0, lastMatchAt:0,
+                    running:false, over:false, busy:false, deadline:0, timeUp:false, sel:null, lastInputAt:0 };
+    apRender();
+    apHud();
+    document.getElementById('anipop-time').textContent = AP_TIME;
+    const bar = document.getElementById('anipop-bar'); bar.style.width = '100%'; bar.classList.remove('low');
+    loadMyBest('anipop');
+    const overlay = document.getElementById('anipop-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'ANIPOP';
+    overlay.querySelector('.overlay-msg').textContent = '같은 동물 3마리를 맞춰 터뜨리세요!';
+  }
+  function startAnipop(){
+    const s = anipopState;
+    if(!s || s.running) return;
+    s.running = true; s.over = false; s.timeUp = false;
+    s.deadline = performance.now() + AP_TIME * 1000;
+    s.lastInputAt = performance.now();
+    document.getElementById('anipop-overlay').classList.add('hidden');
+    stopAnipopTimer();
+    apTimer = setInterval(apTick, 100);
+  }
+  function apTick(){
+    const s = anipopState; if(!s || !s.running) return;
+    const left = Math.max(0, s.deadline - performance.now());
+    document.getElementById('anipop-time').textContent = Math.ceil(left / 1000);
+    const bar = document.getElementById('anipop-bar');
+    bar.style.width = (left / (AP_TIME * 1000) * 100) + '%';
+    bar.classList.toggle('low', left < 10000);
+    if(performance.now() - s.lastMatchAt > 2500 && s.combo > 0 && !s.busy){ s.combo = 0; apHud(); }   // 2.5초 안에 못 맞추면 콤보 끊김
+    if(!s.busy && performance.now() - s.lastInputAt > 6000){ apShowHint(); s.lastInputAt = performance.now(); }
+    if(left <= 0 && !s.timeUp){
+      s.timeUp = true;
+      if(!s.busy) endAnipop();
+    }
+  }
+  function apShowHint(){
+    const s = anipopState, m = apFindMove(s.g); if(!m) return;
+    m.forEach(function(p){
+      const cell = s.g[p[0]][p[1]]; const el = cell && s.els[cell.id];
+      if(el){ el.classList.remove('hint'); void el.offsetWidth; el.classList.add('hint'); setTimeout(function(){ el.classList.remove('hint'); }, 2200); }
+    });
+  }
+
+  /* 매치 찾기: 가로/세로 3개 이상 연속 구간 */
+  function apFindRuns(g){
+    const runs = [];
+    for(let r=0;r<AP_N;r++){
+      let c = 0;
+      while(c < AP_N){
+        const t = g[r][c] ? g[r][c].t : -1; let e = c + 1;
+        while(e < AP_N && t >= 0 && g[r][e] && g[r][e].t === t) e++;
+        if(t >= 0 && e - c >= 3){ const cells = []; for(let i=c;i<e;i++) cells.push([r,i]); runs.push({ dir:'h', cells:cells }); }
+        c = e;
+      }
+    }
+    for(let c=0;c<AP_N;c++){
+      let r = 0;
+      while(r < AP_N){
+        const t = g[r][c] ? g[r][c].t : -1; let e = r + 1;
+        while(e < AP_N && t >= 0 && g[e][c] && g[e][c].t === t) e++;
+        if(t >= 0 && e - r >= 3){ const cells = []; for(let i=r;i<e;i++) cells.push([i,c]); runs.push({ dir:'v', cells:cells }); }
+        r = e;
+      }
+    }
+    return runs;
+  }
+  function apKey(r, c){ return r * AP_N + c; }
+
+  /* 지울 칸 집합에 특수 블록 효과를 연쇄 적용 */
+  function apExpand(g, clear, keep){
+    const queue = Array.from(clear);
+    const done = {};
+    while(queue.length){
+      const k = queue.shift();
+      if(done[k]) continue; done[k] = true;
+      const r = Math.floor(k / AP_N), c = k % AP_N, cell = g[r][c];
+      if(!cell || !cell.sp || keep[k]) continue;
+      const add = [];
+      if(cell.sp === 'h') for(let i=0;i<AP_N;i++) add.push(apKey(r, i));
+      if(cell.sp === 'v') for(let i=0;i<AP_N;i++) add.push(apKey(i, c));
+      if(cell.sp === 'b') for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){ const rr=r+dr, cc=c+dc; if(rr>=0&&rr<AP_N&&cc>=0&&cc<AP_N) add.push(apKey(rr, cc)); }
+      add.forEach(function(x){ if(!keep[x] && !clear.has(x)){ clear.add(x); queue.push(x); } });
+    }
+  }
+
+  async function apClearAndDrop(clear, s){
+    if(anipopState !== s) return false;
+    const g = s.g;
+    // 점수: 칸당 10점 × 콤보 배수
+    const now = performance.now();
+    s.combo = (now - s.lastMatchAt <= 2500) ? s.combo + 1 : 1;
+    s.lastMatchAt = now;
+    s.maxCombo = Math.max(s.maxCombo, s.combo);
+    const mult = Math.min(4, 1 + Math.floor((s.combo - 1) / 3) * 0.5);
+    s.score += Math.round(clear.size * 10 * mult);
+    apHud();
+    if(s.combo >= 2) apShowCombo(s.combo + ' COMBO' + (mult > 1 ? ' ×' + mult : ''));
+    clear.forEach(function(k){
+      const r = Math.floor(k / AP_N), c = k % AP_N, cell = g[r][c];
+      if(cell && s.els[cell.id]) s.els[cell.id].classList.add('pop');
+    });
+    await apSleep(170);
+    if(anipopState !== s) return false;   // 그사이 게임을 나갔거나 새로 시작함
+    clear.forEach(function(k){ g[Math.floor(k / AP_N)][k % AP_N] = null; });
+    // 아래로 떨어뜨리고 위에서 새 동물 채우기
+    for(let c=0;c<AP_N;c++){
+      let write = AP_N - 1;
+      for(let r=AP_N-1;r>=0;r--){ if(g[r][c]){ g[write][c] = g[r][c]; if(write !== r) g[r][c] = null; write--; } }
+      const missing = write + 1;
+      for(let r=write;r>=0;r--){ const n = apNew(); n.from = r - missing; g[r][c] = n; }
+    }
+    apRender();
+    await apSleep(250);
+    return anipopState === s;
+  }
+
+  /* 매치가 없어질 때까지 반복 (연쇄). pref = 방금 옮긴 칸들 (특수 블록 생성 위치 우선) */
+  async function apResolve(pref, s){
+    if(anipopState !== s) return false;
+    const g = s.g;
+    let any = false;
+    for(let loop=0; loop<40; loop++){
+      const runs = apFindRuns(g);
+      if(!runs.length) break;
+      any = true;
+      const clear = new Set(), keep = {}, spawn = [];
+      const hitCount = {};
+      runs.forEach(function(run){ run.cells.forEach(function(p){ const k = apKey(p[0], p[1]); clear.add(k); hitCount[k] = (hitCount[k] || 0) + 1; }); });
+      // ㄱ·T자(가로·세로가 겹치는 칸) → 💣
+      Object.keys(hitCount).forEach(function(k){ if(hitCount[k] >= 2){ spawn.push({ k:Number(k), sp:'b' }); } });
+      runs.forEach(function(run){
+        if(run.cells.some(function(p){ return hitCount[apKey(p[0], p[1])] >= 2; })) return;
+        if(run.cells.length < 4) return;
+        let at = run.cells.find(function(p){ return pref && pref.some(function(q){ return q[0] === p[0] && q[1] === p[1]; }); }) || run.cells[1];
+        spawn.push({ k:apKey(at[0], at[1]), sp: run.cells.length >= 5 ? 'b' : run.dir });
+      });
+      spawn.forEach(function(sp){ keep[sp.k] = true; });
+      apExpand(g, clear, keep);
+      spawn.forEach(function(sp){
+        clear.delete(sp.k);
+        const r = Math.floor(sp.k / AP_N), c = sp.k % AP_N;
+        const old = g[r][c];
+        // 이번에 생기는 특수 블록 (그 자리에 있던 블록은 새 특수 블록으로 바뀜)
+        g[r][c] = { id:old.id, t: sp.sp === 'b' ? -1 : old.t, sp: sp.sp };
+      });
+      if(!(await apClearAndDrop(clear, s))) return any;
+      pref = null;
+    }
+    return any;
+  }
+
+  function apReshuffle(){
+    const s = anipopState, g = s.g;
+    for(let tries=0; tries<50; tries++){
+      apFillNoMatch(g, true);
+      if(apFindMove(g)) break;
+    }
+    // 새 동물로 바뀌므로 화면 요소를 다시 그림
+    Object.keys(s.els).forEach(function(id){ s.els[id].remove(); });
+    s.els = {};
+    apRender();
+    const b = document.getElementById('anipop-board');
+    b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash');
+    if(typeof showToast === 'function') showToast('🔀 맞출 수 있는 동물이 없어서 섞었어요', null, null, 2500);
+  }
+
+  async function apTrySwap(a, b){
+    const s = anipopState;
+    if(!s || !s.running || s.busy || s.over) return;
+    if(Math.abs(a[0]-b[0]) + Math.abs(a[1]-b[1]) !== 1) return;
+    s.busy = true;
+    s.lastInputAt = performance.now();
+    apSetSel(null);
+    const g = s.g, A = g[a[0]][a[1]], B = g[b[0]][b[1]];
+    g[a[0]][a[1]] = B; g[b[0]][b[1]] = A;
+    apRender();
+    await apSleep(160);
+    if(anipopState !== s) return;
+    if(A.sp === 'b' || B.sp === 'b'){
+      // 💣 + 동물: 그 동물 전부 제거 / 💣 + 💣: 판 전체 제거
+      const clear = new Set();
+      if(A.sp === 'b' && B.sp === 'b'){
+        for(let r=0;r<AP_N;r++) for(let c=0;c<AP_N;c++) clear.add(apKey(r, c));
+      }else{
+        const bombAt = A.sp === 'b' ? b : a;
+        const other = A.sp === 'b' ? B : A;
+        clear.add(apKey(bombAt[0], bombAt[1]));
+        for(let r=0;r<AP_N;r++) for(let c=0;c<AP_N;c++) if(g[r][c].t === other.t) clear.add(apKey(r, c));
+      }
+      g.forEach(function(row, r){ row.forEach(function(cell, c){ if(cell.sp === 'b' && clear.has(apKey(r, c))) cell.sp = null; }); });   // 폭탄 자신은 연쇄 3×3 대신 제거만
+      apExpand(g, clear, {});
+      if(await apClearAndDrop(clear, s)) await apResolve(null, s);
+    }else if(apRunAt(g, a[0], a[1]) || apRunAt(g, b[0], b[1])){
+      await apResolve([a, b], s);
+    }else{
+      // 매치가 안 되면 원래대로
+      g[a[0]][a[1]] = A; g[b[0]][b[1]] = B;
+      apRender();
+      await apSleep(160);
+    }
+    if(anipopState !== s) return;
+    if(!apFindMove(g)) apReshuffle();
+    s.busy = false;
+    if(s.timeUp) endAnipop();
+  }
+
+  function apSetSel(p){
+    const s = anipopState;
+    if(s.sel){ const c = s.g[s.sel[0]][s.sel[1]]; if(c && s.els[c.id]) s.els[c.id].classList.remove('sel'); }
+    s.sel = p;
+    if(p){ const c = s.g[p[0]][p[1]]; if(c && s.els[c.id]) s.els[c.id].classList.add('sel'); }
+  }
+
+  function endAnipop(){
+    const s = anipopState; if(!s || s.over) return;
+    s.running = false; s.over = true;
+    stopAnipopTimer();
+    // 마무리 보너스: 판에 남은 특수 블록 1개당 100점
+    let left = 0;
+    s.g.forEach(function(row){ row.forEach(function(cell){ if(cell && cell.sp) left++; }); });
+    const bonus = left * 100;
+    s.score += bonus;
+    apHud();
+    const overlay = document.getElementById('anipop-overlay');
+    overlay.classList.remove('hidden');
+    overlay.querySelector('.overlay-title').textContent = 'TIME UP!';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + (bonus ? ' (남은 특수 블록 보너스 +' + bonus + ')' : '') + ' · 최대 ' + s.maxCombo + '콤보';
+    finalizeScore('anipop', s.score, overlay);
+  }
+
+  /* ---------- 입력: 드래그로 밀기 / 탭 두 번으로 바꾸기 ---------- */
+  (function(){
+    const board = document.getElementById('anipop-board');
+    let start = null;
+    function cellFromEvent(e){
+      const tile = e.target.closest('.ap-tile');
+      if(!tile || !anipopState) return null;
+      return anipopState.pos[tile.dataset.id] || null;
+    }
+    board.addEventListener('pointerdown', function(e){
+      const s = anipopState;
+      if(!s || !s.running || s.busy) return;
+      const p = cellFromEvent(e); if(!p) return;
+      e.preventDefault();
+      start = { p:p, x:e.clientX, y:e.clientY, moved:false };
+      try{ board.setPointerCapture(e.pointerId); }catch(err){}
+    });
+    board.addEventListener('pointermove', function(e){
+      if(!start || start.moved) return;
+      const dx = e.clientX - start.x, dy = e.clientY - start.y;
+      const th = Math.max(14, board.clientWidth / AP_N * 0.3);
+      if(Math.abs(dx) < th && Math.abs(dy) < th) return;
+      start.moved = true;
+      const p = start.p;
+      const q = Math.abs(dx) > Math.abs(dy) ? [p[0], p[1] + (dx > 0 ? 1 : -1)] : [p[0] + (dy > 0 ? 1 : -1), p[1]];
+      if(q[0] >= 0 && q[0] < AP_N && q[1] >= 0 && q[1] < AP_N) apTrySwap(p, q);
+    });
+    function up(){
+      const s = anipopState;
+      if(!start){ return; }
+      const st = start; start = null;
+      if(st.moved || !s || !s.running || s.busy) return;
+      const p = st.p;
+      if(!s.sel){ apSetSel(p); return; }
+      if(s.sel[0] === p[0] && s.sel[1] === p[1]){ apSetSel(null); return; }
+      if(Math.abs(s.sel[0]-p[0]) + Math.abs(s.sel[1]-p[1]) === 1){ apTrySwap(s.sel, p); return; }
+      apSetSel(p);
+    }
+    board.addEventListener('pointerup', up);
+    board.addEventListener('pointercancel', function(){ start = null; });
+  })();
+  document.getElementById('anipop-start').addEventListener('click', function(){
+    if(!anipopState) return;
+    if(anipopState.over) prepareAnipop();
+    startAnipop();
+  });
+
   /* ============================================================
      관리자 모드 — Supabase Auth 로그인 후 게임별 ON/OFF 토글
      (game_settings 테이블 쓰기는 RLS로 로그인한 사용자만 허용됨)
@@ -10216,6 +10699,10 @@
     else if(currentScreen==='fortress') handleFortressKey(e);
     else if(currentScreen==='sidesort') handleSidesortKey(e);
     else if(currentScreen==='spintail') handleSpintailKey(e);
+    else if(currentScreen==='anipop' && e.key===' '){
+      e.preventDefault();
+      if(anipopState && !anipopState.running){ if(anipopState.over) prepareAnipop(); startAnipop(); }
+    }
   });
 
 
