@@ -351,181 +351,6 @@
     font-weight:700; font-size:13px; cursor:pointer; touch-action:manipulation; white-space:nowrap;
   }
 
-  /* ---------- LIVE 피드 티커 + 오늘의 챌린지 (1차 업데이트) ---------- */
-  .live-ticker{
-    display:flex; align-items:center; gap:10px; margin:18px 0 0; padding:9px 12px;
-    background:var(--card); border:1px solid var(--border); border-radius:10px; cursor:pointer;
-    overflow:hidden; position:relative; user-select:none;
-  }
-  .live-ticker.flash{ animation:tickerFlash 1.2s ease; }
-  @keyframes tickerFlash{ 0%{ border-color:var(--pink); box-shadow:0 0 16px rgba(255,46,126,.45); } 100%{ border-color:var(--border); box-shadow:none; } }
-  .live-tag{
-    flex-shrink:0; font-family:'Press Start 2P',monospace; font-size:9px; color:#fff; background:var(--pink);
-    padding:4px 6px; border-radius:4px; letter-spacing:1px;
-  }
-  .live-tag::before{ content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:#fff; margin-right:5px; vertical-align:1px; animation:livePulse 1.4s infinite; }
-  @keyframes livePulse{ 50%{ opacity:.25; } }
-  .live-viewport{ flex:1; min-width:0; height:20px; position:relative; overflow:hidden; }
-  .live-item{
-    position:absolute; inset:0; display:flex; align-items:center; gap:6px; font-size:13px;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:transform .45s ease, opacity .45s ease;
-  }
-  .live-item.enter{ transform:translateY(100%); opacity:0; }
-  .live-item.leave{ transform:translateY(-100%); opacity:0; }
-  .live-item .feed-text{ overflow:hidden; text-overflow:ellipsis; }
-  .live-ago{ flex-shrink:0; font-size:10.5px; color:var(--text-dim); }
-  .live-more{ flex-shrink:0; font-size:11px; color:var(--text-dim); }
-  .feed-nick{ font-weight:700; color:var(--chip-color, var(--cyan)); }
-  .feed-game{ font-weight:700; color:var(--yellow); }
-  .feed-list{ display:flex; flex-direction:column; gap:2px; max-height:60vh; overflow-y:auto; }
-  .feed-row{ display:flex; gap:8px; align-items:baseline; font-size:13px; padding:8px 4px; border-bottom:1px solid var(--border); line-height:1.45; }
-  .feed-row:last-child{ border-bottom:none; }
-  .feed-row .feed-text{ flex:1; min-width:0; word-break:keep-all; }
-
-  .daily-panel{
-    background:linear-gradient(135deg, rgba(255,46,126,.14), rgba(255,46,126,0) 60%), var(--card);
-    border:1px solid rgba(255,46,126,.45); border-radius:12px; padding:20px 22px; margin-top:20px;
-  }
-  .daily-panel h2{ margin:0 0 4px; font-size:14px; font-weight:800; letter-spacing:.5px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
-  .daily-countdown{ font-family:'Press Start 2P',monospace; font-size:10px; color:var(--pink); font-weight:400; white-space:nowrap; }
-  .daily-sub{ font-size:12px; color:var(--text-dim); margin:0 0 14px; }
-  .daily-body{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); gap:16px; }
-  @media (max-width:640px){ .daily-body{ grid-template-columns:1fr; } }
-  .daily-game{
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center;
-    background:var(--bg-deep); border:1px solid var(--border); border-radius:10px; padding:16px 12px;
-  }
-  .daily-game-icon{ font-size:40px; line-height:1; }
-  .daily-game-label{ font-family:'Press Start 2P',monospace; font-size:13px; color:var(--accent, var(--pink)); }
-  .daily-me{ font-size:12px; color:var(--text-dim); }
-  .daily-me b{ color:var(--yellow); }
-  .daily-dots{ display:inline-flex; gap:4px; vertical-align:middle; margin-left:4px; }
-  .daily-dots i{ width:9px; height:9px; border-radius:50%; background:var(--pink); box-shadow:0 0 6px var(--pink); display:inline-block; }
-  .daily-dots i.used{ background:#3a3a52; box-shadow:none; }
-  .daily-play{
-    background:var(--pink); color:#fff; border:none; border-radius:8px; padding:10px 22px; font-weight:800;
-    font-size:14px; cursor:pointer; font-family:inherit; touch-action:manipulation;
-  }
-  .daily-play.practice{ background:transparent; border:1px solid var(--border); color:var(--text-dim); }
-  .daily-play:disabled{ opacity:.45; cursor:default; }
-  .daily-rank-title{ font-size:11px; color:var(--text-dim); margin:0 0 6px; text-transform:uppercase; letter-spacing:.5px; }
-  .daily-yesterday{ margin-top:12px; font-size:12px; color:var(--text-dim); border-top:1px dashed var(--border); padding-top:10px; }
-  .daily-yesterday b{ color:var(--text); }
-  .daily-ingame{
-    display:flex; align-items:center; justify-content:center; gap:8px; margin:-8px 0 14px; padding:7px 12px;
-    border:1px solid rgba(255,46,126,.45); background:rgba(255,46,126,.1); border-radius:8px; font-size:12.5px; color:var(--text);
-  }
-  .daily-ingame.spent{ border-color:var(--border); background:rgba(255,255,255,.03); color:var(--text-dim); }
-  @media (prefers-reduced-motion: reduce){
-    .live-item{ transition:none; } .live-tag::before, .live-ticker.flash{ animation:none; }
-  }
-
-  /* ---------- 2차 업데이트: 시즌 + 뱃지 ---------- */
-  .season-label{ font-family:'Press Start 2P',monospace; font-size:9px; color:var(--pink); border:1px solid rgba(255,46,126,.5); border-radius:4px; padding:3px 6px; margin-left:8px; vertical-align:2px; font-weight:400; }
-  .season-dday{ color:var(--pink); font-weight:700; }
-  .team-battle-sub .link-btn{ margin-left:6px; }
-  .bdg-icons{ display:inline-flex; gap:1px; margin-left:4px; font-size:12px; vertical-align:-1px; }
-  .bdg-icons span{ cursor:default; }
-  .roster-chip{ cursor:pointer; }
-  .badge-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:8px; max-height:58vh; overflow-y:auto; padding:2px; }
-  .badge-card{ background:var(--bg-deep); border:1px solid var(--border); border-radius:10px; padding:12px 10px; text-align:center; position:relative; }
-  .badge-card.earned{ border-color:rgba(255,210,63,.55); box-shadow:inset 0 0 18px rgba(255,210,63,.08); }
-  .badge-card .bi{ font-size:30px; line-height:1.1; }
-  .badge-card.locked .bi{ filter:grayscale(1); opacity:.3; }
-  .badge-card .bn{ font-size:12.5px; font-weight:800; margin-top:6px; }
-  .badge-card.locked .bn{ color:var(--text-dim); }
-  .badge-card .bd{ font-size:11px; color:var(--text-dim); margin-top:3px; line-height:1.4; word-break:keep-all; }
-  .badge-card .bc{ position:absolute; top:6px; right:8px; font-family:'Press Start 2P',monospace; font-size:9px; color:var(--yellow); }
-  .badge-card .bp{ height:4px; background:#2a2a40; border-radius:2px; margin-top:8px; overflow:hidden; }
-  .badge-card .bp i{ display:block; height:100%; background:var(--pink); }
-  .badge-summary{ font-size:12px; color:var(--text-dim); margin:0 0 12px; }
-  .badge-summary b{ color:var(--yellow); }
-  .season-list{ display:flex; flex-direction:column; gap:14px; max-height:60vh; overflow-y:auto; }
-  .season-card{ background:var(--bg-deep); border:1px solid var(--border); border-radius:10px; padding:14px; }
-  .season-card h4{ margin:0 0 8px; font-size:13px; display:flex; justify-content:space-between; gap:8px; }
-  .season-card h4 small{ color:var(--text-dim); font-weight:500; font-size:11px; }
-  .season-teams{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
-  .season-team{ font-size:12px; border:1px solid var(--border); border-radius:20px; padding:4px 10px; }
-  .season-team.win{ border-color:var(--yellow); color:var(--yellow); font-weight:700; }
-  .season-champs{ display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:4px 12px; font-size:12px; }
-  .season-champs div{ display:flex; justify-content:space-between; gap:6px; overflow:hidden; white-space:nowrap; }
-  .season-champs b{ color:var(--text-dim); font-weight:600; }
-  .admin-danger-btn{ background:var(--red); color:#fff; border:none; border-radius:6px; padding:8px 14px; font-weight:700; cursor:pointer; font-family:inherit; }
-
-  /* ---------- 3차 업데이트: 보스 레이드 + 도전장 ---------- */
-  .raid-panel{
-    background:linear-gradient(135deg, rgba(0,229,255,.10), rgba(0,229,255,0) 55%), var(--card);
-    border:1px solid rgba(0,229,255,.4); border-radius:12px; padding:20px 22px; margin-top:20px;
-  }
-  .raid-panel h2{ margin:0 0 4px; font-size:14px; font-weight:800; display:flex; justify-content:space-between; align-items:center; gap:8px; }
-  .raid-countdown{ font-family:'Press Start 2P',monospace; font-size:10px; color:var(--cyan); font-weight:400; white-space:nowrap; }
-  .raid-sub{ font-size:12px; color:var(--text-dim); margin:0 0 14px; }
-  .raid-body{ display:grid; grid-template-columns:150px minmax(0,1fr); gap:18px; align-items:center; }
-  @media (max-width:640px){ .raid-body{ grid-template-columns:1fr; } }
-  .raid-boss{ text-align:center; }
-  .raid-boss-icon{ font-size:64px; line-height:1; display:inline-block; }
-  .raid-boss-icon.hit{ animation:bossHit .45s ease; }
-  @keyframes bossHit{ 20%{ transform:translateX(-6px) rotate(-6deg); filter:brightness(2); } 45%{ transform:translateX(6px) rotate(5deg); } 70%{ transform:translateX(-3px); } }
-  .raid-boss-name{ font-weight:800; font-size:14px; margin-top:6px; }
-  .raid-boss-line{ font-size:11px; color:var(--text-dim); margin-top:3px; word-break:keep-all; }
-  .raid-bars{ display:flex; flex-direction:column; gap:9px; }
-  .raid-bar-row{ display:grid; grid-template-columns:96px minmax(0,1fr) 92px; gap:10px; align-items:center; font-size:12px; }
-  .raid-bar-row.mine .raid-team{ font-weight:800; }
-  .raid-team{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--team-color); }
-  .raid-track{ height:14px; background:#2a2a40; border-radius:7px; overflow:hidden; position:relative; }
-  .raid-bar-row.mine .raid-track{ outline:1px solid var(--team-color); }
-  .raid-fill{ height:100%; background:linear-gradient(90deg, var(--red), #ff7b88); border-radius:7px; transition:width .6s ease; }
-  .raid-hp{ text-align:right; font-family:'Press Start 2P',monospace; font-size:9px; color:var(--text-dim); white-space:nowrap; }
-  .raid-bar-row.dead .raid-fill{ background:none; }
-  .raid-bar-row.dead .raid-hp{ color:var(--yellow); }
-  .raid-me{ margin-top:14px; font-size:12px; color:var(--text-dim); display:flex; flex-wrap:wrap; gap:6px 14px; border-top:1px dashed var(--border); padding-top:10px; }
-  .raid-me b{ color:var(--cyan); }
-  .raid-mvp{ color:var(--text-dim); }
-
-  .rank-list.duelable li{ grid-template-columns:24px 1fr auto 30px; }
-  .rank-list.duelable li.lb-empty{ display:block; }
-  .duel-btn{ background:none; border:1px solid var(--border); border-radius:6px; width:28px; height:24px; cursor:pointer; font-size:12px; padding:0; touch-action:manipulation; }
-  .duel-btn:hover, .duel-btn:focus-visible{ border-color:var(--pink); }
-  .duel-count.hidden{ display:none; }
-  .duel-hint{ font-size:11px; color:var(--text-dim); margin:6px 0 0; }
-  .duel-count{ display:inline-block; min-width:16px; padding:0 4px; border-radius:8px; background:var(--pink); color:#fff; font-size:10px; font-weight:800; text-align:center; text-decoration:none; margin-left:2px; }
-  .duel-list{ display:flex; flex-direction:column; gap:8px; max-height:56vh; overflow-y:auto; }
-  .duel-item{ background:var(--bg-deep); border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:12.5px; line-height:1.5; display:flex; gap:10px; align-items:center; }
-  .duel-item.won{ border-color:rgba(61,255,122,.4); }
-  .duel-item.lost{ border-color:rgba(255,71,87,.45); }
-  .duel-item .di-main{ flex:1; min-width:0; }
-  .duel-item .di-meta{ font-size:11px; color:var(--text-dim); }
-  .duel-item button{ flex-shrink:0; background:var(--pink); color:#fff; border:none; border-radius:6px; padding:6px 10px; font-weight:700; font-size:12px; cursor:pointer; font-family:inherit; }
-  .duel-tabs{ display:flex; gap:6px; margin-bottom:10px; }
-  .duel-tab{ background:var(--bg-deep); border:1px solid var(--border); color:var(--text-dim); border-radius:20px; padding:5px 12px; font-size:12px; cursor:pointer; font-family:inherit; }
-  .duel-tab.active{ border-color:var(--pink); color:var(--text); }
-  .toast-stack{ position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; gap:8px; width:min(92vw, 420px); pointer-events:none; }
-  .toast{ pointer-events:auto; background:#24243a; border:1px solid var(--pink); border-radius:10px; padding:11px 14px; font-size:13px; box-shadow:0 8px 30px rgba(0,0,0,.5); display:flex; gap:10px; align-items:center; animation:toastIn .3s ease; }
-  .toast .t-text{ flex:1; min-width:0; line-height:1.45; }
-  .toast button{ flex-shrink:0; background:var(--pink); color:#fff; border:none; border-radius:6px; padding:6px 10px; font-weight:700; font-size:12px; cursor:pointer; font-family:inherit; }
-  .toast .t-x{ background:none; color:var(--text-dim); padding:0 2px; }
-  @keyframes toastIn{ from{ transform:translateY(16px); opacity:0; } }
-
-  /* ---------- 칭호 ---------- */
-  .ttl{ display:inline-block; font-size:10px; font-weight:800; padding:1px 6px; border-radius:4px; margin-right:5px; vertical-align:1px; white-space:nowrap; border:1px solid currentColor; line-height:1.5; }
-  .ttl.r-common{ color:#A9A9C2; }
-  .ttl.r-rare{ color:var(--cyan); }
-  .ttl.r-epic{ color:var(--pink); text-shadow:0 0 6px rgba(255,46,126,.5); }
-  .ttl.r-legend{ color:#1a1300; border-color:transparent; background:linear-gradient(90deg, #FFD23F, #FF9F43, #FFD23F); background-size:200% 100%; animation:ttlShine 3s linear infinite; }
-  @keyframes ttlShine{ to{ background-position:-200% 0; } }
-  @media (prefers-reduced-motion: reduce){ .ttl.r-legend{ animation:none; } }
-  .badge-tabs{ display:flex; gap:6px; margin-bottom:10px; }
-  .title-grid{ display:flex; flex-direction:column; gap:6px; max-height:56vh; overflow-y:auto; }
-  .title-row{ display:flex; align-items:center; gap:10px; background:var(--bg-deep); border:1px solid var(--border); border-radius:8px; padding:9px 12px; }
-  .title-row.equipped{ border-color:var(--yellow); }
-  .title-row.locked{ opacity:.45; }
-  .title-row.hidden-title{ border-style:dashed; }
-  .title-row.hidden-title.locked{ opacity:.6; }
-  .title-row .tr-main{ flex:1; min-width:0; }
-  .title-row .tr-cond{ font-size:11px; color:var(--text-dim); margin-top:3px; }
-  .title-row button{ flex-shrink:0; background:var(--pink); color:#fff; border:none; border-radius:6px; padding:6px 12px; font-weight:700; font-size:12px; cursor:pointer; font-family:inherit; }
-  .title-row button.off{ background:transparent; border:1px solid var(--border); color:var(--text-dim); }
-
   /* ---------- announcement popup ---------- */
   .announce-list{ display:flex; flex-direction:column; gap:14px; max-height:60vh; overflow-y:auto; }
   .announce-item{ border-bottom:1px solid var(--border); padding-bottom:14px; }
@@ -697,40 +522,6 @@
     pointer-events:none; display:none;
   }
 
-  #shisen-board.auto-shuffled{ animation:shisenShuffleFlash .6s ease; }
-  @keyframes shisenShuffleFlash{ 0%{ filter:brightness(1.8); transform:scale(.98); } 100%{ filter:none; transform:none; } }
-
-  /* ---------- ANIPOP (3매치 퍼즐) ---------- */
-  .ap-timebar{ width:100%; max-width:420px; height:8px; margin:0 auto 10px; background:var(--border); border-radius:4px; overflow:hidden; }
-  .ap-timebar-fill{ height:100%; width:100%; background:var(--green); border-radius:4px; transition:width .1s linear; }
-  .ap-timebar-fill.low{ background:var(--red); }
-  .ap-board{
-    position:relative; width:min(92vw, 420px); aspect-ratio:1/1; margin:0 auto; background:var(--bg-deep);
-    border:1px solid var(--border); border-radius:14px; touch-action:none; overflow:hidden; user-select:none; -webkit-user-select:none;
-  }
-  .ap-board.flash{ animation:shisenShuffleFlash .6s ease; }
-  .ap-tile{
-    position:absolute; padding:3px; box-sizing:border-box; display:flex; align-items:center; justify-content:center;
-    font-size:clamp(22px, 7.4vw, 38px); line-height:1; cursor:pointer;
-    transition:left .15s ease, top .24s cubic-bezier(.35,0,.45,1.25), transform .16s ease, opacity .16s ease;
-  }
-  .ap-in{ width:100%; height:100%; border-radius:12px; background:rgba(255,255,255,.045); display:flex; align-items:center; justify-content:center; position:relative; }
-  .ap-tile.sel .ap-in{ outline:2px solid var(--cyan); background:rgba(0,229,255,.16); }
-  .ap-tile.pop{ transform:scale(0) rotate(25deg); opacity:0; }
-  .ap-tile.sp-h .ap-in{ background:repeating-linear-gradient(0deg, rgba(255,210,63,.32) 0 3px, transparent 3px 8px); box-shadow:inset 0 0 0 2px rgba(255,210,63,.7); }
-  .ap-tile.sp-v .ap-in{ background:repeating-linear-gradient(90deg, rgba(255,210,63,.32) 0 3px, transparent 3px 8px); box-shadow:inset 0 0 0 2px rgba(255,210,63,.7); }
-  .ap-tile.sp-b .ap-in{ background:radial-gradient(circle, rgba(255,46,126,.55), rgba(255,46,126,0) 70%); animation:apPulse 1s ease-in-out infinite; }
-  .ap-tile.hint .ap-in{ animation:apHint .7s ease 3; }
-  @keyframes apPulse{ 50%{ transform:scale(1.08); } }
-  @keyframes apHint{ 50%{ transform:scale(1.15); background:rgba(255,255,255,.22); } }
-  .ap-combo{
-    position:absolute; left:50%; top:42%; transform:translate(-50%,-50%); pointer-events:none; opacity:0; white-space:nowrap;
-    font-family:'Press Start 2P',monospace; font-size:clamp(14px, 4.5vw, 22px); color:var(--yellow); text-shadow:0 0 12px rgba(255,210,63,.8), 0 2px 0 #000; z-index:5;
-  }
-  .ap-combo.show{ animation:apCombo .8s ease; }
-  @keyframes apCombo{ 0%{ opacity:0; transform:translate(-50%,-30%) scale(.6); } 25%{ opacity:1; transform:translate(-50%,-50%) scale(1.15); } 100%{ opacity:0; transform:translate(-50%,-90%) scale(1); } }
-  @media (prefers-reduced-motion: reduce){ .ap-tile.sp-b .ap-in, .ap-tile.hint .ap-in{ animation:none; } }
-
   /* ---------- colorspot ---------- */
   .cs-timebar{ width:100%; max-width:340px; height:8px; margin:0 auto 10px; background:var(--border); border-radius:4px; overflow:hidden; }
   .cs-timebar-fill{ height:100%; width:100%; background:var(--yellow); border-radius:4px; }
@@ -746,6 +537,23 @@
   @keyframes csShake{ 25%{transform:translateX(-3px);} 75%{transform:translateX(3px);} }
   .cs-hearts{ letter-spacing:2px; }
   .cs-board.hidden{ display:none; }
+
+  /* ---------- popmatch ---------- */
+  .pm-timebar{ width:100%; max-width:360px; height:8px; margin:0 auto 10px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .pm-timebar-fill{ height:100%; width:100%; background:var(--green); border-radius:4px; }
+  .pm-timebar-fill.low{ background:var(--red); }
+  .pm-board{
+    display:grid; grid-template-columns:repeat(8,1fr); grid-auto-rows:1fr; gap:3px; width:100%; max-width:360px;
+    aspect-ratio:1/1; margin:0 auto; padding:6px; background:var(--bg-deep); border:1px solid var(--border);
+    border-radius:14px; touch-action:none; box-sizing:border-box; user-select:none; -webkit-user-select:none;
+  }
+  .pm-cell{
+    display:flex; align-items:center; justify-content:center; border-radius:8px; background:rgba(255,255,255,0.04);
+    font-size:clamp(18px,6.2vw,28px); line-height:1; min-width:0; min-height:0; transition:transform .12s, opacity .2s;
+  }
+  .pm-cell.sel{ background:rgba(125,249,255,0.25); outline:2px solid var(--cyan); outline-offset:-2px; transform:scale(1.08); }
+  .pm-cell.pop{ transform:scale(0.2); opacity:0; }
+  .pm-combo{ text-align:center; height:20px; margin-top:8px; font-size:13px; color:var(--yellow); font-weight:700; }
 
   /* ---------- numtap ---------- */
   .numtap-board{
@@ -1168,80 +976,8 @@
     <div class="game-info-rankings">
       <h4>🏆 TOP 10</h4>
       <ol class="rank-list" id="game-info-ranklist"><li class="lb-empty">불러오는 중...</li></ol>
-      <p class="duel-hint" id="game-info-duel-hint"></p>
     </div>
     <button class="start-btn" id="game-info-play">플레이</button>
-  </div>
-</div>
-
-<!-- 3차 업데이트: 도전장함 -->
-<div class="game-info-modal hidden" id="duel-modal">
-  <div class="game-info-box">
-    <button type="button" class="modal-close" id="duel-close" aria-label="닫기">✕</button>
-    <div class="game-info-header">
-      <span class="game-info-icon">⚔️</span>
-      <div>
-        <div class="game-info-title" style="font-weight:800;">도전장</div>
-        <div class="game-info-desc">게임 랭킹에서 ⚔️를 눌러 보내요 · 48시간 안에 상대 기록을 넘으면 승리</div>
-      </div>
-    </div>
-    <div class="duel-tabs">
-      <button type="button" class="duel-tab active" data-duel-tab="in">받은 도전장</button>
-      <button type="button" class="duel-tab" data-duel-tab="out">보낸 도전장</button>
-    </div>
-    <div class="duel-list" id="duel-list"><p class="lb-empty">불러오는 중...</p></div>
-  </div>
-</div>
-<div class="toast-stack" id="toast-stack"></div>
-
-<!-- 2차 업데이트: 뱃지 보기 -->
-<div class="game-info-modal hidden" id="badge-modal">
-  <div class="game-info-box">
-    <button type="button" class="modal-close" id="badge-close" aria-label="닫기">✕</button>
-    <div class="game-info-header">
-      <span class="game-info-icon">🏅</span>
-      <div>
-        <div class="game-info-title" id="badge-modal-title" style="font-weight:800;">내 뱃지</div>
-        <div class="game-info-desc">플레이하면서 조건을 채우면 자동으로 받아요</div>
-      </div>
-    </div>
-    <div class="badge-tabs">
-      <button type="button" class="duel-tab active" data-badge-tab="badges">🏅 뱃지</button>
-      <button type="button" class="duel-tab" data-badge-tab="titles">🎖️ 칭호</button>
-    </div>
-    <p class="badge-summary" id="badge-summary"></p>
-    <div class="badge-grid" id="badge-grid"><p class="lb-empty">불러오는 중...</p></div>
-    <div class="title-grid hidden" id="title-grid" style="display:none"></div>
-  </div>
-</div>
-
-<!-- 2차 업데이트: 지난 시즌 기록 -->
-<div class="game-info-modal hidden" id="season-modal">
-  <div class="game-info-box">
-    <button type="button" class="modal-close" id="season-close" aria-label="닫기">✕</button>
-    <div class="game-info-header">
-      <span class="game-info-icon">🏆</span>
-      <div>
-        <div class="game-info-title pixel">SEASONS</div>
-        <div class="game-info-desc">시즌별 우승팀과 게임별 챔피언</div>
-      </div>
-    </div>
-    <div class="season-list" id="season-list"><p class="lb-empty">불러오는 중...</p></div>
-  </div>
-</div>
-
-<!-- 1차 업데이트: 실시간 소식 전체 보기 -->
-<div class="game-info-modal hidden" id="feed-modal">
-  <div class="game-info-box">
-    <button type="button" class="modal-close" id="feed-close" aria-label="닫기">✕</button>
-    <div class="game-info-header">
-      <span class="game-info-icon">📡</span>
-      <div>
-        <div class="game-info-title pixel">LIVE</div>
-        <div class="game-info-desc">오락실에서 방금 일어난 일들</div>
-      </div>
-    </div>
-    <div class="feed-list" id="feed-list"><p class="lb-empty">불러오는 중...</p></div>
   </div>
 </div>
 
@@ -1271,8 +1007,6 @@
       <span id="player-name-display">🎮 –</span>
       <span id="player-team-display" class="team-badge"></span>
       <button class="link-btn" id="change-nickname-btn">닉네임/팀 변경</button>
-      <button class="link-btn" id="badge-open-btn">🏅 내 뱃지</button>
-      <button class="link-btn" id="duel-open-btn">⚔️ 도전장<span class="duel-count hidden" id="duel-count">0</span></button>
       <button class="link-btn" id="announce-open-btn">📢 업데이트 내역</button>
       <button class="link-btn" id="admin-open-btn">⚙️ 관리자</button>
     </div>
@@ -1281,52 +1015,9 @@
       <p class="tagline">동전을 넣고 게임을 선택하세요</p>
     </header>
 
-    <!-- 1차 업데이트: 실시간 소식 티커 (누르면 최근 소식 전체 보기) -->
-    <div class="live-ticker" id="live-ticker" role="button" tabindex="0" aria-label="실시간 소식 전체 보기">
-      <span class="live-tag">LIVE</span>
-      <div class="live-viewport" id="live-viewport">
-        <div class="live-item"><span class="feed-text" style="color:var(--text-dim)">소식을 불러오는 중...</span></div>
-      </div>
-      <span class="live-more">전체 ›</span>
-    </div>
-
-    <!-- 1차 업데이트: 오늘의 챌린지 -->
-    <div class="daily-panel" id="daily-panel">
-      <h2><span>🔥 오늘의 챌린지</span><span class="daily-countdown" id="daily-countdown">--:--:--</span></h2>
-      <p class="daily-sub">매일 자정 게임이 바뀌어요 · 하루 3번 도전 · 가장 높은 기록으로 순위 결정</p>
-      <div class="daily-body">
-        <div class="daily-game" id="daily-game-box">
-          <div class="daily-game-icon" id="daily-game-icon">🎲</div>
-          <div class="daily-game-label" id="daily-game-label">LOADING</div>
-          <div class="daily-me" id="daily-me">&nbsp;</div>
-          <button type="button" class="daily-play" id="daily-play-btn" disabled>도전하기 ▶</button>
-        </div>
-        <div>
-          <p class="daily-rank-title">오늘의 순위</p>
-          <ol class="rank-list" id="daily-rank-list"><li class="lb-empty">불러오는 중...</li></ol>
-        </div>
-      </div>
-      <div class="daily-yesterday" id="daily-yesterday">어제의 챌린지 기록이 없어요</div>
-    </div>
-
-    <!-- 3차 업데이트: 주간 팀 보스 레이드 -->
-    <div class="raid-panel" id="raid-panel">
-      <h2><span>👾 이번 주 보스 레이드</span><span class="raid-countdown" id="raid-countdown">--</span></h2>
-      <p class="raid-sub">팀원 모두가 아무 게임이나 하면 보스에게 데미지 · 한 판 10 · 개인 최고기록 +20 · 대전 승리 30 · 1인 하루 최대 <span id="raid-cap">150</span></p>
-      <div class="raid-body">
-        <div class="raid-boss">
-          <div class="raid-boss-icon" id="raid-boss-icon">👾</div>
-          <div class="raid-boss-name" id="raid-boss-name">보스 등장 중...</div>
-          <div class="raid-boss-line" id="raid-boss-line"></div>
-        </div>
-        <div class="raid-bars" id="raid-bars"><p class="lb-empty">불러오는 중...</p></div>
-      </div>
-      <div class="raid-me" id="raid-me"></div>
-    </div>
-
     <div class="team-battle-panel">
-      <h2><span>🏆 팀 대항전<span class="season-label" id="season-label">SEASON 1</span></span><button class="refresh-btn" data-refresh-team aria-label="팀 순위 새로고침">⟳</button></h2>
-      <p class="team-battle-sub">게임별 1등 팀에게 1점씩 · 최다 게임 석권 팀이 우승<span id="season-dday"></span><button type="button" class="link-btn" id="season-history-btn">지난 시즌 ›</button></p>
+      <h2><span>🏆 팀 대항전</span><button class="refresh-btn" data-refresh-team aria-label="팀 순위 새로고침">⟳</button></h2>
+      <p class="team-battle-sub">게임별 1등 팀에게 1점씩 · 최다 게임 석권 팀이 우승</p>
       <div class="team-list-header"><span></span><span></span><span>팀</span><span>인원</span><span>포인트</span></div>
       <ol class="team-list" id="team-battle-list"><li class="lb-empty">불러오는 중...</li></ol>
     </div>
@@ -1539,10 +1230,10 @@
         <div class="cabinet-sub">색깔이 살짝 다른 칸 하나를 찾아내세요 · 스테이지가 올라갈수록 어려워져요</div>
       </button>
 
-      <button class="cabinet" data-game="anipop" style="--accent:var(--yellow)">
-        <div class="cabinet-screen" style="font-size:40px;">🐰</div>
-        <div class="cabinet-label pixel">ANIPOP</div>
-        <div class="cabinet-sub">이웃한 동물을 바꿔 같은 동물 3마리 이상을 맞추세요 · 60초 동안 콤보를 이어가요</div>
+      <button class="cabinet" data-game="popmatch" style="--accent:var(--green)">
+        <div class="cabinet-screen" style="font-size:40px;">🍓</div>
+        <div class="cabinet-label pixel">POPMATCH</div>
+        <div class="cabinet-sub">같은 과일 3개를 맞춰 터뜨리세요 · 연쇄 콤보로 고득점, 60초 승부!</div>
       </button>
     </div>
 
@@ -2167,30 +1858,29 @@
     <p class="controls-hint">화면에 나온 역 이름을 순서대로 입력하세요 (역 이름만, 예: 강남) · 먼저 끝까지 도착하면 승리! · 틀리면 Esc/Enter로 지우기</p>
   </section>
 
-  <!-- ANIPOP -->
-  <section id="screen-anipop" class="screen">
+  <!-- COLORSPOT -->
+  <section id="screen-popmatch" class="screen">
     <div class="game-topbar">
       <button class="back-btn" data-back>← 오락실로</button>
       <div class="hud pixel">
-        <span>SCORE<b id="anipop-score">0</b></span>
-        <span>COMBO<b id="anipop-combo">0</b></span>
-        <span>TIME<b id="anipop-time">60</b></span>
-        <span>BEST<b id="anipop-best">0</b></span>
+        <span>SCORE<b id="popmatch-score">0</b></span>
+        <span>TIME<b id="popmatch-time">60</b></span>
+        <span>BEST<b id="popmatch-best">0</b></span>
       </div>
     </div>
     <div class="game-stage">
-      <div class="ap-timebar"><div class="ap-timebar-fill" id="anipop-bar"></div></div>
-      <div class="ap-board" id="anipop-board"><div class="ap-combo" id="anipop-combo-pop"></div></div>
-      <div class="overlay" id="anipop-overlay">
-        <div class="overlay-title pixel">ANIPOP</div>
-        <div class="overlay-msg">같은 동물 3마리를 맞춰 터뜨리세요!</div>
-        <button class="start-btn" id="anipop-start">시작하기</button>
+      <div class="pm-timebar"><div class="pm-timebar-fill" id="popmatch-bar"></div></div>
+      <div class="pm-board" id="popmatch-board"></div>
+      <div class="pm-combo" id="popmatch-combo"></div>
+      <div class="overlay" id="popmatch-overlay">
+        <div class="overlay-title pixel">POPMATCH</div>
+        <div class="overlay-msg">같은 과일 3개 이상을 맞춰 터뜨리세요!</div>
+        <button class="start-btn" id="popmatch-start">시작하기</button>
       </div>
     </div>
-    <p class="controls-hint">동물을 옆 칸으로 밀거나(드래그) 두 칸을 차례로 탭해서 바꾸기 · 4개 맞추면 줄무늬 블록(터지면 한 줄 전부 제거) · 5개 이상 / ㄱ·T자 모양이면 💣폭탄(아무 동물과 바꾸면 그 동물 전부 제거) · 빠르게 연속으로 맞추면 콤보 배수 UP</p>
+    <p class="controls-hint">과일을 눌러 옆 과일과 바꾸거나 밀어서 이동 · 3개 이상 한 줄이면 터져요 · 연쇄가 이어지면 점수 배수와 보너스 시간!</p>
   </section>
 
-  <!-- COLORSPOT -->
   <section id="screen-colorspot" class="screen">
     <div class="game-topbar">
       <button class="back-btn" data-back>← 오락실로</button>
@@ -2386,24 +2076,6 @@
         <div class="admin-order-msg" id="admin-order-msg"></div>
         <div class="admin-game-list" id="admin-game-list"></div>
 
-        <h3 class="admin-sec-title">🏁 시즌 관리</h3>
-        <p class="admin-panel-sub">[시즌 종료]를 누르면 게임별 TOP 3와 팀 순위가 '지난 시즌'에 박제되고, 시즌 뱃지(게임 1위 · 우승팀)가 지급된 뒤 모든 점수가 0으로 초기화돼요. 명예의 전당 · 뱃지 · 챌린지 기록은 그대로 남아요. 이제 Table Editor에서 scores 를 직접 지우지 않아도 됩니다. 되돌릴 수 없으니 신중하게 눌러주세요.</p>
-        <div class="admin-game-row">
-          <span class="agr-label">현재 시즌 <b id="admin-season-no">-</b></span>
-          <span class="agr-actions">
-            <input type="date" class="admin-limit-input" id="admin-season-ends" style="width:150px;text-align:left;">
-            <button type="button" class="mini-btn" id="admin-season-ends-save">종료 예정일 저장</button>
-          </span>
-        </div>
-        <div class="admin-game-row">
-          <span class="agr-label">다음 시즌 종료 예정일 (선택)</span>
-          <span class="agr-actions">
-            <input type="date" class="admin-limit-input" id="admin-season-next-ends" style="width:150px;text-align:left;">
-            <button type="button" class="admin-danger-btn" id="admin-season-end-btn">시즌 종료 &amp; 새 시즌 시작</button>
-          </span>
-        </div>
-        <div class="admin-order-msg" id="admin-season-msg" style="margin-top:6px;"></div>
-
         <h3 class="admin-sec-title">🔄 구버전 차단</h3>
         <p class="admin-panel-sub">현재 이 화면의 버전: <b id="admin-cur-build"></b> · 서버 최소 허용 버전보다 낮은 화면은 게임 대신 '새로고침' 안내만 보이고 점수도 저장되지 않아요. 새 버전을 배포한 뒤 [현재 버전으로 설정]을 누르면 구버전이 차단됩니다.</p>
         <div class="admin-game-row">
@@ -2515,12 +2187,12 @@
     { id:'subwayrace', label:'SUBWAY RACE', icon:'🚇', color:'var(--green)' },
     { id:'spintail', label:'SPINTAIL', icon:'🐹', color:'var(--orange)' },
     { id:'colorspot', label:'COLORSPOT', icon:'🎨', color:'var(--pink)' },
-    { id:'anipop', label:'ANIPOP', icon:'🐰', color:'var(--yellow)' }
+    { id:'popmatch', label:'POPMATCH', icon:'🍓', color:'var(--green)' }
   ];
   /* ============ 앱 버전 / 구버전 차단 ============
      APP_BUILD는 배포할 때마다 올립니다(YYYYMMDDNN). 서버(app_config.min_build)가 이 값보다 크면
      구버전으로 보고 게임 대신 '새로고침' 안내만 보여줍니다. 값은 관리자 화면에서 바꿉니다. */
-  const APP_BUILD = 2026111201;
+  const APP_BUILD = 2026111401;
   function appVersionLabel(n){
     const s = String(n);
     return 'v' + s.slice(0,4) + '.' + s.slice(4,6) + '.' + s.slice(6,8) + '-' + s.slice(8);
@@ -2624,7 +2296,7 @@
   let pendingRecoveryId = null;
 
   function updatePlayerBadge(){
-    document.getElementById('player-name-display').innerHTML = '🎮 ' + (typeof titleHtml === 'function' ? titleHtml(playerId) : '') + escapeHtml(nickname || '-');
+    document.getElementById('player-name-display').textContent = '🎮 ' + (nickname || '-');
     const teamEl = document.getElementById('player-team-display');
     if(team){
       teamEl.textContent = team;
@@ -2735,9 +2407,6 @@
     closeNicknameModal();
     renderTeamBattle();
     renderRoster();
-    renderDaily();
-    renderRaid();
-    refreshDuelCount();
   }
   document.getElementById('nickname-confirm').addEventListener('click', confirmNickname);
   document.getElementById('nickname-input').addEventListener('keydown', function(e){
@@ -2861,15 +2530,12 @@
     }).sort(function(a,b){ return b.points - a.points; });
   }
 
-  function renderBoardHtml(board, duelGame){
+  function renderBoardHtml(board){
     if(board.length === 0) return '<li class="lb-empty">아직 기록이 없습니다</li>';
     return board.map(function(e,i){
-      const duelCell = duelGame ? (e.playerId !== playerId && e.score > 0
-        ? '<button type="button" class="duel-btn" data-duel-pid="'+escapeHtml(e.playerId)+'" data-duel-name="'+escapeHtml(e.name)+'" title="'+escapeHtml(e.name)+'님에게 도전장 보내기" aria-label="도전장 보내기">⚔️</button>'
-        : '<span></span>') : '';
       const mine = e.playerId === playerId ? ' class="lb-mine"' : '';
       const teamTag = e.team ? ' <span class="lb-team" style="color:'+(TEAM_COLORS[e.team]||'var(--text-dim)')+'">· '+escapeHtml(e.team)+'</span>' : '';
-      return '<li'+mine+'><span class="lb-rank">'+(i+1)+'</span><span class="lb-name">'+titleHtml(e.playerId)+escapeHtml(e.name)+badgeIconsHtml(e.playerId, 2)+teamTag+'</span><span class="lb-score">'+e.score+'</span>'+duelCell+'</li>';
+      return '<li'+mine+'><span class="lb-rank">'+(i+1)+'</span><span class="lb-name">'+escapeHtml(e.name)+teamTag+'</span><span class="lb-score">'+e.score+'</span></li>';
     }).join('');
   }
 
@@ -2960,7 +2626,7 @@
       const color = TEAM_COLORS[p.team] || 'var(--text-dim)';
       const mine = p.playerId === playerId ? ' mine' : '';
       const teamLabel = p.team ? escapeHtml(p.team) : '팀 미정';
-      return '<span class="roster-chip'+mine+'" data-pid="'+escapeHtml(p.playerId)+'" data-name="'+escapeHtml(p.name)+'" style="--chip-color:'+color+'"><span class="dot"></span>'+titleHtml(p.playerId)+escapeHtml(p.name)+badgeIconsHtml(p.playerId, 3)+' <small>'+teamLabel+'</small></span>';
+      return '<span class="roster-chip'+mine+'" style="--chip-color:'+color+'"><span class="dot"></span>'+escapeHtml(p.name)+' <small>'+teamLabel+'</small></span>';
     }).join('');
   }
 
@@ -3034,798 +2700,6 @@
     openAnnounceModal();
   });
 
-  /* ============ 1차 업데이트: 실시간 소식(LIVE 티커) ============
-     activity_feed 테이블은 서버(트리거/함수)만 기록하고, 여기서는 읽기 + Realtime 구독만 한다. */
-  const FEED_KEEP = 30;
-  let feedItems = [], feedIdx = 0, feedTimer = null, feedChannel = null, feedSeen = new Set();
-
-  function feedAgo(iso){
-    const sec = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
-    if(sec < 60) return '방금';
-    if(sec < 3600) return Math.floor(sec/60) + '분 전';
-    if(sec < 86400) return Math.floor(sec/3600) + '시간 전';
-    return Math.floor(sec/86400) + '일 전';
-  }
-  function feedText(f){
-    const nick = '<span class="feed-nick" style="--chip-color:'+(TEAM_COLORS[f.team]||'var(--cyan)')+'">'+escapeHtml(f.nickname || '???')+'</span>';
-    const game = f.game ? '<span class="feed-game">'+escapeHtml(gameLabel(f.game))+'</span>' : '';
-    const sc = (typeof f.score === 'number') ? Number(f.score).toLocaleString() + '점' : '';
-    switch(f.kind){
-      case 'hof':       return '👑 '+nick+'님이 '+game+' 역대 최고기록 경신! ('+sc+')';
-      case 'top1':      return '🥇 '+nick+'님이 '+game+' 1위 등극! ('+sc+')';
-      case 'rank':      return (f.rank === 2 ? '🥈 ' : '🥉 ')+nick+'님이 '+game+' '+f.rank+'위로 올라섰어요 ('+sc+')';
-      case 'daily_top': return '🔥 '+nick+'님이 오늘의 챌린지 '+game+' 1위! ('+sc+')';
-      case 'pvp_win':   return '⚔️ '+nick+'님이 '+game+'에서 승리했어요';
-      case 'join':      return '👋 '+nick+'님('+escapeHtml(f.team || '')+')이 오락실에 처음 왔어요';
-      case 'badge':     if(f.extra && f.extra.indexOf('h_') === 0){
-                          const ht = TITLES.filter(function(t){ return t.badge === f.extra; })[0];
-                          return '🕵️ '+nick+'님이 히든 칭호 '+(ht ? '<span class="ttl r-'+ht.rarity+'">'+escapeHtml(ht.name)+'</span>' : '')+'을(를) 발견했어요!';
-                        }
-                        { const b = BADGE_BY_ID[f.extra]; return (b ? b.icon : '🏅')+' '+nick+'님이 <span class="feed-game">'+escapeHtml(b ? b.name : '새')+'</span> 뱃지를 받았어요'; }
-      case 'duel_win':  return '🤺 '+nick+'님이 도전장 승리! '+escapeHtml(f.extra || '')+'님의 '+game+' 기록 돌파 ('+sc+')';
-      case 'raid_kill': return '💥 '+escapeHtml(f.team || '')+' 팀이 보스 <span class="feed-game">'+escapeHtml(raidBoss(f.extra).name)+'</span> 처치! ('+(f.rank||'?')+'등) · 막타 '+nick;
-      case 'raid_half': return raidBoss(f.extra).icon+' '+escapeHtml(f.team || '')+' 팀 보스 체력 50% 돌파! ('+nick+'님의 일격)';
-      case 'season_end': return '🏆 SEASON '+f.rank+' 종료! <span class="feed-game">'+escapeHtml(f.extra || '-')+'</span> 우승 ('+(f.score||0)+'점) · 새 시즌 시작!';
-      default:          return nick + ' · ' + game + ' ' + sc;
-    }
-  }
-  function feedItemHtml(f){
-    return '<span class="feed-text">'+feedText(f)+'</span><span class="live-ago">'+feedAgo(f.created_at)+'</span>';
-  }
-  function feedShow(idx, animate){
-    const vp = document.getElementById('live-viewport');
-    if(!vp) return;
-    if(feedItems.length === 0){
-      vp.innerHTML = '<div class="live-item"><span class="feed-text" style="color:var(--text-dim)">아직 소식이 없어요 · 첫 기록의 주인공이 되어보세요!</span></div>';
-      return;
-    }
-    feedIdx = ((idx % feedItems.length) + feedItems.length) % feedItems.length;
-    const next = document.createElement('div');
-    next.className = 'live-item' + (animate ? ' enter' : '');
-    next.innerHTML = feedItemHtml(feedItems[feedIdx]);
-    const prev = Array.prototype.slice.call(vp.children);
-    vp.appendChild(next);
-    if(animate){
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ next.classList.remove('enter'); }); });
-      prev.forEach(function(el){ el.classList.add('leave'); setTimeout(function(){ el.remove(); }, 500); });
-    }else{
-      prev.forEach(function(el){ el.remove(); });
-    }
-  }
-  function feedStartRotation(){
-    if(feedTimer) clearInterval(feedTimer);
-    feedTimer = setInterval(function(){
-      if(document.hidden || currentScreen !== 'hub' || feedItems.length < 2) return;
-      feedShow(feedIdx + 1, true);
-    }, 4500);
-  }
-  async function loadFeed(){
-    try{
-      let res = await sb.from('activity_feed').select('id, kind, nickname, team, game, score, rank, extra, created_at').order('id', { ascending:false }).limit(FEED_KEEP);
-      if(res.error) res = await sb.from('activity_feed').select('id, kind, nickname, team, game, score, rank, created_at').order('id', { ascending:false }).limit(FEED_KEEP);   // 20번 SQL 실행 전
-      const data = res.data;
-      if(res.error || !data) throw res.error || new Error('x');
-      feedItems = data;
-      feedSeen = new Set(data.map(function(f){ return f.id; }));
-    }catch(e){ feedItems = []; }
-    feedShow(0, false);
-  }
-  function onFeedInsert(f){
-    if(!f || feedSeen.has(f.id)) return;
-    feedSeen.add(f.id);
-    feedItems.unshift(f);
-    if(feedItems.length > FEED_KEEP) feedItems.length = FEED_KEEP;
-    feedShow(0, true);
-    feedStartRotation();   // 새 소식은 4.5초 동안 그대로 보여줌
-    const t = document.getElementById('live-ticker');
-    if(t){ t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); }
-    if(f.kind === 'daily_top' || (dailyInfo && f.game === dailyInfo.game)) scheduleDailyRefresh();
-    if(f.kind === 'badge' && f.player_id && f.player_id === playerId){
-      const nt = TITLES.filter(function(t){ return t.badge === f.extra && t.min === 1; })[0];
-      if(nt && nt.hidden) showToast('🕵️ 히든 칭호 <span class="ttl r-'+nt.rarity+'">'+escapeHtml(nt.name)+'</span>을(를) 발견했어요!', '장착하러 가기', function(){ openBadgeModal(playerId, nickname || '').then(function(){ setBadgeModalTab('titles'); }); });
-      else if(nt) showToast('🎖️ 새 칭호 <span class="ttl r-'+nt.rarity+'">'+escapeHtml(nt.name)+'</span>이(가) 열렸어요!', '장착하러 가기', function(){ openBadgeModal(playerId, nickname || '').then(function(){ setBadgeModalTab('titles'); }); });
-    }
-    if(f.kind === 'badge' && f.player_id){
-      const list = badgeMap[f.player_id] = badgeMap[f.player_id] || [];
-      if(!list.some(function(b){ return b.badge === f.extra; }) && BADGE_BY_ID[f.extra]){
-        list.push({ badge:f.extra, cnt:1 });
-        list.sort(function(a,b){ return BADGE_BY_ID[a.badge].rank - BADGE_BY_ID[b.badge].rank; });
-      }
-    }
-    if(f.kind === 'raid_kill' || f.kind === 'raid_half') scheduleRaidRefresh();
-    if(f.kind === 'season_end'){
-      loadSeasonMeta(); loadAllBadges().then(function(){ renderTeamBattle(); renderRoster(); renderCabinetLeaders(); });
-    }
-  }
-  function onFeedUpdate(f){
-    if(!f) return;
-    const i = feedItems.findIndex(function(x){ return x.id === f.id; });
-    if(i >= 0){ feedItems[i] = f; if(i === feedIdx) feedShow(feedIdx, false); }
-  }
-  function startFeed(){
-    loadFeed();
-    feedStartRotation();
-    if(feedChannel) return;
-    feedChannel = sb.channel('hub-activity-feed')
-      .on('postgres_changes', { event:'INSERT', schema:'public', table:'activity_feed' }, function(payload){ onFeedInsert(payload.new); })
-      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'activity_feed' }, function(payload){ onFeedUpdate(payload.new); })
-      .subscribe();
-  }
-  function openFeedModal(){
-    const list = document.getElementById('feed-list');
-    list.innerHTML = feedItems.length
-      ? feedItems.map(function(f){ return '<div class="feed-row">'+feedItemHtml(f)+'</div>'; }).join('')
-      : '<p class="lb-empty">아직 소식이 없어요</p>';
-    document.getElementById('feed-modal').classList.remove('hidden');
-  }
-  document.getElementById('live-ticker').addEventListener('click', openFeedModal);
-  document.getElementById('live-ticker').addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openFeedModal(); } });
-  document.getElementById('feed-close').addEventListener('click', function(){ document.getElementById('feed-modal').classList.add('hidden'); });
-  document.getElementById('feed-modal').addEventListener('click', function(e){ if(e.target === this) this.classList.add('hidden'); });
-
-  /* ============ 1차 업데이트: 오늘의 챌린지 ============
-     게임 선정·기록·도전 횟수는 모두 서버가 관리(arcade_daily_info / arcade_submit_score).
-     화면은 결과를 보여주고, 자정(한국시간) 카운트다운만 계산한다. */
-  let dailyInfo = null, dailyClockOffset = 0, dailyCountdownTimer = null, dailyRefreshTimer = null;
-
-  async function fetchDailyInfo(){
-    try{
-      const data = await arcadeRpc('arcade_daily_info', { p_pid: playerId || null });
-      if(!data || !data.game) return null;
-      if(data.server_now) dailyClockOffset = new Date(data.server_now).getTime() - Date.now();
-      dailyInfo = data;
-      return data;
-    }catch(e){ return null; }
-  }
-  function dailyAttemptsUsed(){ return (dailyInfo && dailyInfo.me && dailyInfo.me.attempts) || 0; }
-  function dailyMaxAttempts(){ return (dailyInfo && dailyInfo.max_attempts) || 3; }
-  function dailyMyRank(){
-    if(!dailyInfo || !dailyInfo.top) return 0;
-    const i = dailyInfo.top.findIndex(function(t){ return t.player_id === playerId; });
-    return i >= 0 ? i + 1 : 0;
-  }
-  function dailyMsLeft(){
-    if(!dailyInfo || !dailyInfo.day) return 0;
-    const p = String(dailyInfo.day).split('-').map(Number);
-    const nextMidnightKst = Date.UTC(p[0], p[1]-1, p[2]+1) - 9*3600*1000;
-    return nextMidnightKst - (Date.now() + dailyClockOffset);
-  }
-  function tickDailyCountdown(){
-    const el = document.getElementById('daily-countdown');
-    if(!el || !dailyInfo) return;
-    const ms = dailyMsLeft();
-    if(ms <= 0){
-      el.textContent = '00:00:00';
-      if(!tickDailyCountdown.refetching){
-        tickDailyCountdown.refetching = true;
-        setTimeout(function(){ renderDaily().finally(function(){ tickDailyCountdown.refetching = false; }); }, 1500);
-      }
-      return;
-    }
-    const t = Math.floor(ms/1000);
-    el.textContent = '마감까지 ' + String(Math.floor(t/3600)).padStart(2,'0') + ':' + String(Math.floor(t%3600/60)).padStart(2,'0') + ':' + String(t%60).padStart(2,'0');
-  }
-  function renderDailyPanel(){
-    if(!dailyInfo) return;
-    const g = GAMES.find(function(x){ return x.id === dailyInfo.game; }) || { id:dailyInfo.game, label:dailyInfo.game, icon:'🎲', color:'var(--pink)' };
-    document.getElementById('daily-game-box').style.setProperty('--accent', g.color);
-    document.getElementById('daily-game-icon').textContent = g.icon;
-    document.getElementById('daily-game-label').textContent = g.label;
-
-    const used = dailyAttemptsUsed(), max = dailyMaxAttempts();
-    let dots = '';
-    for(let i=0;i<max;i++) dots += '<i class="'+(i < used ? 'used' : '')+'"></i>';
-    const best = dailyInfo.me ? dailyInfo.me.best : null;
-    const rank = dailyMyRank();
-    document.getElementById('daily-me').innerHTML =
-      (best != null ? '내 기록 <b>'+Number(best).toLocaleString()+'</b>' + (rank ? ' · '+rank+'위' : '') + ' · ' : '') +
-      '남은 도전 <span class="daily-dots">'+dots+'</span>';
-
-    const btn = document.getElementById('daily-play-btn');
-    const off = gameSettingsMap[g.id] === false;
-    btn.disabled = off || !playerId;
-    btn.classList.toggle('practice', used >= max);
-    btn.textContent = off ? '점검중' : (used >= max ? '연습하기 (기록 미반영)' : (used ? '다시 도전 ▶' : '도전하기 ▶'));
-
-    const list = document.getElementById('daily-rank-list');
-    const top = dailyInfo.top || [];
-    list.innerHTML = top.length ? top.slice(0, 5).map(function(t, i){
-      const mine = t.player_id === playerId ? ' class="lb-mine"' : '';
-      const teamTag = t.team ? ' <span class="lb-team" style="color:'+(TEAM_COLORS[t.team]||'var(--text-dim)')+'">· '+escapeHtml(t.team)+'</span>' : '';
-      return '<li'+mine+'><span class="lb-rank">'+(i+1)+'</span><span class="lb-name">'+titleHtml(t.player_id)+escapeHtml(t.nickname)+badgeIconsHtml(t.player_id, 2)+teamTag+'</span><span class="lb-score">'+Number(t.best).toLocaleString()+'</span></li>';
-    }).join('') + (rank > 5 ? '<li class="lb-mine"><span class="lb-rank">'+rank+'</span><span class="lb-name">'+escapeHtml(nickname || '나')+'</span><span class="lb-score">'+Number(best).toLocaleString()+'</span></li>' : '')
-    : '<li class="lb-empty">아직 도전자가 없어요 · 지금 1등을 노려보세요!</li>';
-
-    const y = dailyInfo.yesterday;
-    document.getElementById('daily-yesterday').innerHTML = y
-      ? '🏆 어제의 챌린지 우승 · <b style="color:'+(TEAM_COLORS[y.team]||'var(--text)')+'">'+escapeHtml(y.nickname)+'</b> ('+escapeHtml(y.team)+') · '+escapeHtml(gameLabel(y.game))+' '+Number(y.best).toLocaleString()+'점'
-      : '어제의 챌린지 기록이 없어요';
-    updateDailyIngameBadge();
-  }
-  async function renderDaily(){
-    const data = await fetchDailyInfo();
-    const panel = document.getElementById('daily-panel');
-    if(!data){ if(panel && !dailyInfo) panel.style.display = 'none'; return; }   // SQL 미실행 시 패널 숨김
-    if(panel) panel.style.display = '';
-    renderDailyPanel();
-    tickDailyCountdown();
-    if(!dailyCountdownTimer) dailyCountdownTimer = setInterval(tickDailyCountdown, 1000);
-  }
-  function scheduleDailyRefresh(){
-    if(dailyRefreshTimer) return;
-    dailyRefreshTimer = setTimeout(function(){ dailyRefreshTimer = null; if(currentScreen === 'hub') renderDaily(); }, 800);
-  }
-  function updateDailyIngameBadge(){
-    let badge = document.getElementById('daily-ingame');
-    const isDaily = dailyInfo && currentScreen === dailyInfo.game;
-    if(!isDaily){ if(badge) badge.remove(); return; }
-    const screen = document.getElementById('screen-' + currentScreen);
-    const topbar = screen && screen.querySelector('.game-topbar');
-    if(!topbar) return;
-    if(!badge){ badge = document.createElement('div'); badge.id = 'daily-ingame'; badge.className = 'daily-ingame'; }
-    if(badge.previousElementSibling !== topbar) topbar.insertAdjacentElement('afterend', badge);
-    const left = Math.max(0, dailyMaxAttempts() - dailyAttemptsUsed());
-    badge.classList.toggle('spent', left === 0);
-    badge.textContent = left > 0
-      ? '🔥 오늘의 챌린지 진행 중 · 남은 도전 ' + left + '/' + dailyMaxAttempts() + ' · 이번 판 기록이 챌린지에 반영돼요'
-      : '오늘의 챌린지 도전 기회를 모두 썼어요 · 지금은 일반 기록만 저장돼요';
-  }
-  document.getElementById('daily-play-btn').addEventListener('click', function(){
-    if(!dailyInfo || this.disabled) return;
-    openGameInfoModal(dailyInfo.game);
-  });
-
-  /* 게임 종료 후 결과 문구에 챌린지 결과를 덧붙임 */
-  async function appendDailyResult(game, overlay){
-    if(!dailyInfo || dailyInfo.game !== game) return;
-    const usedBefore = dailyAttemptsUsed();
-    const data = await fetchDailyInfo();
-    if(!data || data.game !== game) return;
-    renderDailyPanel();
-    if(!overlay) return;
-    const msgEl = overlay.querySelector('.overlay-msg');
-    if(!msgEl) return;
-    const left = Math.max(0, dailyMaxAttempts() - dailyAttemptsUsed());
-    const rank = dailyMyRank();
-    let extra;
-    if(usedBefore >= dailyMaxAttempts()) extra = '🔥 챌린지 기회 소진 (일반 기록만 저장)';
-    else extra = '🔥 챌린지 ' + (rank ? rank + '위' : '기록 반영') + ' · 남은 도전 ' + left + '회';
-    msgEl.textContent = msgEl.textContent + ' · ' + extra;
-  }
-
-  /* ============ 2차 업데이트: 뱃지 ============
-     뱃지는 서버가 조건을 판단해 player_badges 에 기록한다. 여기서는 정의(이름/설명)와 표시만 담당.
-     rank: 이름 옆에 보여줄 우선순위(작을수록 먼저). repeat: 여러 번 받을 수 있는 뱃지(×횟수 표시) */
-  const BADGES = [
-    { id:'season_champ', icon:'🏆', name:'시즌 챔피언', desc:'시즌 종료 시 게임 1위', rank:1, repeat:true },
-    { id:'legend',       icon:'👑', name:'레전드',      desc:'명예의 전당 역대 최고기록 경신', rank:2 },
-    { id:'season_team',  icon:'🎖️', name:'우승팀',      desc:'시즌 우승팀 멤버로 기록 보유', rank:3, repeat:true },
-    { id:'daily_win',    icon:'🌟', name:'챌린지 우승', desc:'오늘의 챌린지 하루 1위', rank:4, repeat:true },
-    { id:'raid_kill',    icon:'🐉', name:'보스 사냥꾼', desc:'팀이 주간 보스 처치 (데미지 기여)', rank:4.3, repeat:true },
-    { id:'last_hit',     icon:'🗡️', name:'막타',        desc:'주간 보스에게 마지막 일격', rank:4.6, repeat:true },
-    { id:'top1',         icon:'🥇', name:'정상 등극',   desc:'아무 게임이나 시즌 1위 달성', rank:5 },
-    { id:'duel_3',       icon:'🤺', name:'결투가',      desc:'도전장 3번 승리', rank:5.5, prog:function(st){ return [st.duel_wins||0, 3]; } },
-    { id:'pvp_10',       icon:'⚔️', name:'백전노장',    desc:'실시간 대전 누적 10승', rank:6, prog:function(st){ return [st.pvp_wins||0, 10]; } },
-    { id:'streak20',     icon:'🗓️', name:'월간 개근',   desc:'영업일 20일 연속 플레이', rank:7, prog:function(st){ return [st.streak||0, 20]; } },
-    { id:'all_rounder',  icon:'🎪', name:'올라운더',    desc:'혼자 하는 게임 전부 기록 남기기', rank:8, prog:function(st){ return [st.solo_games||0, SOLO_GAME_COUNT]; } },
-    { id:'streak5',      icon:'📅', name:'주간 개근',   desc:'영업일 5일 연속 플레이', rank:9, prog:function(st){ return [st.streak||0, 5]; } },
-    { id:'daily_5',      icon:'🎯', name:'챌린지 단골', desc:'오늘의 챌린지 5일 참여', rank:10, prog:function(st){ return [st.daily_days||0, 5]; } },
-    { id:'explorer',     icon:'🧭', name:'탐험가',      desc:'서로 다른 게임 10개 기록', rank:11, prog:function(st){ return [st.games||0, 10]; } },
-    { id:'streak3',      icon:'🔥', name:'3일 연속',    desc:'영업일 3일 연속 플레이 (주말은 쉬어도 OK)', rank:12, prog:function(st){ return [st.streak||0, 3]; } },
-    { id:'lunch',        icon:'🍱', name:'점심 게이머', desc:'12시대에 10판 플레이', rank:13, prog:function(st){ return [st.lunch_plays||0, 10]; } },
-    { id:'night_owl',    icon:'🦉', name:'야근 게이머', desc:'밤 10시 ~ 새벽 5시에 플레이', rank:14 },
-    { id:'first_coin',   icon:'🪙', name:'첫 동전',     desc:'처음으로 기록 남기기', rank:15 }
-  ];
-  const BADGE_BY_ID = {};
-  BADGES.forEach(function(b){ BADGE_BY_ID[b.id] = b; });
-  const SOLO_GAME_COUNT = GAMES.filter(function(g){ return ['gomokupvp','catchmind','fortress','subwayrace'].indexOf(g.id) === -1; }).length;
-  let badgeMap = {};   // player_id -> [{badge, cnt}] (우선순위 정렬)
-
-  async function loadAllBadges(){
-    try{
-      const { data, error } = await sb.from('player_badges').select('player_id, badge, cnt');
-      if(error || !data) return;
-      const m = {};
-      data.forEach(function(r){ if(BADGE_BY_ID[r.badge]) (m[r.player_id] = m[r.player_id] || []).push(r); });
-      Object.keys(m).forEach(function(k){ m[k].sort(function(a,b){ return BADGE_BY_ID[a.badge].rank - BADGE_BY_ID[b.badge].rank; }); });
-      badgeMap = m;
-    }catch(e){ /* 20번 SQL 실행 전이면 조용히 무시 */ }
-  }
-  /* 이름 옆에 붙는 대표 뱃지 아이콘 (최대 n개, first_coin 제외) */
-  function badgeIconsHtml(pid, n){
-    const list = (badgeMap[pid] || []).filter(function(b){ return b.badge !== 'first_coin'; }).slice(0, n || 3);
-    if(!list.length) return '';
-    return '<span class="bdg-icons">' + list.map(function(b){
-      const d = BADGE_BY_ID[b.badge];
-      return '<span title="'+escapeHtml(d.name + (d.repeat && b.cnt > 1 ? ' ×'+b.cnt : ''))+'">'+d.icon+'</span>';
-    }).join('') + '</span>';
-  }
-
-  async function openBadgeModal(pid, name){
-    const modal = document.getElementById('badge-modal');
-    const grid = document.getElementById('badge-grid');
-    const isMe = pid === playerId;
-    document.getElementById('badge-modal-title').textContent = isMe ? '내 뱃지' : (name + '님의 뱃지');
-    document.getElementById('badge-summary').textContent = '';
-    grid.innerHTML = '<p class="lb-empty">불러오는 중...</p>';
-    badgeModalOwned = {}; badgeModalPid = pid; badgeModalSummaryHtml = '';
-    setBadgeModalTab('badges');
-    modal.classList.remove('hidden');
-    if(!pid){ grid.innerHTML = '<p class="lb-empty">닉네임을 먼저 등록해주세요</p>'; return; }
-    let owned = {}, st = {};
-    try{
-      const res = await Promise.all([
-        sb.from('player_badges').select('badge, cnt, first_at').eq('player_id', pid),
-        sb.from('player_stats').select('streak, best_streak, pvp_wins, lunch_plays, plays').eq('player_id', pid).maybeSingle(),
-        sb.from('player_game_played').select('game').eq('player_id', pid),
-        sb.from('daily_scores').select('day').eq('player_id', pid)
-      ]);
-      (res[0].data || []).forEach(function(r){ owned[r.badge] = r; });
-      st = res[1].data || {};
-      const played = (res[2].data || []).map(function(r){ return r.game; });
-      st.games = played.filter(function(g){ return GAME_IDS.indexOf(g) !== -1; }).length;
-      st.solo_games = played.filter(function(g){ return GAME_IDS.indexOf(g) !== -1 && ['gomokupvp','catchmind','fortress','subwayrace'].indexOf(g) === -1; }).length;
-      st.daily_days = new Set((res[3].data || []).map(function(r){ return r.day; })).size;
-      try{
-        const dw = await sb.from('duels').select('id', { count:'exact', head:true }).eq('challenger_id', pid).eq('status', 'won');
-        st.duel_wins = dw.count || 0;
-      }catch(e){ st.duel_wins = 0; }
-    }catch(e){
-      grid.innerHTML = '<p class="lb-empty">뱃지를 불러오지 못했어요</p>'; return;
-    }
-    badgeModalOwned = owned; badgeModalPid = pid;
-    const earned = BADGES.filter(function(b){ return owned[b.id]; }).length;
-    document.getElementById('badge-summary').innerHTML = '모은 뱃지 <b>'+earned+'</b> / '+BADGES.length +
-      (st.plays ? ' · 누적 '+Number(st.plays).toLocaleString()+'판' : '') +
-      (st.streak ? ' · 현재 연속 '+st.streak+'일' : '') + (st.best_streak > 1 ? ' (최고 '+st.best_streak+'일)' : '');
-    badgeModalSummaryHtml = document.getElementById('badge-summary').innerHTML;
-    const ordered = BADGES.slice().sort(function(a,b){
-      const ea = owned[a.id] ? 0 : 1, eb = owned[b.id] ? 0 : 1;
-      return ea - eb || a.rank - b.rank;
-    });
-    grid.innerHTML = ordered.map(function(b){
-      const o = owned[b.id];
-      let extra = '';
-      if(o){
-        const d = new Date(o.first_at);
-        extra = '<div class="bd" style="color:var(--yellow)">'+(d.getMonth()+1)+'/'+d.getDate()+' 획득</div>';
-      }else if(b.prog && isMe){
-        const pr = b.prog(st), cur = Math.min(pr[0], pr[1]);
-        extra = '<div class="bp"><i style="width:'+Math.round(cur/pr[1]*100)+'%"></i></div><div class="bd">'+cur+' / '+pr[1]+'</div>';
-      }
-      return '<div class="badge-card '+(o ? 'earned' : 'locked')+'">' +
-        (o && b.repeat && o.cnt > 1 ? '<span class="bc">×'+o.cnt+'</span>' : '') +
-        '<div class="bi">'+b.icon+'</div><div class="bn">'+escapeHtml(b.name)+'</div><div class="bd">'+escapeHtml(b.desc)+'</div>'+extra+'</div>';
-    }).join('');
-  }
-  document.getElementById('badge-open-btn').addEventListener('click', function(){ openBadgeModal(playerId, nickname || ''); });
-  document.getElementById('badge-close').addEventListener('click', function(){ document.getElementById('badge-modal').classList.add('hidden'); });
-  document.getElementById('badge-modal').addEventListener('click', function(e){ if(e.target === this) this.classList.add('hidden'); });
-  document.getElementById('roster-list').addEventListener('click', function(e){
-    const chip = e.target.closest('.roster-chip[data-pid]');
-    if(chip) openBadgeModal(chip.dataset.pid, chip.dataset.name || '');
-  });
-
-  /* ============ 2차 업데이트: 시즌 ============
-     시즌 번호/종료 예정일은 app_config(season_no, season_ends_at)에 있고, 종료는 관리자 화면에서만 가능. */
-  let seasonMeta = { no:1, endsAt:'' };
-  async function loadSeasonMeta(){
-    try{
-      const { data, error } = await sb.from('app_config').select('k, v').in('k', ['season_no', 'season_ends_at']);
-      if(error || !data) return;
-      data.forEach(function(r){
-        if(r.k === 'season_no') seasonMeta.no = parseInt(r.v, 10) || 1;
-        if(r.k === 'season_ends_at') seasonMeta.endsAt = r.v || '';
-      });
-    }catch(e){ /* ignore */ }
-    renderSeasonMeta();
-  }
-  function seasonDaysLeft(){
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(seasonMeta.endsAt)) return null;
-    const p = seasonMeta.endsAt.split('-').map(Number);
-    const kstToday = new Date(Date.now() + 9*3600*1000);
-    const today = Date.UTC(kstToday.getUTCFullYear(), kstToday.getUTCMonth(), kstToday.getUTCDate());
-    return Math.round((Date.UTC(p[0], p[1]-1, p[2]) - today) / 86400000);
-  }
-  function renderSeasonMeta(){
-    const lab = document.getElementById('season-label');
-    if(lab) lab.textContent = 'SEASON ' + seasonMeta.no;
-    const dd = document.getElementById('season-dday');
-    if(!dd) return;
-    const left = seasonDaysLeft();
-    if(left === null){ dd.innerHTML = ''; return; }
-    const p = seasonMeta.endsAt.split('-').map(Number);
-    dd.innerHTML = ' · <span class="season-dday">' + (left > 0 ? 'D-'+left : (left === 0 ? 'D-DAY' : '마감 임박')) + '</span> (' + p[1] + '/' + p[2] + ' 종료 예정)';
-  }
-  async function openSeasonModal(){
-    const list = document.getElementById('season-list');
-    list.innerHTML = '<p class="lb-empty">불러오는 중...</p>';
-    document.getElementById('season-modal').classList.remove('hidden');
-    try{
-      const res = await Promise.all([
-        sb.from('season_team_results').select('season, team, points, rank, ended_at').order('season', { ascending:false }),
-        sb.from('season_results').select('season, game, nickname, team, score').eq('rank', 1)
-      ]);
-      if(res[0].error) throw res[0].error;
-      const seasons = {};
-      (res[0].data || []).forEach(function(r){ (seasons[r.season] = seasons[r.season] || { teams:[], champs:[], ended:r.ended_at }).teams.push(r); });
-      (res[1].data || []).forEach(function(r){ if(seasons[r.season]) seasons[r.season].champs.push(r); });
-      const keys = Object.keys(seasons).map(Number).sort(function(a,b){ return b-a; });
-      if(!keys.length){ list.innerHTML = '<p class="lb-empty">아직 끝난 시즌이 없어요 · 지금 SEASON '+seasonMeta.no+' 진행 중!</p>'; return; }
-      list.innerHTML = keys.map(function(k){
-        const ss = seasons[k];
-        const d = ss.ended ? new Date(ss.ended) : null;
-        const teams = ss.teams.sort(function(a,b){ return a.rank - b.rank; }).map(function(t){
-          return '<span class="season-team'+(t.rank === 1 ? ' win' : '')+'">'+(t.rank === 1 ? '🏆 ' : t.rank + '위 ')+escapeHtml(t.team)+' · '+t.points+'점</span>';
-        }).join('');
-        const champs = ss.champs.sort(function(a,b){ return gameLabel(a.game).localeCompare(gameLabel(b.game)); }).map(function(c){
-          return '<div><b>'+escapeHtml(gameLabel(c.game))+'</b><span style="color:'+(TEAM_COLORS[c.team]||'var(--text)')+'">'+escapeHtml(c.nickname)+' · '+Number(c.score).toLocaleString()+'</span></div>';
-        }).join('');
-        return '<div class="season-card"><h4>SEASON '+k+'<small>'+(d ? d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate()+' 종료' : '')+'</small></h4><div class="season-teams">'+teams+'</div><div class="season-champs">'+champs+'</div></div>';
-      }).join('');
-    }catch(e){
-      list.innerHTML = '<p class="lb-empty">시즌 기록을 불러오지 못했어요</p>';
-    }
-  }
-  document.getElementById('season-history-btn').addEventListener('click', openSeasonModal);
-  document.getElementById('season-close').addEventListener('click', function(){ document.getElementById('season-modal').classList.add('hidden'); });
-  document.getElementById('season-modal').addEventListener('click', function(e){ if(e.target === this) this.classList.add('hidden'); });
-
-  /* ============ 3차 업데이트: 공용 토스트 알림 ============ */
-  function showToast(html, actionLabel, onAction, ms){
-    const stack = document.getElementById('toast-stack');
-    if(!stack) return;
-    const t = document.createElement('div');
-    t.className = 'toast';
-    t.innerHTML = '<span class="t-text">'+html+'</span>' + (actionLabel ? '<button type="button" class="t-act">'+escapeHtml(actionLabel)+'</button>' : '') + '<button type="button" class="t-x" aria-label="닫기">✕</button>';
-    function close(){ t.remove(); }
-    t.querySelector('.t-x').addEventListener('click', close);
-    if(actionLabel) t.querySelector('.t-act').addEventListener('click', function(){ close(); try{ onAction(); }catch(e){} });
-    stack.appendChild(t);
-    while(stack.children.length > 3) stack.removeChild(stack.firstChild);
-    setTimeout(close, ms || 9000);
-  }
-
-  /* ============ 3차 업데이트: 도전장 ============
-     보내기는 arcade_send_duel(), 승패 판정은 서버가 점수 저장 때 자동으로 처리.
-     duels 테이블을 Realtime으로 구독해 나와 관련된 변화만 알림으로 띄운다. */
-  const DUEL_GAMES = GAMES.map(function(g){ return g.id; }).filter(function(id){ return ['gomokupvp','catchmind','fortress','subwayrace'].indexOf(id) === -1; });
-  const DUEL_HOURS = 48;
-  let duelChannel = null, duelTab = 'in', duelCache = [];
-
-  function duelIsOpen(d){ return d.status === 'open' && (Date.now() - new Date(d.created_at).getTime()) < DUEL_HOURS*3600*1000; }
-  function duelLeftLabel(d){
-    const h = Math.max(0, DUEL_HOURS - (Date.now() - new Date(d.created_at).getTime())/3600000);
-    return h >= 1 ? Math.floor(h) + '시간 남음' : Math.max(1, Math.round(h*60)) + '분 남음';
-  }
-  async function sendDuel(targetPid, targetName, game){
-    if(!playerCode || !playerId){ showToast('닉네임을 먼저 등록해주세요'); return; }
-    if(!window.confirm(targetName + '님의 ' + gameLabel(game) + ' 기록에 도전장을 보낼까요?\n48시간 안에 기록을 넘으면 승리예요.')) return;
-    try{
-      const r = await arcadeRpc('arcade_send_duel', { p_code: playerCode, p_target: targetPid, p_game: game });
-      if(r && r.ok){
-        showToast('⚔️ ' + escapeHtml(targetName) + '님에게 도전장을 보냈어요 · 목표 <b>' + Number(r.target_score).toLocaleString() + '점</b> 돌파!', '바로 도전', function(){ closeGameInfoModal(); goTo(game); });
-        refreshDuelCount();
-      }else{
-        showToast('😅 ' + escapeHtml((r && r.msg) || '도전장을 보내지 못했어요'));
-      }
-    }catch(e){ showToast('😅 도전장을 보내지 못했어요 (최신 SQL 21번 섹션 실행 여부 확인)'); }
-  }
-  document.getElementById('game-info-ranklist').addEventListener('click', function(e){
-    const btn = e.target.closest('.duel-btn');
-    if(!btn) return;
-    const game = document.getElementById('game-info-modal').dataset.currentGame;
-    sendDuel(btn.dataset.duelPid, btn.dataset.duelName, game);
-  });
-
-  async function fetchMyDuels(){
-    if(!playerId) return [];
-    try{
-      const { data, error } = await sb.from('duels').select('*')
-        .or('challenger_id.eq.' + playerId + ',target_id.eq.' + playerId)
-        .order('created_at', { ascending:false }).limit(40);
-      if(error || !data) return [];
-      duelCache = data;
-      return data;
-    }catch(e){ return []; }
-  }
-  function updateDuelCountBadge(){
-    const el = document.getElementById('duel-count');
-    if(!el) return;
-    const n = duelCache.filter(function(d){ return d.target_id === playerId && duelIsOpen(d); }).length;
-    el.textContent = String(n);
-    el.classList.toggle('hidden', n === 0);
-  }
-  async function refreshDuelCount(){ await fetchMyDuels(); updateDuelCountBadge(); }
-
-  function duelItemHtml(d){
-    const g = '<span class="feed-game">'+escapeHtml(gameLabel(d.game))+'</span>';
-    const tgt = Number(d.target_score).toLocaleString();
-    const open = duelIsOpen(d);
-    if(d.target_id === playerId){   // 받은 것
-      if(open) return '<div class="duel-item"><div class="di-main">⚔️ <b>'+escapeHtml(d.challenger_nick)+'</b>님이 내 '+g+' 기록('+tgt+')에 도전 중<div class="di-meta">'+duelLeftLabel(d)+' · 더 높여두면 막을 수 있어요</div></div><button type="button" data-duel-play="'+escapeHtml(d.game)+'">방어하기</button></div>';
-      if(d.status === 'won') return '<div class="duel-item lost"><div class="di-main">💥 <b>'+escapeHtml(d.challenger_nick)+'</b>님이 내 '+g+' 기록('+tgt+')을 깼어요 → '+Number(d.challenger_score).toLocaleString()+'<div class="di-meta">'+feedAgo(d.resolved_at || d.created_at)+'</div></div><button type="button" data-duel-back="'+escapeHtml(d.challenger_id)+'" data-duel-name="'+escapeHtml(d.challenger_nick)+'" data-duel-game="'+escapeHtml(d.game)+'">반격</button></div>';
-      return '<div class="duel-item won"><div class="di-main">🛡️ <b>'+escapeHtml(d.challenger_nick)+'</b>님의 '+g+' 도전을 막아냈어요<div class="di-meta">'+feedAgo(d.created_at)+'</div></div></div>';
-    }
-    // 보낸 것
-    if(open) return '<div class="duel-item"><div class="di-main">🎯 <b>'+escapeHtml(d.target_nick)+'</b>님의 '+g+' '+tgt+'점 넘기기<div class="di-meta">'+duelLeftLabel(d)+' · 상대가 기록을 올리면 목표도 올라가요</div></div><button type="button" data-duel-play="'+escapeHtml(d.game)+'">도전하기</button></div>';
-    if(d.status === 'won') return '<div class="duel-item won"><div class="di-main">🎉 <b>'+escapeHtml(d.target_nick)+'</b>님의 '+g+' 기록 돌파! '+tgt+' → '+Number(d.challenger_score).toLocaleString()+'<div class="di-meta">'+feedAgo(d.resolved_at || d.created_at)+'</div></div></div>';
-    return '<div class="duel-item lost"><div class="di-main">⌛ <b>'+escapeHtml(d.target_nick)+'</b>님의 '+g+' '+tgt+'점 도전 실패<div class="di-meta">시간 초과</div></div></div>';
-  }
-  async function renderDuelModal(){
-    const list = document.getElementById('duel-list');
-    document.querySelectorAll('.duel-tab').forEach(function(t){ t.classList.toggle('active', t.dataset.duelTab === duelTab); });
-    const rows = duelCache.filter(function(d){ return duelTab === 'in' ? d.target_id === playerId : d.challenger_id === playerId; });
-    rows.sort(function(a,b){ return (duelIsOpen(b) ? 1 : 0) - (duelIsOpen(a) ? 1 : 0) || new Date(b.created_at) - new Date(a.created_at); });
-    list.innerHTML = rows.length ? rows.map(duelItemHtml).join('')
-      : '<p class="lb-empty">'+(duelTab === 'in' ? '아직 받은 도전장이 없어요' : '게임 정보 창의 랭킹에서 ⚔️를 눌러 도전장을 보내보세요')+'</p>';
-  }
-  document.getElementById('duel-open-btn').addEventListener('click', async function(){
-    document.getElementById('duel-modal').classList.remove('hidden');
-    document.getElementById('duel-list').innerHTML = '<p class="lb-empty">불러오는 중...</p>';
-    await fetchMyDuels(); updateDuelCountBadge(); renderDuelModal();
-  });
-  document.querySelectorAll('.duel-tab').forEach(function(t){ t.addEventListener('click', function(){ duelTab = t.dataset.duelTab; renderDuelModal(); }); });
-  document.getElementById('duel-close').addEventListener('click', function(){ document.getElementById('duel-modal').classList.add('hidden'); });
-  document.getElementById('duel-modal').addEventListener('click', function(e){ if(e.target === this) this.classList.add('hidden'); });
-  document.getElementById('duel-list').addEventListener('click', function(e){
-    const play = e.target.closest('[data-duel-play]');
-    if(play){ document.getElementById('duel-modal').classList.add('hidden'); goTo(play.dataset.duelPlay); return; }
-    const back = e.target.closest('[data-duel-back]');
-    if(back) sendDuel(back.dataset.duelBack, back.dataset.duelName, back.dataset.duelGame);
-  });
-
-  function onDuelChange(d, isInsert){
-    if(!d || !playerId || (d.challenger_id !== playerId && d.target_id !== playerId)) return;
-    const i = duelCache.findIndex(function(x){ return x.id === d.id; });
-    if(i >= 0) duelCache[i] = d; else duelCache.unshift(d);
-    updateDuelCountBadge();
-    if(!document.getElementById('duel-modal').classList.contains('hidden')) renderDuelModal();
-    const g = '<b>'+escapeHtml(gameLabel(d.game))+'</b>';
-    if(isInsert && d.target_id === playerId){
-      showToast('⚔️ <b>'+escapeHtml(d.challenger_nick)+'</b>님이 내 '+g+' 기록('+Number(d.target_score).toLocaleString()+')에 도전장을 보냈어요!', '기록 지키기', function(){ goTo(d.game); });
-    }else if(!isInsert && d.status === 'won' && d.target_id === playerId){
-      showToast('💥 <b>'+escapeHtml(d.challenger_nick)+'</b>님이 내 '+g+' 기록을 깼어요! ('+Number(d.challenger_score).toLocaleString()+')', '반격하기', function(){ sendDuel(d.challenger_id, d.challenger_nick, d.game); });
-    }else if(!isInsert && d.status === 'won' && d.challenger_id === playerId){
-      showToast('🎉 도전 성공! <b>'+escapeHtml(d.target_nick)+'</b>님의 '+g+' 기록을 넘었어요');
-    }
-  }
-  function startDuelWatch(){
-    refreshDuelCount();
-    if(duelChannel) return;
-    duelChannel = sb.channel('duels-watch')
-      .on('postgres_changes', { event:'INSERT', schema:'public', table:'duels' }, function(p){ onDuelChange(p.new, true); })
-      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'duels' }, function(p){ onDuelChange(p.new, false); })
-      .subscribe();
-  }
-
-  /* ============ 3차 업데이트: 주간 팀 보스 레이드 ============
-     HP·데미지 계산은 전부 서버. 화면은 표시 + raid_teams Realtime으로 체력바를 실시간 갱신. */
-  const RAID_BOSSES = [
-    { icon:'👾', name:'마감 괴물',            line:'금요일 오후 6시에만 나타난다' },
-    { icon:'📊', name:'KPI 골렘',             line:'때릴수록 목표치가 올라간다' },
-    { icon:'📧', name:'회신 요망 드래곤',     line:'"확인 부탁드립니다" 브레스를 뿜는다' },
-    { icon:'🧾', name:'정산 슬라임',          line:'영수증을 먹고 분열한다' },
-    { icon:'📞', name:'수정 요청 히드라',     line:'머리 하나를 자르면 최종_진짜최종이 자란다' },
-    { icon:'🖨️', name:'용지 걸림 데몬',       line:'급할 때만 깨어난다' },
-    { icon:'☕', name:'카페인 결핍 리치',     line:'오후 3시에 가장 강하다' },
-    { icon:'🗓️', name:'월요일 위원회',        line:'회의를 위한 회의를 소환한다' }
-  ];
-  function raidBoss(idx){ const n = parseInt(idx, 10); return RAID_BOSSES[(isNaN(n) ? 0 : n) % RAID_BOSSES.length]; }
-  let raidInfo = null, raidOffset = 0, raidTimer = null, raidChannel = null, raidRefreshTimer = null;
-
-  async function fetchRaidInfo(){
-    try{
-      const d = await arcadeRpc('arcade_raid_info', { p_pid: playerId || null });
-      if(!d || !d.week_start) return null;
-      if(d.server_now) raidOffset = new Date(d.server_now).getTime() - Date.now();
-      raidInfo = d;
-      return d;
-    }catch(e){ return null; }
-  }
-  function tickRaidCountdown(){
-    const el = document.getElementById('raid-countdown');
-    if(!el || !raidInfo) return;
-    const p = String(raidInfo.week_start).split('-').map(Number);
-    const end = Date.UTC(p[0], p[1]-1, p[2]+7) - 9*3600*1000;
-    const ms = end - (Date.now() + raidOffset);
-    if(ms <= 0){ el.textContent = '새 보스 등장!'; if(!tickRaidCountdown.busy){ tickRaidCountdown.busy = true; setTimeout(function(){ renderRaid().finally(function(){ tickRaidCountdown.busy = false; }); }, 2000); } return; }
-    const d = Math.floor(ms/86400000), h = Math.floor(ms%86400000/3600000), m = Math.floor(ms%3600000/60000);
-    el.textContent = '퇴장까지 ' + (d ? d + '일 ' : '') + h + '시간 ' + m + '분';
-  }
-  function renderRaidPanel(){
-    if(!raidInfo) return;
-    const boss = raidBoss(raidInfo.boss_idx);
-    document.getElementById('raid-boss-icon').textContent = boss.icon;
-    document.getElementById('raid-boss-name').textContent = boss.name;
-    document.getElementById('raid-boss-line').textContent = boss.line;
-    document.getElementById('raid-cap').textContent = raidInfo.cap || 150;
-    const teams = raidInfo.teams || [];
-    document.getElementById('raid-bars').innerHTML = teams.length ? teams.map(function(t){
-      const dead = !!t.killed_at;
-      const pct = dead ? 0 : Math.max(0, Math.min(100, t.hp / t.max_hp * 100));
-      const color = TEAM_COLORS[t.team] || 'var(--text)';
-      const hpText = dead ? ('💥 ' + t.kill_rank + '등 처치') : (Number(t.hp).toLocaleString() + ' / ' + Number(t.max_hp).toLocaleString());
-      return '<div class="raid-bar-row'+(t.team === team ? ' mine' : '')+(dead ? ' dead' : '')+'" style="--team-color:'+color+'" title="'+(dead && t.last_hit_nick ? '막타: '+escapeHtml(t.last_hit_nick) : '')+'">'
-        + '<span class="raid-team">'+escapeHtml(t.team)+'</span><div class="raid-track"><div class="raid-fill" style="width:'+pct.toFixed(1)+'%"></div></div><span class="raid-hp">'+hpText+'</span></div>';
-    }).join('') : '<p class="lb-empty">아직 이번 주 참가 팀이 없어요 · 한 판 하면 보스가 등장해요!</p>';
-
-    const me = raidInfo.me, cap = raidInfo.cap || 150;
-    const top = (raidInfo.my_team_top || [])[0];
-    let lw = '';
-    if(raidInfo.last_week && raidInfo.last_week.teams && raidInfo.last_week.teams.length){
-      const w = raidInfo.last_week.teams[0];
-      lw = '<span class="raid-mvp">지난주 '+escapeHtml(raidBoss(raidInfo.last_week.boss_idx).name)+': '+(w.kill_rank ? '🏆 '+escapeHtml(w.team)+' 1등 처치' : '아무도 못 잡았어요')+'</span>';
-    }
-    document.getElementById('raid-me').innerHTML =
-      (me ? '<span>내 이번 주 데미지 <b>'+Number(me.total).toLocaleString()+'</b> · 오늘 '+me.today+'/'+cap+'</span>' : '') +
-      (top ? '<span class="raid-mvp">우리 팀 MVP '+escapeHtml(top.nickname)+' ('+Number(top.dmg).toLocaleString()+')</span>' : '') + lw;
-  }
-  async function renderRaid(){
-    const d = await fetchRaidInfo();
-    const panel = document.getElementById('raid-panel');
-    if(!d){ if(panel && !raidInfo) panel.style.display = 'none'; return; }   // SQL 미실행 시 숨김
-    if(panel) panel.style.display = '';
-    renderRaidPanel();
-    tickRaidCountdown();
-    if(!raidTimer) raidTimer = setInterval(tickRaidCountdown, 30000);
-    if(!raidChannel){
-      raidChannel = sb.channel('raid-teams')
-        .on('postgres_changes', { event:'*', schema:'public', table:'raid_teams' }, function(p){
-          const row = p.new;
-          if(!raidInfo || !row || String(row.week_start) !== String(raidInfo.week_start)) return;
-          const list = raidInfo.teams || (raidInfo.teams = []);
-          const i = list.findIndex(function(t){ return t.team === row.team; });
-          const prevHp = i >= 0 ? list[i].hp : null;
-          if(i >= 0) list[i] = row; else list.push(row);
-          list.sort(function(a,b){ return ((a.kill_rank||99) - (b.kill_rank||99)) || (a.hp/a.max_hp - b.hp/b.max_hp); });
-          renderRaidPanel();
-          if(prevHp !== null && row.hp < prevHp){
-            const ic = document.getElementById('raid-boss-icon');
-            ic.classList.remove('hit'); void ic.offsetWidth; ic.classList.add('hit');
-          }
-        })
-        .subscribe();
-    }
-  }
-  function scheduleRaidRefresh(){
-    if(raidRefreshTimer) return;
-    raidRefreshTimer = setTimeout(function(){ raidRefreshTimer = null; if(currentScreen === 'hub') renderRaid(); }, 800);
-  }
-  /* 게임 종료 문구에 이번 판 보스 데미지를 덧붙임 */
-  async function appendRaidResult(overlay){
-    if(!raidInfo || !raidInfo.me) return;
-    const before = raidInfo.me.total;
-    const d = await fetchRaidInfo();
-    if(!d || !d.me) return;
-    const dmg = d.me.total - before;
-    const msgEl = overlay && overlay.querySelector('.overlay-msg');
-    if(!msgEl) return;
-    if(dmg > 0) msgEl.textContent = msgEl.textContent + ' · 👾 보스에게 ' + dmg + ' 데미지!';
-    else if(d.me.today >= (d.cap || 150)) msgEl.textContent = msgEl.textContent + ' · 👾 오늘 데미지 상한 도달';
-  }
-
-  /* ============ 칭호 시스템 ============
-     조건(어떤 뱃지를 몇 번)은 서버 title_defs 와 같아야 한다. 장착은 arcade_set_title()로만 가능(서버가 검증). */
-  const TITLES = [
-    { id:'dynasty',     name:'왕조 건설자',       badge:'season_champ', min:3, rarity:'legend' },
-    { id:'legend',      name:'살아있는 전설',     badge:'legend',       min:1, rarity:'legend' },
-    { id:'daily_king',  name:'챌린지 제왕',       badge:'daily_win',    min:5, rarity:'legend' },
-    { id:'slayer',      name:'괴물 퇴치 전문가',  badge:'raid_kill',    min:4, rarity:'legend' },
-    { id:'champion',    name:'시즌 챔피언',       badge:'season_champ', min:1, rarity:'epic' },
-    { id:'fixture',     name:'오락실 붙박이',     badge:'streak20',     min:1, rarity:'epic' },
-    { id:'ring',        name:'우승 반지 보유자',  badge:'season_team',  min:1, rarity:'epic' },
-    { id:'last_hit',    name:'막타 장인',         badge:'last_hit',     min:1, rarity:'epic' },
-    { id:'all_rounder', name:'만능 엔터테이너',   badge:'all_rounder',  min:1, rarity:'epic' },
-    { id:'daily_hero',  name:'오늘의 주인공',     badge:'daily_win',    min:1, rarity:'rare' },
-    { id:'summit',      name:'정상에 선 자',      badge:'top1',         min:1, rarity:'rare' },
-    { id:'veteran',     name:'백전노장',          badge:'pvp_10',       min:1, rarity:'rare' },
-    { id:'duelist',     name:'결투의 달인',       badge:'duel_3',       min:1, rarity:'rare' },
-    { id:'hunter',      name:'보스 사냥꾼',       badge:'raid_kill',    min:1, rarity:'rare' },
-    { id:'attendance',  name:'개근상 수상자',     badge:'streak5',      min:1, rarity:'rare' },
-    { id:'regular',     name:'챌린지 단골손님',   badge:'daily_5',      min:1, rarity:'rare' },
-    { id:'explorer',    name:'오락실 탐험가',     badge:'explorer',     min:1, rarity:'common' },
-    { id:'steady',      name:'꾸준함의 아이콘',   badge:'streak3',      min:1, rarity:'common' },
-    { id:'lunch',       name:'점심시간 사냥꾼',   badge:'lunch',        min:1, rarity:'common' },
-    { id:'night',       name:'야근 요정',         badge:'night_owl',    min:1, rarity:'common' },
-    { id:'coin',        name:'동전 넣은 자',      badge:'first_coin',   min:1, rarity:'common' },
-    { id:'rookie',      name:'수습 게이머',       badge:null,           min:1, rarity:'common' },
-    /* ---- 히든 칭호: 조건은 비공개, hint 만 보여줌 (판정은 서버 23번 섹션) ---- */
-    { id:'x_100',        name:'일은 언제 하세요?', badge:'h_100',        min:1, rarity:'legend', hidden:true, hint:'하루를 통째로 오락실에 바친다면' },
-    { id:'x_oneman',     name:'원맨 레이드',       badge:'h_oneman',     min:1, rarity:'legend', hidden:true, hint:'팀 보스를 거의 혼자서' },
-    { id:'x_lastchance', name:'삼세판의 기적',     badge:'h_lastchance', min:1, rarity:'legend', hidden:true, hint:'마지막 기회에서 뒤집기' },
-    { id:'x_777',        name:'럭키 세븐',         badge:'h_777',        min:1, rarity:'epic',   hidden:true, hint:'행운의 숫자를 노려보세요' },
-    { id:'x_dejavu',     name:'데자뷰',            badge:'h_dejavu',     min:1, rarity:'epic',   hidden:true, hint:'어디서 본 듯한 점수…' },
-    { id:'x_photo',      name:'간발의 차',         badge:'h_photo',      min:1, rarity:'epic',   hidden:true, hint:'아슬아슬하게 넘어서면' },
-    { id:'x_3am',        name:'새벽 3시의 유령',   badge:'h_3am',        min:1, rarity:'epic',   hidden:true, hint:'모두가 잠든 시간' },
-    { id:'x_second',     name:'영원한 2인자',      badge:'h_second',     min:1, rarity:'epic',   hidden:true, hint:'1등은 아니지만 늘 그 근처' },
-    { id:'x_one',        name:'1점의 미학',        badge:'h_one',        min:1, rarity:'rare',   hidden:true, hint:'가끔은 내려놓는 것도 기록이에요' },
-    { id:'x_palin',      name:'데칼코마니',        badge:'h_palin',      min:1, rarity:'rare',   hidden:true, hint:'앞으로 읽어도 뒤로 읽어도' },
-    { id:'x_grind',      name:'한 우물 장인',      badge:'h_grind',      min:1, rarity:'rare',   hidden:true, hint:'하루에 한 게임만 판다면' },
-    { id:'x_friday',     name:'퇴근 거부자',       badge:'h_friday',     min:1, rarity:'rare',   hidden:true, hint:'불금인데 아직도 사무실?' },
-    { id:'x_nick',       name:'정체성 혼란',       badge:'h_nick',       min:1, rarity:'rare',   hidden:true, hint:'나는 누구인가' },
-    { id:'x_chat',       name:'오락실 아나운서',   badge:'h_chat',       min:1, rarity:'rare',   hidden:true, hint:'게임보다 말이 많다면' },
-    { id:'x_weekend',    name:'주말 출근러',       badge:'h_weekend',    min:1, rarity:'common', hidden:true, hint:'쉬는 날에도…' }
-  ];
-  const TITLE_BY_ID = {};
-  TITLES.forEach(function(t){ TITLE_BY_ID[t.id] = t; });
-  const RARITY_LABEL = { legend:'전설', epic:'에픽', rare:'레어', common:'일반' };
-  let titleMap = {};   // player_id -> title id
-
-  async function loadTitles(){
-    try{
-      const { data, error } = await sb.from('players').select('id, title').not('title', 'is', null);
-      if(error || !data) return;
-      const m = {};
-      data.forEach(function(r){ if(TITLE_BY_ID[r.title]) m[r.id] = r.title; });
-      titleMap = m;
-      updatePlayerBadge();
-    }catch(e){ /* 22번 SQL 실행 전이면 조용히 무시 */ }
-  }
-  function titleHtml(pid){
-    const t = pid && TITLE_BY_ID[titleMap[pid]];
-    return t ? '<span class="ttl r-'+t.rarity+'" title="'+RARITY_LABEL[t.rarity]+' 칭호">'+escapeHtml(t.name)+'</span>' : '';
-  }
-  function titleUnlocked(t, owned){
-    if(!t.badge) return true;
-    const b = owned[t.badge];
-    return !!(b && (b.cnt || 1) >= t.min);
-  }
-  function titleCondText(t){
-    if(!t.badge) return '누구나 사용 가능';
-    const b = BADGE_BY_ID[t.badge];
-    return (b ? b.icon + ' ' + b.name : t.badge) + ' 뱃지' + (t.min > 1 ? ' ' + t.min + '회' : '') + ' 획득 시';
-  }
-  let badgeModalOwned = {}, badgeModalPid = null, badgeModalTab = 'badges';
-  function renderTitleTab(){
-    const grid = document.getElementById('title-grid');
-    const isMe = badgeModalPid === playerId;
-    const cur = titleMap[badgeModalPid] || '';
-    const list = TITLES.map(function(t){ return { t:t, ok:titleUnlocked(t, badgeModalOwned) }; })
-      .filter(function(x){ return isMe || x.ok; })
-      .sort(function(a,b){ return (b.ok - a.ok) || ((a.t.hidden ? 1 : 0) - (b.t.hidden ? 1 : 0)); });
-    const opened = TITLES.filter(function(t){ return !t.hidden && titleUnlocked(t, badgeModalOwned); }).length;
-    const hiddenAll = TITLES.filter(function(t){ return t.hidden; });
-    const hiddenOpened = hiddenAll.filter(function(t){ return titleUnlocked(t, badgeModalOwned); }).length;
-    document.getElementById('badge-summary').innerHTML = '열린 칭호 <b>'+opened+'</b> / '+(TITLES.length - hiddenAll.length) +
-      ' · 🕵️ 히든 <b>'+hiddenOpened+'</b> / '+hiddenAll.length + (cur ? ' · 장착 중 ' + titleHtml(badgeModalPid) : '');
-    grid.innerHTML = list.map(function(x){
-      const t = x.t, eq = cur === t.id;
-      const btn = !isMe ? '' : (eq ? '<button type="button" class="off" data-title-set="">해제</button>'
-        : (x.ok ? '<button type="button" data-title-set="'+t.id+'">장착</button>' : ''));
-      const secret = t.hidden && !x.ok;
-      const nameHtml = secret ? '<span class="ttl r-'+t.rarity+'">???</span>' : '<span class="ttl r-'+t.rarity+'">'+escapeHtml(t.name)+'</span>';
-      const tag = '<span style="font-size:10px;color:var(--text-dim)">'+(t.hidden ? '🕵️ 히든 · ' : '')+RARITY_LABEL[t.rarity]+'</span>';
-      const cond = x.ok ? (eq ? '장착 중' : (t.hidden ? '발견! · 사용 가능' : '사용 가능')) : (secret ? '💭 ' + escapeHtml(t.hint || '') : '🔒 ' + titleCondText(t));
-      return '<div class="title-row'+(eq ? ' equipped' : '')+(x.ok ? '' : ' locked')+(t.hidden ? ' hidden-title' : '')+'"><div class="tr-main">'+nameHtml+' '+tag+'<div class="tr-cond">'+cond+'</div></div>'+btn+'</div>';
-    }).join('') || '<p class="lb-empty">아직 열린 칭호가 없어요</p>';
-  }
-  function setBadgeModalTab(tab){
-    badgeModalTab = tab;
-    document.querySelectorAll('[data-badge-tab]').forEach(function(b){ b.classList.toggle('active', b.dataset.badgeTab === tab); });
-    document.getElementById('badge-grid').style.display = tab === 'badges' ? '' : 'none';
-    document.getElementById('title-grid').style.display = tab === 'titles' ? '' : 'none';
-    if(tab === 'titles') renderTitleTab(); else if(badgeModalSummaryHtml) document.getElementById('badge-summary').innerHTML = badgeModalSummaryHtml;
-  }
-  let badgeModalSummaryHtml = '';
-  document.querySelectorAll('[data-badge-tab]').forEach(function(b){ b.addEventListener('click', function(){ setBadgeModalTab(b.dataset.badgeTab); }); });
-  document.getElementById('title-grid').addEventListener('click', async function(e){
-    const btn = e.target.closest('[data-title-set]');
-    if(!btn || !playerCode) return;
-    const id = btn.dataset.titleSet;
-    btn.disabled = true;
-    try{
-      const ok = await arcadeRpc('arcade_set_title', { p_code: playerCode, p_title: id });
-      if(ok){
-        if(id) titleMap[playerId] = id; else delete titleMap[playerId];
-        updatePlayerBadge(); renderTitleTab(); renderRoster(); renderDailyPanel();
-        showToast(id ? '🎖️ 칭호 ' + titleHtml(playerId) + '장착 완료!' : '칭호를 해제했어요', null, null, 4000);
-      }else{
-        showToast('😅 아직 열리지 않은 칭호예요'); btn.disabled = false;
-      }
-    }catch(err){ showToast('😅 칭호를 바꾸지 못했어요 (최신 SQL 22번 섹션 실행 여부 확인)'); btn.disabled = false; }
-  });
-
   /* ============ 허브 실시간 채팅 + 접속자 ============ */
   const CHAT_MAX_LOG = 150;
   let chatDbChannel = null, chatPresenceChannel = null, chatSeenIds = new Set(), chatLastSendAt = 0, chatTrackedPid = null;
@@ -3838,7 +2712,7 @@
   function chatMsgHtml(m){
     const mine = m.player_id && m.player_id === playerId;
     return '<div class="chat-msg'+(mine?' mine':'')+'" data-id="'+escapeHtml(String(m.id))+'" style="--chip-color:'+escapeHtml(chatTeamColor(m.team))+'">'
-      + '<span class="chat-nick">'+titleHtml(m.player_id)+escapeHtml(m.nickname || '???')+'</span>'
+      + '<span class="chat-nick">'+escapeHtml(m.nickname || '???')+'</span>'
       + '<span class="chat-text">'+escapeHtml(m.content)+'</span>'
       + '<span class="chat-time">'+chatTimeLabel(m.created_at)+'</span>'
       + (adminAuthUser ? '<button type="button" class="chat-del" data-id="'+escapeHtml(String(m.id))+'" aria-label="삭제">✕</button>' : '')
@@ -3898,7 +2772,7 @@
     });
     cntEl.textContent = String(users.length);
     listEl.innerHTML = users.map(function(u){
-      return '<span class="online-chip'+(u.playerId===playerId?' mine':'')+'" style="--chip-color:'+escapeHtml(chatTeamColor(u.team))+'"><span class="dot"></span>'+titleHtml(u.playerId)+escapeHtml(u.nickname || '???')+'</span>';
+      return '<span class="online-chip'+(u.playerId===playerId?' mine':'')+'" style="--chip-color:'+escapeHtml(chatTeamColor(u.team))+'"><span class="dot"></span>'+escapeHtml(u.nickname || '???')+'</span>';
     }).join('');
   }
   function stopHubChat(){
@@ -3971,8 +2845,6 @@
     }
     loadMyBest(game);
     renderTeamBattle();
-    appendDailyResult(game, overlay);
-    appendRaidResult(overlay);
   }
 
   /* ============ screen management ============ */
@@ -4070,11 +2942,7 @@
     if(currentScreen === 'sidesort' && sidesortState){ stopSidesortLoop(); }
     if(currentScreen === 'spintail' && spintailState){ stopSpintailLoop(); }
     if(currentScreen === 'colorspot'){ stopColorspotTimer(); }
-    if(currentScreen === 'anipop' && anipopState){
-      stopAnipopTimer();
-      if(anipopState.running && !anipopState.over && anipopState.score > 0) submitScore('anipop', anipopState.score);
-      anipopState.running = false; anipopState.over = true;
-    }
+    if(currentScreen === 'popmatch'){ stopPopmatchTimer(); }
     currentScreen = id;
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + id).classList.add('active');
@@ -4086,15 +2954,7 @@
       startHubChat();
       initCabinetLeaderSlots();
       renderCabinetLeaders();
-      renderDaily();
-      feedShow(0, false);
-      loadSeasonMeta();
-      loadAllBadges().then(function(){ renderRoster(); renderDailyPanel(); });
-      renderRaid();
-      refreshDuelCount();
-      loadTitles().then(function(){ renderRoster(); renderDailyPanel(); });
     }
-    updateDailyIngameBadge();
     if(id === 'snake') prepareSnake();
     if(id === 'tetris') prepareTetris();
     if(id === 'shisen') prepareShisen();
@@ -4124,7 +2984,7 @@
     if(id === 'sidesort') prepareSidesort();
     if(id === 'spintail') prepareSpintail();
     if(id === 'colorspot') prepareColorspot();
-    if(id === 'anipop') prepareAnipop();
+    if(id === 'popmatch') preparePopmatch();
     if(id === 'subwayrace') prepareSubway();
     if(id === 'admin') prepareAdmin();
   }
@@ -4140,18 +3000,13 @@
     const descEl = cabinetBtn ? cabinetBtn.querySelector('.cabinet-sub') : null;
     document.getElementById('game-info-desc').textContent = descEl ? descEl.textContent : '';
     document.getElementById('game-info-ranklist').innerHTML = '<li class="lb-empty">불러오는 중...</li>';
-    document.getElementById('game-info-duel-hint').textContent = '';
     const hofEl = document.getElementById('game-info-hof');
     document.getElementById('game-info-hof-text').textContent = '불러오는 중...';
     hofEl.classList.add('empty');
     modal.classList.remove('hidden');
     const [board, hof] = await Promise.all([fetchLeaderboard(gameId), fetchHallOfFame(gameId)]);
     if(modal.dataset.currentGame === gameId){
-      const duelable = DUEL_GAMES.indexOf(gameId) !== -1;
-      const rl = document.getElementById('game-info-ranklist');
-      rl.classList.toggle('duelable', duelable);
-      rl.innerHTML = renderBoardHtml(board, duelable ? gameId : null);
-      document.getElementById('game-info-duel-hint').textContent = duelable && board.some(function(e){ return e.playerId !== playerId; }) ? '⚔️ 를 누르면 그 사람 기록에 도전장을 보내요 · 48시간 안에 넘으면 승리' : '';
+      document.getElementById('game-info-ranklist').innerHTML = renderBoardHtml(board);
       const hofTextEl = document.getElementById('game-info-hof-text');
       if(hof){
         hofTextEl.textContent = hof.nickname + ' · ' + hof.score + '점';
@@ -4649,7 +3504,6 @@
       mismatches:0, shuffles:0, hints:0,
       startTime:0, elapsed:0, timerId:null, running:false, over:false
     };
-    if(!shisenHasMove()) shisenReshuffleTiles();   // 시작 판에 이을 수 있는 패가 없으면 다시 섞기
     renderShisenBoard();
     document.getElementById('shisen-progress').textContent = '0/' + shisenState.total;
     document.getElementById('shisen-time').textContent = '00:00';
@@ -4763,54 +3617,40 @@
       if(s.matched >= s.total){
         finishShisen();
       }else if(!shisenHasMove()){
-        // 이동 가능한 조합이 없으면 자동으로 섞기 (점수 감점 없음)
-        shisenAutoShuffle();
+        // 이동 불가 → 자동으로 한 번 섞기 (점수 감점 없음)
+        shuffleShisen(true);
       }
     }else{
-      // 매칭 실패: 첫 번째로 고른 패는 선택 상태를 그대로 유지하고, 두 번째 패만 흔들어 표시
-      // (첫 패를 해제하려면 같은 패를 한 번 더 누르면 됨)
+      // 연결 불가: 이전 선택은 해제하고, 새로 누른 패를 선택 상태로 유지
       s.mismatches++;
-      btn.classList.remove('shake'); void btn.offsetWidth;
-      btn.classList.add('shake');
-      setTimeout(function(){ btn.classList.remove('shake'); }, 300);
+      if(prevBtn) prevBtn.classList.remove('selected');
+      s.selected = { r:r, c:c };
+      btn.classList.add('selected');
     }
   }
 
-  /* 남은 패를 섞되, 최소 한 쌍은 연결 가능한 배치가 나올 때까지 다시 섞는다 */
-  function shisenReshuffleTiles(){
+  function shuffleShisen(auto){
     const s = shisenState;
+    if(!s) return;
+    auto = (auto === true);
     const positions = [], values = [];
     for(let r=0;r<s.rows;r++) for(let c=0;c<s.cols;c++) if(s.board[r][c]){ positions.push({r:r,c:c}); values.push(s.board[r][c]); }
-    if(values.length < 2) return;
-    for(let tries=0; tries<200; tries++){
+    // 섞은 뒤에 반드시 연결 가능한 쌍이 있도록 (최대 200회 시도)
+    for(let attempt=0; attempt<200; attempt++){
       for(let i=values.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=values[i]; values[i]=values[j]; values[j]=t; }
       positions.forEach(function(p,i){ s.board[p.r][p.c] = values[i]; });
-      if(shisenHasMove()) return;
+      if(shisenHasMove()) break;
     }
-    // 200번 안에 못 찾으면(극히 드묾) 같은 그림 두 장을 서로 붙여 강제로 길을 만든다
-    const a = positions[0], b = positions[1];
-    const v = s.board[a.r][a.c];
-    const twin = positions.slice(1).find(function(p){ return s.board[p.r][p.c] === v; });
-    if(twin){ const t = s.board[b.r][b.c]; s.board[b.r][b.c] = v; s.board[twin.r][twin.c] = t; }
-  }
-  function shisenAutoShuffle(){
-    const s = shisenState;
-    if(!s) return;
-    shisenReshuffleTiles();
+    if(!auto) s.shuffles++;
     s.selected = null;
     renderShisenBoard();
-    const el = document.getElementById('shisen-board');
-    el.classList.remove('auto-shuffled'); void el.offsetWidth; el.classList.add('auto-shuffled');
-    if(typeof showToast === 'function') showToast('🔀 이을 수 있는 패가 없어서 자동으로 섞었어요 (감점 없음)', null, null, 3500);
-  }
-
-  function shuffleShisen(){
-    const s = shisenState;
-    if(!s) return;
-    shisenReshuffleTiles();
-    s.shuffles++;
-    s.selected = null;
-    renderShisenBoard();
+    if(auto){
+      const sb2 = document.getElementById('shisen-shuffle-btn');
+      if(sb2){
+        sb2.textContent = '🔀 이동 불가로 자동 섞음!';
+        setTimeout(function(){ sb2.textContent = '🔀 섞기'; }, 1800);
+      }
+    }
     if(s.over) return;
     const overlay = document.getElementById('shisen-overlay');
     if(!overlay.classList.contains('hidden')){
@@ -4865,7 +3705,7 @@
     if(shisenState.over) prepareShisen();
     startShisen();
   });
-  document.getElementById('shisen-shuffle-btn').addEventListener('click', shuffleShisen);
+  document.getElementById('shisen-shuffle-btn').addEventListener('click', function(){ shuffleShisen(false); });
   document.getElementById('shisen-hint-btn').addEventListener('click', hintShisen);
 
   function handleShisenKey(e){
@@ -9992,393 +8832,218 @@
     startColorspot();
   });
 
+  /* ============ POPMATCH (3매치 퍼즐) ============ */
+  const PM_N = 8, PM_TIME = 60, PM_MAX_TIME = 90;
+  const PM_TYPES = ['🍎','🍊','🍋','🍇','🍓','🥝'];
+  let popmatchState = null, pmTimer = null;
 
-  /* ============================================================
-     ANIPOP (3매치 퍼즐) — 이웃한 동물을 바꿔 3개 이상 맞추기, 60초
-     특수 블록: 4개 일렬 → 줄 폭탄(h: 가로줄 / v: 세로줄), 5개 이상 또는 ㄱ·T자 → 💣폭탄
-     💣는 아무 동물과 바꾸면 그 동물을 판에서 전부 제거, 💣끼리 바꾸면 판 전체 제거
-  ============================================================= */
-  const AP_N = 7, AP_TIME = 60;
-  const AP_TYPES = ['🐶','🐱','🐰','🐻','🐼','🐸'];
-  let anipopState = null, apTimer = null, apIdSeq = 0;
+  function pmSleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+  function stopPopmatchTimer(){ if(pmTimer){ clearInterval(pmTimer); pmTimer = null; } }
+  function pmRand(){ return Math.floor(Math.random() * PM_TYPES.length); }
 
-  function apSleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
-  function apNew(t){ return { id:++apIdSeq, t:(t == null ? Math.floor(Math.random()*AP_TYPES.length) : t), sp:null }; }
-  function stopAnipopTimer(){ if(apTimer){ clearInterval(apTimer); apTimer = null; } }
-
-  function apRunAt(g, r, c){
-    const t = g[r][c] && g[r][c].t; if(t == null || t < 0) return false;
-    let n = 1, i;
-    for(i=c-1; i>=0 && g[r][i] && g[r][i].t===t; i--) n++;
-    for(i=c+1; i<AP_N && g[r][i] && g[r][i].t===t; i++) n++;
-    if(n >= 3) return true;
-    n = 1;
-    for(i=r-1; i>=0 && g[i][c] && g[i][c].t===t; i--) n++;
-    for(i=r+1; i<AP_N && g[i][c] && g[i][c].t===t; i++) n++;
-    return n >= 3;
-  }
-  /* 가능한 이동 하나 찾기 (없으면 null) */
-  function apFindMove(g){
-    for(let r=0;r<AP_N;r++) for(let c=0;c<AP_N;c++){
-      if(g[r][c].sp === 'b') return [[r,c],[r, c+1 < AP_N ? c+1 : c-1]];
-      const dirs = [[0,1],[1,0]];
-      for(const d of dirs){
-        const r2 = r+d[0], c2 = c+d[1];
-        if(r2>=AP_N || c2>=AP_N) continue;
-        const a = g[r][c]; g[r][c] = g[r2][c2]; g[r2][c2] = a;
-        const ok = apRunAt(g, r, c) || apRunAt(g, r2, c2);
-        g[r2][c2] = g[r][c]; g[r][c] = a;
-        if(ok) return [[r,c],[r2,c2]];
+  function pmFindMatches(b){
+    const out = new Set();
+    for(let r = 0; r < PM_N; r++){
+      let run = 1;
+      for(let c = 1; c <= PM_N; c++){
+        if(c < PM_N && b[r*PM_N+c] !== -1 && b[r*PM_N+c] === b[r*PM_N+c-1]) run++;
+        else{
+          if(run >= 3) for(let k = 1; k <= run; k++) out.add(r*PM_N + c - k);
+          run = 1;
+        }
       }
     }
-    return null;
-  }
-  function apFillNoMatch(g, keepSpecial){
-    for(let r=0;r<AP_N;r++) for(let c=0;c<AP_N;c++){
-      if(keepSpecial && g[r][c] && g[r][c].sp) continue;
-      let t, guard = 0;
-      do{ t = Math.floor(Math.random()*AP_TYPES.length); guard++; }
-      while(guard < 30 && ((c>=2 && g[r][c-1] && g[r][c-2] && g[r][c-1].t===t && g[r][c-2].t===t) ||
-                           (r>=2 && g[r-1][c] && g[r-2][c] && g[r-1][c].t===t && g[r-2][c].t===t)));
-      if(keepSpecial && g[r][c]) g[r][c].t = t; else g[r][c] = apNew(t);
-    }
-  }
-  function apGenBoard(){
-    for(let tries=0; tries<100; tries++){
-      const g = [];
-      for(let r=0;r<AP_N;r++){ g.push(new Array(AP_N).fill(null)); }
-      apFillNoMatch(g, false);
-      if(apFindMove(g)) return g;
-    }
-    const g = []; for(let r=0;r<AP_N;r++){ g.push(new Array(AP_N).fill(null)); } apFillNoMatch(g, false); return g;
-  }
-
-  /* ---------- 렌더링: 칸마다 div 하나, 위치는 % 좌표 + CSS transition 으로 이동/낙하 ---------- */
-  function apCellPct(i){ return (i * 100 / AP_N) + '%'; }
-  function apRender(){
-    const s = anipopState, board = document.getElementById('anipop-board');
-    const seen = {};
-    s.pos = {};
-    for(let r=0;r<AP_N;r++) for(let c=0;c<AP_N;c++){
-      const cell = s.g[r][c]; if(!cell) continue;
-      seen[cell.id] = true;
-      s.pos[cell.id] = [r, c];
-      let el = s.els[cell.id];
-      if(!el){
-        el = document.createElement('div');
-        el.className = 'ap-tile';
-        el.dataset.id = cell.id;
-        el.style.width = el.style.height = (100 / AP_N) + '%';
-        el.innerHTML = '<div class="ap-in"></div>';
-        el.style.left = apCellPct(c);
-        el.style.top = apCellPct(cell.from != null ? cell.from : r);
-        board.appendChild(el);
-        s.els[cell.id] = el;
-        void el.offsetWidth;   // 시작 위치를 먼저 그린 뒤 목적지로 이동 (낙하 애니메이션)
+    for(let c = 0; c < PM_N; c++){
+      let run = 1;
+      for(let r = 1; r <= PM_N; r++){
+        if(r < PM_N && b[r*PM_N+c] !== -1 && b[r*PM_N+c] === b[(r-1)*PM_N+c]) run++;
+        else{
+          if(run >= 3) for(let k = 1; k <= run; k++) out.add((r-k)*PM_N + c);
+          run = 1;
+        }
       }
-      delete cell.from;
-      el.firstChild.textContent = cell.sp === 'b' ? '💣' : AP_TYPES[cell.t];
-      el.classList.toggle('sp-h', cell.sp === 'h');
-      el.classList.toggle('sp-v', cell.sp === 'v');
-      el.classList.toggle('sp-b', cell.sp === 'b');
-      el.style.left = apCellPct(c);
-      el.style.top = apCellPct(r);
     }
-    Object.keys(s.els).forEach(function(id){
-      if(!seen[id]){ s.els[id].remove(); delete s.els[id]; }
-    });
+    return out;
   }
-  function apHud(){
-    const s = anipopState; if(!s) return;
-    document.getElementById('anipop-score').textContent = s.score;
-    document.getElementById('anipop-combo').textContent = s.combo;
+  function pmSwapIdx(b, i, j){ const t = b[i]; b[i] = b[j]; b[j] = t; }
+  function pmHasMove(b){
+    for(let r = 0; r < PM_N; r++){
+      for(let c = 0; c < PM_N; c++){
+        const i = r*PM_N + c;
+        const nbrs = [];
+        if(c < PM_N-1) nbrs.push(i+1);
+        if(r < PM_N-1) nbrs.push(i+PM_N);
+        for(let k = 0; k < nbrs.length; k++){
+          pmSwapIdx(b, i, nbrs[k]);
+          const ok = pmFindMatches(b).size > 0;
+          pmSwapIdx(b, i, nbrs[k]);
+          if(ok) return true;
+        }
+      }
+    }
+    return false;
   }
-  function apShowCombo(text){
-    const el = document.getElementById('anipop-combo-pop');
-    el.textContent = text;
-    el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+  function pmNewBoard(){
+    for(;;){
+      const b = new Array(PM_N*PM_N);
+      for(let i = 0; i < b.length; i++){
+        let t;
+        do{ t = pmRand(); }while(
+          (i % PM_N >= 2 && b[i-1] === t && b[i-2] === t) ||
+          (i >= PM_N*2 && b[i-PM_N] === t && b[i-PM_N*2] === t)
+        );
+        b[i] = t;
+      }
+      if(pmHasMove(b)) return b;
+    }
   }
-
-  function prepareAnipop(){
-    stopAnipopTimer();
-    const board = document.getElementById('anipop-board');
-    board.querySelectorAll('.ap-tile').forEach(function(el){ el.remove(); });
-    anipopState = { g:apGenBoard(), els:{}, pos:{}, score:0, combo:0, maxCombo:0, lastMatchAt:0,
-                    running:false, over:false, busy:false, deadline:0, timeUp:false, sel:null, lastInputAt:0 };
-    apRender();
-    apHud();
-    document.getElementById('anipop-time').textContent = AP_TIME;
-    const bar = document.getElementById('anipop-bar'); bar.style.width = '100%'; bar.classList.remove('low');
-    loadMyBest('anipop');
-    const overlay = document.getElementById('anipop-overlay');
+  function pmRender(){
+    const s = popmatchState; if(!s) return;
+    const board = document.getElementById('popmatch-board');
+    if(board.children.length !== PM_N*PM_N){
+      let h = '';
+      for(let i = 0; i < PM_N*PM_N; i++) h += '<div class="pm-cell" data-i="'+i+'"></div>';
+      board.innerHTML = h;
+    }
+    for(let i = 0; i < s.board.length; i++){
+      const el = board.children[i];
+      el.textContent = s.board[i] >= 0 ? PM_TYPES[s.board[i]] : '';
+      el.className = 'pm-cell' + (i === s.sel ? ' sel' : '');
+    }
+    document.getElementById('popmatch-score').textContent = s.score;
+  }
+  function preparePopmatch(){
+    stopPopmatchTimer();
+    popmatchState = { board: pmNewBoard(), score:0, running:false, over:false, busy:false, sel:-1, deadline:0, drag:null };
+    document.getElementById('popmatch-board').innerHTML = '';
+    pmRender();
+    document.getElementById('popmatch-time').textContent = PM_TIME;
+    document.getElementById('popmatch-combo').textContent = '';
+    const bar = document.getElementById('popmatch-bar');
+    bar.style.width = '100%'; bar.classList.remove('low');
+    loadMyBest('popmatch');
+    const overlay = document.getElementById('popmatch-overlay');
     overlay.classList.remove('hidden');
-    overlay.querySelector('.overlay-title').textContent = 'ANIPOP';
-    overlay.querySelector('.overlay-msg').textContent = '같은 동물 3마리를 맞춰 터뜨리세요!';
+    overlay.querySelector('.overlay-title').textContent = 'POPMATCH';
+    overlay.querySelector('.overlay-msg').textContent = '같은 과일 3개 이상을 맞춰 터뜨리세요!';
   }
-  function startAnipop(){
-    const s = anipopState;
-    if(!s || s.running) return;
-    s.running = true; s.over = false; s.timeUp = false;
-    s.deadline = performance.now() + AP_TIME * 1000;
-    s.lastInputAt = performance.now();
-    document.getElementById('anipop-overlay').classList.add('hidden');
-    stopAnipopTimer();
-    apTimer = setInterval(apTick, 100);
+  function startPopmatch(){
+    const s = popmatchState; if(!s || s.running) return;
+    s.running = true; s.over = false;
+    s.deadline = Date.now() + PM_TIME*1000;
+    document.getElementById('popmatch-overlay').classList.add('hidden');
+    stopPopmatchTimer();
+    pmTimer = setInterval(pmTick, 200);
   }
-  function apTick(){
-    const s = anipopState; if(!s || !s.running) return;
-    const left = Math.max(0, s.deadline - performance.now());
-    document.getElementById('anipop-time').textContent = Math.ceil(left / 1000);
-    const bar = document.getElementById('anipop-bar');
-    bar.style.width = (left / (AP_TIME * 1000) * 100) + '%';
+  function pmTick(){
+    const s = popmatchState; if(!s || !s.running) return;
+    const left = Math.max(0, s.deadline - Date.now());
+    document.getElementById('popmatch-time').textContent = Math.ceil(left/1000);
+    const bar = document.getElementById('popmatch-bar');
+    bar.style.width = Math.min(100, left/(PM_TIME*1000)*100) + '%';
     bar.classList.toggle('low', left < 10000);
-    if(performance.now() - s.lastMatchAt > 2500 && s.combo > 0 && !s.busy){ s.combo = 0; apHud(); }   // 2.5초 안에 못 맞추면 콤보 끊김
-    if(!s.busy && performance.now() - s.lastInputAt > 6000){ apShowHint(); s.lastInputAt = performance.now(); }
-    if(left <= 0 && !s.timeUp){
-      s.timeUp = true;
-      if(!s.busy) endAnipop();
-    }
+    if(left <= 0) endPopmatch();
   }
-  function apShowHint(){
-    const s = anipopState, m = apFindMove(s.g); if(!m) return;
-    m.forEach(function(p){
-      const cell = s.g[p[0]][p[1]]; const el = cell && s.els[cell.id];
-      if(el){ el.classList.remove('hint'); void el.offsetWidth; el.classList.add('hint'); setTimeout(function(){ el.classList.remove('hint'); }, 2200); }
-    });
-  }
-
-  /* 매치 찾기: 가로/세로 3개 이상 연속 구간 */
-  function apFindRuns(g){
-    const runs = [];
-    for(let r=0;r<AP_N;r++){
-      let c = 0;
-      while(c < AP_N){
-        const t = g[r][c] ? g[r][c].t : -1; let e = c + 1;
-        while(e < AP_N && t >= 0 && g[r][e] && g[r][e].t === t) e++;
-        if(t >= 0 && e - c >= 3){ const cells = []; for(let i=c;i<e;i++) cells.push([r,i]); runs.push({ dir:'h', cells:cells }); }
-        c = e;
-      }
-    }
-    for(let c=0;c<AP_N;c++){
-      let r = 0;
-      while(r < AP_N){
-        const t = g[r][c] ? g[r][c].t : -1; let e = r + 1;
-        while(e < AP_N && t >= 0 && g[e][c] && g[e][c].t === t) e++;
-        if(t >= 0 && e - r >= 3){ const cells = []; for(let i=r;i<e;i++) cells.push([i,c]); runs.push({ dir:'v', cells:cells }); }
-        r = e;
-      }
-    }
-    return runs;
-  }
-  function apKey(r, c){ return r * AP_N + c; }
-
-  /* 지울 칸 집합에 특수 블록 효과를 연쇄 적용 */
-  function apExpand(g, clear, keep){
-    const queue = Array.from(clear);
-    const done = {};
-    while(queue.length){
-      const k = queue.shift();
-      if(done[k]) continue; done[k] = true;
-      const r = Math.floor(k / AP_N), c = k % AP_N, cell = g[r][c];
-      if(!cell || !cell.sp || keep[k]) continue;
-      const add = [];
-      if(cell.sp === 'h') for(let i=0;i<AP_N;i++) add.push(apKey(r, i));
-      if(cell.sp === 'v') for(let i=0;i<AP_N;i++) add.push(apKey(i, c));
-      if(cell.sp === 'b') for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){ const rr=r+dr, cc=c+dc; if(rr>=0&&rr<AP_N&&cc>=0&&cc<AP_N) add.push(apKey(rr, cc)); }
-      add.forEach(function(x){ if(!keep[x] && !clear.has(x)){ clear.add(x); queue.push(x); } });
-    }
-  }
-
-  async function apClearAndDrop(clear, s){
-    if(anipopState !== s) return false;
-    const g = s.g;
-    // 점수: 칸당 10점 × 콤보 배수
-    const now = performance.now();
-    s.combo = (now - s.lastMatchAt <= 2500) ? s.combo + 1 : 1;
-    s.lastMatchAt = now;
-    s.maxCombo = Math.max(s.maxCombo, s.combo);
-    const mult = Math.min(4, 1 + Math.floor((s.combo - 1) / 3) * 0.5);
-    s.score += Math.round(clear.size * 10 * mult);
-    apHud();
-    if(s.combo >= 2) apShowCombo(s.combo + ' COMBO' + (mult > 1 ? ' ×' + mult : ''));
-    clear.forEach(function(k){
-      const r = Math.floor(k / AP_N), c = k % AP_N, cell = g[r][c];
-      if(cell && s.els[cell.id]) s.els[cell.id].classList.add('pop');
-    });
-    await apSleep(170);
-    if(anipopState !== s) return false;   // 그사이 게임을 나갔거나 새로 시작함
-    clear.forEach(function(k){ g[Math.floor(k / AP_N)][k % AP_N] = null; });
-    // 아래로 떨어뜨리고 위에서 새 동물 채우기
-    for(let c=0;c<AP_N;c++){
-      let write = AP_N - 1;
-      for(let r=AP_N-1;r>=0;r--){ if(g[r][c]){ g[write][c] = g[r][c]; if(write !== r) g[r][c] = null; write--; } }
-      const missing = write + 1;
-      for(let r=write;r>=0;r--){ const n = apNew(); n.from = r - missing; g[r][c] = n; }
-    }
-    apRender();
-    await apSleep(250);
-    return anipopState === s;
-  }
-
-  /* 매치가 없어질 때까지 반복 (연쇄). pref = 방금 옮긴 칸들 (특수 블록 생성 위치 우선) */
-  async function apResolve(pref, s){
-    if(anipopState !== s) return false;
-    const g = s.g;
-    let any = false;
-    for(let loop=0; loop<40; loop++){
-      const runs = apFindRuns(g);
-      if(!runs.length) break;
-      any = true;
-      const clear = new Set(), keep = {}, spawn = [];
-      const hitCount = {};
-      runs.forEach(function(run){ run.cells.forEach(function(p){ const k = apKey(p[0], p[1]); clear.add(k); hitCount[k] = (hitCount[k] || 0) + 1; }); });
-      // ㄱ·T자(가로·세로가 겹치는 칸) → 💣
-      Object.keys(hitCount).forEach(function(k){ if(hitCount[k] >= 2){ spawn.push({ k:Number(k), sp:'b' }); } });
-      runs.forEach(function(run){
-        if(run.cells.some(function(p){ return hitCount[apKey(p[0], p[1])] >= 2; })) return;
-        if(run.cells.length < 4) return;
-        let at = run.cells.find(function(p){ return pref && pref.some(function(q){ return q[0] === p[0] && q[1] === p[1]; }); }) || run.cells[1];
-        spawn.push({ k:apKey(at[0], at[1]), sp: run.cells.length >= 5 ? 'b' : run.dir });
-      });
-      spawn.forEach(function(sp){ keep[sp.k] = true; });
-      apExpand(g, clear, keep);
-      spawn.forEach(function(sp){
-        clear.delete(sp.k);
-        const r = Math.floor(sp.k / AP_N), c = sp.k % AP_N;
-        const old = g[r][c];
-        // 이번에 생기는 특수 블록 (그 자리에 있던 블록은 새 특수 블록으로 바뀜)
-        g[r][c] = { id:old.id, t: sp.sp === 'b' ? -1 : old.t, sp: sp.sp };
-      });
-      if(!(await apClearAndDrop(clear, s))) return any;
-      pref = null;
-    }
-    return any;
-  }
-
-  function apReshuffle(){
-    const s = anipopState, g = s.g;
-    for(let tries=0; tries<50; tries++){
-      apFillNoMatch(g, true);
-      if(apFindMove(g)) break;
-    }
-    // 새 동물로 바뀌므로 화면 요소를 다시 그림
-    Object.keys(s.els).forEach(function(id){ s.els[id].remove(); });
-    s.els = {};
-    apRender();
-    const b = document.getElementById('anipop-board');
-    b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash');
-    if(typeof showToast === 'function') showToast('🔀 맞출 수 있는 동물이 없어서 섞었어요', null, null, 2500);
-  }
-
-  async function apTrySwap(a, b){
-    const s = anipopState;
-    if(!s || !s.running || s.busy || s.over) return;
-    if(Math.abs(a[0]-b[0]) + Math.abs(a[1]-b[1]) !== 1) return;
-    s.busy = true;
-    s.lastInputAt = performance.now();
-    apSetSel(null);
-    const g = s.g, A = g[a[0]][a[1]], B = g[b[0]][b[1]];
-    g[a[0]][a[1]] = B; g[b[0]][b[1]] = A;
-    apRender();
-    await apSleep(160);
-    if(anipopState !== s) return;
-    if(A.sp === 'b' || B.sp === 'b'){
-      // 💣 + 동물: 그 동물 전부 제거 / 💣 + 💣: 판 전체 제거
-      const clear = new Set();
-      if(A.sp === 'b' && B.sp === 'b'){
-        for(let r=0;r<AP_N;r++) for(let c=0;c<AP_N;c++) clear.add(apKey(r, c));
-      }else{
-        const bombAt = A.sp === 'b' ? b : a;
-        const other = A.sp === 'b' ? B : A;
-        clear.add(apKey(bombAt[0], bombAt[1]));
-        for(let r=0;r<AP_N;r++) for(let c=0;c<AP_N;c++) if(g[r][c].t === other.t) clear.add(apKey(r, c));
-      }
-      g.forEach(function(row, r){ row.forEach(function(cell, c){ if(cell.sp === 'b' && clear.has(apKey(r, c))) cell.sp = null; }); });   // 폭탄 자신은 연쇄 3×3 대신 제거만
-      apExpand(g, clear, {});
-      if(await apClearAndDrop(clear, s)) await apResolve(null, s);
-    }else if(apRunAt(g, a[0], a[1]) || apRunAt(g, b[0], b[1])){
-      await apResolve([a, b], s);
-    }else{
-      // 매치가 안 되면 원래대로
-      g[a[0]][a[1]] = A; g[b[0]][b[1]] = B;
-      apRender();
-      await apSleep(160);
-    }
-    if(anipopState !== s) return;
-    if(!apFindMove(g)) apReshuffle();
-    s.busy = false;
-    if(s.timeUp) endAnipop();
-  }
-
-  function apSetSel(p){
-    const s = anipopState;
-    if(s.sel){ const c = s.g[s.sel[0]][s.sel[1]]; if(c && s.els[c.id]) s.els[c.id].classList.remove('sel'); }
-    s.sel = p;
-    if(p){ const c = s.g[p[0]][p[1]]; if(c && s.els[c.id]) s.els[c.id].classList.add('sel'); }
-  }
-
-  function endAnipop(){
-    const s = anipopState; if(!s || s.over) return;
+  function endPopmatch(){
+    const s = popmatchState; if(!s || s.over) return;
     s.running = false; s.over = true;
-    stopAnipopTimer();
-    // 마무리 보너스: 판에 남은 특수 블록 1개당 100점
-    let left = 0;
-    s.g.forEach(function(row){ row.forEach(function(cell){ if(cell && cell.sp) left++; }); });
-    const bonus = left * 100;
-    s.score += bonus;
-    apHud();
-    const overlay = document.getElementById('anipop-overlay');
+    stopPopmatchTimer();
+    const overlay = document.getElementById('popmatch-overlay');
     overlay.classList.remove('hidden');
-    overlay.querySelector('.overlay-title').textContent = 'TIME UP!';
-    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + (bonus ? ' (남은 특수 블록 보너스 +' + bonus + ')' : '') + ' · 최대 ' + s.maxCombo + '콤보';
-    finalizeScore('anipop', s.score, overlay);
+    overlay.querySelector('.overlay-title').textContent = 'TIME UP';
+    overlay.querySelector('.overlay-msg').textContent = '점수 ' + s.score + ' · 다시 시작하려면 버튼을 누르세요';
+    finalizeScore('popmatch', s.score, overlay);
   }
-
-  /* ---------- 입력: 드래그로 밀기 / 탭 두 번으로 바꾸기 ---------- */
-  (function(){
-    const board = document.getElementById('anipop-board');
-    let start = null;
-    function cellFromEvent(e){
-      const tile = e.target.closest('.ap-tile');
-      if(!tile || !anipopState) return null;
-      return anipopState.pos[tile.dataset.id] || null;
+  function pmAdjacent(a, b){
+    const ar = Math.floor(a/PM_N), ac = a % PM_N, br = Math.floor(b/PM_N), bc = b % PM_N;
+    return Math.abs(ar-br) + Math.abs(ac-bc) === 1;
+  }
+  async function pmTrySwap(i, j){
+    const s = popmatchState; if(!s || !s.running || s.busy || s.over) return;
+    s.busy = true; s.sel = -1;
+    pmSwapIdx(s.board, i, j); pmRender();
+    if(pmFindMatches(s.board).size === 0){
+      await pmSleep(150);
+      if(popmatchState !== s) return;
+      pmSwapIdx(s.board, i, j); pmRender();
+      s.busy = false;
+      return;
     }
-    board.addEventListener('pointerdown', function(e){
-      const s = anipopState;
-      if(!s || !s.running || s.busy) return;
-      const p = cellFromEvent(e); if(!p) return;
-      e.preventDefault();
-      start = { p:p, x:e.clientX, y:e.clientY, moved:false };
-      try{ board.setPointerCapture(e.pointerId); }catch(err){}
-    });
-    board.addEventListener('pointermove', function(e){
-      if(!start || start.moved) return;
-      const dx = e.clientX - start.x, dy = e.clientY - start.y;
-      const th = Math.max(14, board.clientWidth / AP_N * 0.3);
-      if(Math.abs(dx) < th && Math.abs(dy) < th) return;
-      start.moved = true;
-      const p = start.p;
-      const q = Math.abs(dx) > Math.abs(dy) ? [p[0], p[1] + (dx > 0 ? 1 : -1)] : [p[0] + (dy > 0 ? 1 : -1), p[1]];
-      if(q[0] >= 0 && q[0] < AP_N && q[1] >= 0 && q[1] < AP_N) apTrySwap(p, q);
-    });
-    function up(){
-      const s = anipopState;
-      if(!start){ return; }
-      const st = start; start = null;
-      if(st.moved || !s || !s.running || s.busy) return;
-      const p = st.p;
-      if(!s.sel){ apSetSel(p); return; }
-      if(s.sel[0] === p[0] && s.sel[1] === p[1]){ apSetSel(null); return; }
-      if(Math.abs(s.sel[0]-p[0]) + Math.abs(s.sel[1]-p[1]) === 1){ apTrySwap(s.sel, p); return; }
-      apSetSel(p);
+    await pmSleep(120);
+    if(popmatchState !== s) return;
+    await pmResolve(s);
+    if(popmatchState !== s) return;
+    if(!s.over && !pmHasMove(s.board)){
+      document.getElementById('popmatch-combo').textContent = '움직일 곳이 없어 판을 섞었어요!';
+      s.board = pmNewBoard(); pmRender();
     }
-    board.addEventListener('pointerup', up);
-    board.addEventListener('pointercancel', function(){ start = null; });
-  })();
-  document.getElementById('anipop-start').addEventListener('click', function(){
-    if(!anipopState) return;
-    if(anipopState.over) prepareAnipop();
-    startAnipop();
+    s.busy = false;
+  }
+  async function pmResolve(s){
+    const board = document.getElementById('popmatch-board');
+    let chain = 0;
+    for(;;){
+      if(popmatchState !== s || s.over) return;
+      const m = pmFindMatches(s.board);
+      if(m.size === 0) break;
+      chain++;
+      m.forEach(function(i){ if(board.children[i]) board.children[i].classList.add('pop'); });
+      s.score += m.size * 10 * chain;
+      if(chain >= 2){
+        s.deadline = Math.min(s.deadline + 1000, Date.now() + PM_MAX_TIME*1000);
+        document.getElementById('popmatch-combo').textContent = chain + ' COMBO! +1초';
+      }else{
+        document.getElementById('popmatch-combo').textContent = '';
+      }
+      document.getElementById('popmatch-score').textContent = s.score;
+      await pmSleep(220);
+      if(popmatchState !== s || s.over) return;
+      m.forEach(function(i){ s.board[i] = -1; });
+      for(let c = 0; c < PM_N; c++){
+        let write = PM_N - 1;
+        for(let r = PM_N - 1; r >= 0; r--){
+          const v = s.board[r*PM_N+c];
+          if(v !== -1){ s.board[write*PM_N+c] = v; if(write !== r) s.board[r*PM_N+c] = -1; write--; }
+        }
+        for(let r = write; r >= 0; r--) s.board[r*PM_N+c] = pmRand();
+      }
+      pmRender();
+      await pmSleep(180);
+    }
+  }
+  function pmHandleDown(i){
+    const s = popmatchState; if(!s || !s.running || s.busy || s.over) return;
+    if(s.sel >= 0 && s.sel !== i && pmAdjacent(s.sel, i)){
+      const a = s.sel; s.drag = null; pmTrySwap(a, i); return;
+    }
+    s.sel = (s.sel === i) ? -1 : i;
+    pmRender();
+  }
+  const pmBoardEl = document.getElementById('popmatch-board');
+  pmBoardEl.addEventListener('pointerdown', function(e){
+    const cell = e.target.closest('.pm-cell'); if(!cell) return;
+    e.preventDefault();
+    const s = popmatchState; if(!s) return;
+    const i = Number(cell.dataset.i);
+    s.drag = { i: i, x: e.clientX, y: e.clientY };
+    pmHandleDown(i);
+  });
+  pmBoardEl.addEventListener('pointermove', function(e){
+    const s = popmatchState; if(!s || !s.drag || !s.running || s.busy) return;
+    const dx = e.clientX - s.drag.x, dy = e.clientY - s.drag.y;
+    if(Math.max(Math.abs(dx), Math.abs(dy)) < 18) return;
+    const from = s.drag.i; s.drag = null;
+    const r = Math.floor(from/PM_N), c = from % PM_N;
+    let to;
+    if(Math.abs(dx) > Math.abs(dy)) to = dx > 0 ? (c < PM_N-1 ? from+1 : -1) : (c > 0 ? from-1 : -1);
+    else to = dy > 0 ? (r < PM_N-1 ? from+PM_N : -1) : (r > 0 ? from-PM_N : -1);
+    if(to >= 0) pmTrySwap(from, to);
+  });
+  pmBoardEl.addEventListener('pointerup', function(){ if(popmatchState) popmatchState.drag = null; });
+  document.getElementById('popmatch-start').addEventListener('click', function(){
+    if(!popmatchState) return;
+    if(popmatchState.over) preparePopmatch();
+    startPopmatch();
   });
 
   /* ============================================================
@@ -10439,48 +9104,7 @@
     renderAdminAudit();
     renderAdminLimits();
     loadAdminMinBuild();
-    loadAdminSeason();
   }
-
-  /* ---- 2차 업데이트: 시즌 관리 ---- */
-  async function loadAdminSeason(){
-    await loadSeasonMeta();
-    document.getElementById('admin-season-no').textContent = 'SEASON ' + seasonMeta.no;
-    document.getElementById('admin-season-ends').value = /^\d{4}-\d{2}-\d{2}$/.test(seasonMeta.endsAt) ? seasonMeta.endsAt : '';
-  }
-  document.getElementById('admin-season-ends-save').addEventListener('click', async function(){
-    const msg = document.getElementById('admin-season-msg');
-    const v = document.getElementById('admin-season-ends').value || '';
-    msg.style.color = 'var(--text-dim)'; msg.textContent = '저장 중...';
-    try{
-      const r = await sb.from('app_config').upsert({ k:'season_ends_at', v:v });
-      if(r.error) throw r.error;
-      seasonMeta.endsAt = v; renderSeasonMeta();
-      msg.style.color = 'var(--green)'; msg.textContent = v ? ('저장됨 — 메인 화면에 ' + v + ' 종료 예정으로 표시돼요 (자동 종료는 아니에요)') : '저장됨 — 종료 예정일 표시 안 함';
-    }catch(e){
-      msg.style.color = 'var(--red)'; msg.textContent = '저장하지 못했습니다. 로그인 상태와 최신 SQL(20번 섹션) 실행 여부를 확인해주세요.';
-    }
-  });
-  document.getElementById('admin-season-end-btn').addEventListener('click', async function(){
-    const msg = document.getElementById('admin-season-msg');
-    const next = document.getElementById('admin-season-next-ends').value || null;
-    if(!window.confirm('SEASON ' + seasonMeta.no + '을(를) 종료할까요?\n\n· 게임별 TOP 3와 팀 순위가 기록으로 남아요\n· 시즌 뱃지가 지급돼요\n· 모든 게임 점수가 0으로 초기화돼요 (되돌릴 수 없음)')) return;
-    if(!window.confirm('정말 종료할까요? 한 번 더 확인합니다.')) return;
-    const btn = this; btn.disabled = true;
-    msg.style.color = 'var(--text-dim)'; msg.textContent = '시즌 종료 처리 중...';
-    try{
-      const r = await sb.rpc('arcade_admin_end_season', { p_next_ends_at: next });
-      if(r.error) throw r.error;
-      const d = r.data || {};
-      msg.style.color = 'var(--green)';
-      msg.textContent = 'SEASON ' + d.ended + ' 종료 완료 — 우승: ' + (d.winner || '없음') + (d.points ? ' (' + d.points + '점)' : '') + ' · SEASON ' + d.next + ' 시작!';
-      document.getElementById('admin-season-next-ends').value = '';
-      loadAdminSeason();
-    }catch(e){
-      msg.style.color = 'var(--red)';
-      msg.textContent = '실패: ' + ((e && e.message) || '알 수 없는 오류') + ' — 로그인 상태와 최신 SQL(20번 섹션) 실행 여부를 확인해주세요.';
-    }finally{ btn.disabled = false; }
-  });
 
   async function loadAdminMinBuild(){
     document.getElementById('admin-cur-build').textContent = appVersionLabel(APP_BUILD) + ' (' + APP_BUILD + ')';
@@ -10699,10 +9323,6 @@
     else if(currentScreen==='fortress') handleFortressKey(e);
     else if(currentScreen==='sidesort') handleSidesortKey(e);
     else if(currentScreen==='spintail') handleSpintailKey(e);
-    else if(currentScreen==='anipop' && e.key===' '){
-      e.preventDefault();
-      if(anipopState && !anipopState.running){ if(anipopState.over) prepareAnipop(); startAnipop(); }
-    }
   });
 
 
@@ -11703,13 +10323,7 @@
     initCabinetLeaderSlots();
     renderCabinetLeaders();
     checkAnnouncementsOnLoad();
-    fetchGameSettings().then(function(){ applyGameSettingsToHub(); renderDaily(); });
-    startFeed();
-    loadSeasonMeta();
-    loadAllBadges().then(function(){ renderRoster(); renderDailyPanel(); });
-    renderRaid();
-    startDuelWatch();
-    loadTitles().then(function(){ renderRoster(); renderDailyPanel(); });
+    fetchGameSettings().then(applyGameSettingsToHub);
   });
 })();
 </script>
