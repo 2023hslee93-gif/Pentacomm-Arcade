@@ -207,6 +207,9 @@
     background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 14px;
   }
   .admin-game-row .agr-label{ font-size:13px; display:flex; align-items:center; gap:6px; min-width:0; }
+  .agr-handle{ cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; padding:6px 8px 6px 0; color:var(--text-dim); font-size:16px; line-height:1; flex-shrink:0; }
+  .admin-game-row.dragging{ opacity:.9; border-color:var(--cyan); box-shadow:0 4px 14px rgba(0,229,255,0.35); position:relative; z-index:2; }
+  .admin-game-list.is-dragging{ user-select:none; -webkit-user-select:none; }
   .agr-no{ display:inline-block; min-width:20px; color:var(--text-dim); font-size:11px; }
   .agr-actions{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
   .agr-move{
@@ -2586,7 +2589,7 @@
   /* ============ 앱 버전 / 구버전 차단 ============
      APP_BUILD는 배포할 때마다 올립니다(YYYYMMDDNN). 서버(app_config.min_build)가 이 값보다 크면
      구버전으로 보고 게임 대신 '새로고침' 안내만 보여줍니다. 값은 관리자 화면에서 바꿉니다. */
-  const APP_BUILD = 2026112001;
+  const APP_BUILD = 2026112002;
   function appVersionLabel(n){
     const s = String(n);
     return 'v' + s.slice(0,4) + '.' + s.slice(4,6) + '.' + s.slice(6,8) + '-' + s.slice(8);
@@ -11014,8 +11017,9 @@
       const enabled = gameSettingsMap[g.id] !== false;
       const row = document.createElement('div');
       row.className = 'admin-game-row';
+      row.dataset.gameId = g.id;
       row.innerHTML =
-        '<span class="agr-label"><span class="agr-no">' + (idx + 1) + '</span>' + g.icon + ' ' + g.label + '</span>' +
+        '<span class="agr-label"><span class="agr-handle" data-game-id="' + g.id + '" aria-label="끌어서 순서 변경" title="끌어서 순서 변경">☰</span><span class="agr-no">' + (idx + 1) + '</span>' + g.icon + ' ' + g.label + '</span>' +
         '<span class="agr-actions">' +
           '<button type="button" class="agr-move" data-move="-1" data-game-id="' + g.id + '"' + (idx === 0 ? ' disabled' : '') + ' aria-label="위로">▲</button>' +
           '<button type="button" class="agr-move" data-move="1" data-game-id="' + g.id + '"' + (idx === ordered.length - 1 ? ' disabled' : '') + ' aria-label="아래로">▼</button>' +
@@ -11048,14 +11052,66 @@
     list.querySelectorAll('.agr-move').forEach(function(btn){
       btn.addEventListener('click', function(){ moveAdminGame(btn.dataset.gameId, parseInt(btn.dataset.move, 10)); });
     });
+    // 드래그로 순서 변경 (마우스/터치 공통, 핸들 ☰ 을 잡고 끌기)
+    // DOM 순서는 건드리지 않고 transform 으로만 움직인 뒤, 놓을 때 한 번에 저장 (포인터 캡처 유지)
+    list.querySelectorAll('.agr-handle').forEach(function(handle){
+      handle.addEventListener('pointerdown', function(e){
+        const row = handle.closest('.admin-game-row'); if(!row) return;
+        const rows = Array.prototype.slice.call(list.children);
+        if(rows.length < 2) return;
+        e.preventDefault();
+        try{ handle.setPointerCapture(e.pointerId); }catch(err){}
+        const idx0 = rows.indexOf(row);
+        const step = rows[1].getBoundingClientRect().top - rows[0].getBoundingClientRect().top;
+        const startY = e.clientY + window.scrollY;
+        let target = idx0;
+        row.classList.add('dragging'); list.classList.add('is-dragging');
+        rows.forEach(function(r){ if(r !== row) r.style.transition = 'transform .12s'; });
+        function onMove(ev){
+          if(ev.clientY < 70) window.scrollBy(0, -14); else if(ev.clientY > window.innerHeight - 70) window.scrollBy(0, 14);
+          let dy = (ev.clientY + window.scrollY) - startY;
+          dy = Math.max(-idx0*step, Math.min((rows.length - 1 - idx0)*step, dy));
+          row.style.transform = 'translateY(' + dy + 'px)';
+          target = Math.max(0, Math.min(rows.length - 1, Math.round(idx0 + dy/step)));
+          rows.forEach(function(r, i){
+            if(r === row) return;
+            let shift = 0;
+            if(idx0 < target && i > idx0 && i <= target) shift = -step;
+            else if(target < idx0 && i >= target && i < idx0) shift = step;
+            r.style.transform = shift ? 'translateY(' + shift + 'px)' : '';
+          });
+        }
+        function onEnd(){
+          handle.removeEventListener('pointermove', onMove);
+          handle.removeEventListener('pointerup', onEnd);
+          handle.removeEventListener('pointercancel', onEnd);
+          row.classList.remove('dragging'); list.classList.remove('is-dragging');
+          const ids = rows.map(function(r){ return r.dataset.gameId; });
+          if(target !== idx0){
+            ids.splice(target, 0, ids.splice(idx0, 1)[0]);
+            applyAdminOrder(ids);
+          }else{
+            renderAdminGameList();
+          }
+        }
+        handle.addEventListener('pointermove', onMove);
+        handle.addEventListener('pointerup', onEnd);
+        handle.addEventListener('pointercancel', onEnd);
+      });
+    });
   }
 
   async function moveAdminGame(gameId, delta){
     const ids = getOrderedGames().map(function(g){ return g.id; });
     const from = ids.indexOf(gameId), to = from + delta;
     if(from < 0 || to < 0 || to >= ids.length) return;
-    const prev = Object.assign({}, gameOrderMap);
     ids.splice(to, 0, ids.splice(from, 1)[0]);
+    return applyAdminOrder(ids);
+  }
+
+  // 새 순서(ids 배열)를 화면과 서버에 반영 — ▲▼ 버튼과 드래그가 함께 사용
+  async function applyAdminOrder(ids){
+    const prev = Object.assign({}, gameOrderMap);
     const next = {};
     ids.forEach(function(id, i){ next[id] = i + 1; });
     gameOrderMap = next;
