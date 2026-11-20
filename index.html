@@ -747,6 +747,30 @@
   .cs-hearts{ letter-spacing:2px; }
   .cs-board.hidden{ display:none; }
 
+  /* ---------- colormix ---------- */
+  .cm-swatches{ display:flex; gap:10px; justify-content:center; width:100%; max-width:360px; margin:0 auto 8px; }
+  .cm-sw{ flex:1; display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:6px 10px; font-size:11px; color:var(--text-dim); }
+  .cm-sw i{ flex:1; height:30px; border-radius:6px; border:1px solid rgba(255,255,255,0.15); background:#888; }
+  .cm-wrap{ position:relative; width:100%; max-width:360px; aspect-ratio:4/5; margin:0 auto; border-radius:12px; overflow:hidden; border:1px solid var(--border); background:#f3f0ee; touch-action:none; }
+  .cm-wrap canvas{ width:100%; height:100%; display:block; touch-action:none; cursor:crosshair; user-select:none; -webkit-user-select:none; }
+  .cm-lens{ position:absolute; border-radius:50%; border:3px solid #fff; box-shadow:0 0 0 1.5px #333, 0 2px 8px rgba(0,0,0,0.4); cursor:grab; touch-action:none; transform:translate(-50%,-50%); }
+  .cm-lens::after{ content:''; position:absolute; width:5px; height:5px; border-radius:50%; background:#333; left:50%; top:50%; transform:translate(-50%,-50%); opacity:.5; }
+  .cm-tubes{ display:grid; grid-template-columns:repeat(8,1fr); gap:5px; width:100%; max-width:360px; margin:10px auto 0; }
+  .cm-tube{ position:relative; padding:0; height:58px; border-radius:8px; border:2px solid var(--border); background:var(--card); cursor:pointer; touch-action:manipulation; overflow:hidden; }
+  .cm-tube .cm-fill{ position:absolute; left:0; right:0; bottom:0; background:var(--c); transition:height .1s; }
+  .cm-tube.sel{ border-color:var(--cyan); box-shadow:0 0 8px var(--cyan); }
+  .cm-tube:disabled{ opacity:.35; cursor:default; }
+  .cm-actions{ display:flex; gap:8px; justify-content:center; width:100%; max-width:360px; margin:8px auto 0; }
+  .cm-actions button{ flex:1; padding:10px 6px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--text); font-size:12.5px; font-weight:700; cursor:pointer; touch-action:manipulation; }
+  .cm-actions button.sel{ border-color:var(--cyan); color:var(--cyan); }
+  .cm-actions button.cm-done{ background:var(--cyan); color:#04222a; border-color:var(--cyan); }
+  .cm-result{ display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .cm-circles{ display:flex; }
+  .cm-circles i{ width:88px; height:88px; border-radius:50%; border:1px solid rgba(255,255,255,0.15); }
+  .cm-circles i + i{ margin-left:-10px; }
+  .cm-pct{ font-size:26px; font-weight:800; color:var(--yellow); }
+  .cm-list{ font-size:12.5px; color:var(--text-dim); line-height:1.7; }
+
   /* ---------- numtap ---------- */
   .numtap-board{
     display:grid; grid-template-columns:repeat(5, 1fr); grid-auto-rows:1fr; gap:6px;
@@ -1544,6 +1568,12 @@
         <div class="cabinet-label pixel">ANIPOP</div>
         <div class="cabinet-sub">이웃한 동물을 바꿔 같은 동물 3마리 이상을 맞추세요 · 60초 동안 콤보를 이어가요</div>
       </button>
+
+      <button class="cabinet" data-game="colormix" style="--accent:var(--cyan)">
+        <div class="cabinet-screen" style="font-size:40px;">🖌️</div>
+        <div class="cabinet-label pixel">COLORMIX</div>
+        <div class="cabinet-sub">물감 8색을 섞어 목표 색을 똑같이 만드세요 · 5라운드, 라운드당 20초!</div>
+      </button>
     </div>
 
     <div class="roster-panel">
@@ -2191,6 +2221,41 @@
   </section>
 
   <!-- COLORSPOT -->
+  <section id="screen-colormix" class="screen">
+    <div class="game-topbar">
+      <button class="back-btn" data-back>← 오락실로</button>
+      <div class="hud pixel">
+        <span>ROUND<b id="colormix-round">1/5</b></span>
+        <span>TIME<b id="colormix-time">20</b></span>
+        <span>BEST<b id="colormix-best">0</b></span>
+      </div>
+    </div>
+    <div class="game-stage">
+      <div class="pm-timebar"><div class="pm-timebar-fill" id="colormix-bar"></div></div>
+      <div class="cm-swatches">
+        <div class="cm-sw"><span>목표</span><i id="colormix-target"></i></div>
+        <div class="cm-sw"><span>현재</span><i id="colormix-current"></i></div>
+      </div>
+      <div class="cm-wrap" id="colormix-wrap">
+        <canvas id="colormix-canvas" width="96" height="120"></canvas>
+        <div class="cm-lens" id="colormix-lens" aria-label="색 확인용 돋보기"></div>
+      </div>
+      <div class="cm-tubes" id="colormix-tubes"></div>
+      <div class="cm-actions">
+        <button type="button" id="colormix-knife" class="sel">🔪 나이프</button>
+        <button type="button" id="colormix-reset">🧽 다 지우기</button>
+        <button type="button" id="colormix-done" class="cm-done">✔ 완성</button>
+      </div>
+      <div class="overlay" id="colormix-overlay">
+        <div class="overlay-title pixel">COLORMIX</div>
+        <div class="overlay-msg">목표 색을 똑같이 만들어 보세요!</div>
+        <div class="cm-result" id="colormix-result"></div>
+        <button class="start-btn" id="colormix-start">시작하기</button>
+      </div>
+    </div>
+    <p class="controls-hint">물감을 고르고 캔버스를 드래그해 짜세요 · 🔪 나이프로 문질러 섞으세요 · 동그란 돋보기를 움직여 색을 확인하세요 · 완성은 라운드당 한 번뿐!</p>
+  </section>
+
   <section id="screen-colorspot" class="screen">
     <div class="game-topbar">
       <button class="back-btn" data-back>← 오락실로</button>
@@ -2515,12 +2580,13 @@
     { id:'subwayrace', label:'SUBWAY RACE', icon:'🚇', color:'var(--green)' },
     { id:'spintail', label:'SPINTAIL', icon:'🐹', color:'var(--orange)' },
     { id:'colorspot', label:'COLORSPOT', icon:'🎨', color:'var(--pink)' },
-    { id:'anipop', label:'ANIPOP', icon:'🐰', color:'var(--yellow)' }
+    { id:'anipop', label:'ANIPOP', icon:'🐰', color:'var(--yellow)' },
+    { id:'colormix', label:'COLORMIX', icon:'🖌️', color:'var(--cyan)' }
   ];
   /* ============ 앱 버전 / 구버전 차단 ============
      APP_BUILD는 배포할 때마다 올립니다(YYYYMMDDNN). 서버(app_config.min_build)가 이 값보다 크면
      구버전으로 보고 게임 대신 '새로고침' 안내만 보여줍니다. 값은 관리자 화면에서 바꿉니다. */
-  const APP_BUILD = 2026111601;
+  const APP_BUILD = 2026112001;
   function appVersionLabel(n){
     const s = String(n);
     return 'v' + s.slice(0,4) + '.' + s.slice(4,6) + '.' + s.slice(6,8) + '-' + s.slice(8);
@@ -4070,6 +4136,7 @@
     if(currentScreen === 'sidesort' && sidesortState){ stopSidesortLoop(); }
     if(currentScreen === 'spintail' && spintailState){ stopSpintailLoop(); }
     if(currentScreen === 'colorspot'){ stopColorspotTimer(); }
+    if(currentScreen === 'colormix'){ stopColormixTimer(); }
     if(currentScreen === 'anipop' && anipopState){
       stopAnipopTimer();
       if(anipopState.running && !anipopState.over && anipopState.score > 0) submitScore('anipop', anipopState.score);
@@ -4124,6 +4191,7 @@
     if(id === 'sidesort') prepareSidesort();
     if(id === 'spintail') prepareSpintail();
     if(id === 'colorspot') prepareColorspot();
+    if(id === 'colormix') prepareColormix();
     if(id === 'anipop') prepareAnipop();
     if(id === 'subwayrace') prepareSubway();
     if(id === 'admin') prepareAdmin();
@@ -10385,6 +10453,351 @@
     if(anipopState.over) prepareAnipop();
     startAnipop();
   });
+
+  /* ============ COLORMIX (색 섞기) ============ */
+  const CM_W = 96, CM_H = 120, CM_TIME = 20, CM_ROUNDS = 5, CM_TUBE_CAP = 2200, CM_LENS_R = 9;
+  const CM_PAPER = [243, 240, 238];
+  const CM_PAINTS = [
+    { n:'흰색',   c:[245,245,242] }, { n:'노랑', c:[247,216,16] }, { n:'빨강', c:[214,38,44] },
+    { n:'마젠타', c:[196,32,127] },  { n:'남색', c:[42,42,168] },  { n:'파랑', c:[27,117,184] },
+    { n:'갈색',   c:[122,74,50] },   { n:'검정', c:[26,26,26] }
+  ];
+  let colormixState = null, cmTimer = null, cmRaf = 0;
+
+  function cmLin(v){ v /= 255; return v <= 0.04045 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }
+  function cmSrgb(l){
+    l = Math.max(0, Math.min(1, l));
+    const v = l <= 0.0031308 ? l*12.92 : 1.055*Math.pow(l, 1/2.4) - 0.055;
+    return Math.round(v*255);
+  }
+  function cmLogOf(rgb){ return rgb.map(function(v){ return Math.log(Math.max(0.004, cmLin(v))); }); }
+  function cmLab(rgb){
+    const r = cmLin(rgb[0]), g = cmLin(rgb[1]), b = cmLin(rgb[2]);
+    const X = (0.4124*r + 0.3576*g + 0.1805*b)/0.95047, Y = 0.2126*r + 0.7152*g + 0.0722*b, Z = (0.0193*r + 0.1192*g + 0.9505*b)/1.08883;
+    const f = function(t){ return t > 0.008856 ? Math.cbrt(t) : (7.787*t + 16/116); };
+    return [116*f(Y) - 16, 500*(f(X) - f(Y)), 200*(f(Y) - f(Z))];
+  }
+  function cmDeltaE(a, b){
+    const la = cmLab(a), lb = cmLab(b);
+    return Math.sqrt(Math.pow(la[0]-lb[0],2) + Math.pow(la[1]-lb[1],2) + Math.pow(la[2]-lb[2],2));
+  }
+  function cmCss(rgb){ return 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'; }
+  function stopColormixTimer(){ if(cmTimer){ clearInterval(cmTimer); cmTimer = null; } }
+
+  // 목표 색: 같은 혼색 모델로 만든 레시피라서 팔레트로 반드시 만들 수 있음
+  function cmMakeTarget(){
+    const n = 2 + Math.floor(Math.random()*2);
+    const ids = [];
+    while(ids.length < n){
+      const i = Math.floor(Math.random()*CM_PAINTS.length);
+      if(ids.indexOf(i) === -1) ids.push(i);
+    }
+    let w = ids.map(function(){ return 0.2 + Math.random()*0.8; });
+    const sum = w.reduce(function(a,b){ return a+b; }, 0);
+    w = w.map(function(x){ return x/sum; });
+    const L = [0,0,0];
+    ids.forEach(function(id, k){
+      const lg = cmLogOf(CM_PAINTS[id].c);
+      for(let c = 0; c < 3; c++) L[c] += lg[c]*w[k];
+    });
+    return [cmSrgb(Math.exp(L[0])), cmSrgb(Math.exp(L[1])), cmSrgb(Math.exp(L[2]))];
+  }
+
+  function cmClearCanvas(){
+    const s = colormixState;
+    s.A.fill(0); s.L.fill(0);
+    s.tubes = CM_PAINTS.map(function(){ return CM_TUBE_CAP; });
+    s.tool = -1; s.carry = null; s.drawing = false; s.last = null;
+    s.lens = { x: CM_W/2, y: CM_H/2 };
+    cmUpdateToolUi();
+    cmLayoutLens();
+    cmScheduleRender();
+  }
+  function cmBuildTubes(){
+    const el = document.getElementById('colormix-tubes');
+    el.innerHTML = CM_PAINTS.map(function(p, i){
+      return '<button type="button" class="cm-tube" data-t="'+i+'" style="--c:'+cmCss(p.c)+'" aria-label="'+p.n+'"><span class="cm-fill" style="height:100%"></span></button>';
+    }).join('');
+  }
+  function cmUpdateToolUi(){
+    const s = colormixState; if(!s) return;
+    document.getElementById('colormix-knife').classList.toggle('sel', s.tool === -1);
+    document.querySelectorAll('#colormix-tubes .cm-tube').forEach(function(b){
+      const i = Number(b.dataset.t);
+      b.classList.toggle('sel', s.tool === i);
+      b.disabled = s.tubes[i] <= 0;
+      b.querySelector('.cm-fill').style.height = Math.max(0, s.tubes[i]/CM_TUBE_CAP*100) + '%';
+    });
+  }
+  function cmLayoutLens(){
+    const s = colormixState; if(!s) return;
+    const wrap = document.getElementById('colormix-wrap');
+    const lens = document.getElementById('colormix-lens');
+    const px = wrap.clientWidth / CM_W;
+    lens.style.width = lens.style.height = (CM_LENS_R*2*px) + 'px';
+    lens.style.left = (s.lens.x*px) + 'px';
+    lens.style.top = (s.lens.y*px) + 'px';
+  }
+  function cmCellLin(i, out){
+    const s = colormixState;
+    const a = 1 - Math.exp(-3*s.A[i]);
+    for(let c = 0; c < 3; c++){
+      const paper = cmLin(CM_PAPER[c]);
+      out[c] = a > 0.002 ? paper*(1-a) + Math.exp(s.L[i*3+c])*a : paper;
+    }
+  }
+  function cmSample(){
+    const s = colormixState;
+    const lin = [0,0,0], tmp = [0,0,0];
+    let n = 0;
+    for(let y = Math.floor(s.lens.y - CM_LENS_R); y <= Math.ceil(s.lens.y + CM_LENS_R); y++){
+      for(let x = Math.floor(s.lens.x - CM_LENS_R); x <= Math.ceil(s.lens.x + CM_LENS_R); x++){
+        if(x < 0 || y < 0 || x >= CM_W || y >= CM_H) continue;
+        const dx = x - s.lens.x, dy = y - s.lens.y;
+        if(dx*dx + dy*dy > CM_LENS_R*CM_LENS_R) continue;
+        cmCellLin(y*CM_W + x, tmp);
+        lin[0] += tmp[0]; lin[1] += tmp[1]; lin[2] += tmp[2]; n++;
+      }
+    }
+    if(!n) return CM_PAPER.slice();
+    return [cmSrgb(lin[0]/n), cmSrgb(lin[1]/n), cmSrgb(lin[2]/n)];
+  }
+  function cmScheduleRender(){
+    if(cmRaf) return;
+    cmRaf = requestAnimationFrame(cmRender);
+  }
+  function cmRender(){
+    cmRaf = 0;
+    const s = colormixState; if(!s) return;
+    const cv = document.getElementById('colormix-canvas');
+    const ctx = cv.getContext('2d');
+    const img = ctx.createImageData(CM_W, CM_H);
+    const tmp = [0,0,0];
+    for(let i = 0; i < CM_W*CM_H; i++){
+      cmCellLin(i, tmp);
+      img.data[i*4] = cmSrgb(tmp[0]); img.data[i*4+1] = cmSrgb(tmp[1]); img.data[i*4+2] = cmSrgb(tmp[2]); img.data[i*4+3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    document.getElementById('colormix-current').style.background = cmCss(cmSample());
+    cmUpdateToolUi();
+  }
+
+  // 물감 짜기
+  function cmDeposit(x, y){
+    const s = colormixState; if(!s || s.tool < 0) return;
+    const t = s.tool;
+    if(s.tubes[t] <= 0) return;
+    const lg = cmLogOf(CM_PAINTS[t].c);
+    const R = 5;
+    let used = 0;
+    for(let yy = Math.floor(y-R); yy <= Math.ceil(y+R); yy++){
+      for(let xx = Math.floor(x-R); xx <= Math.ceil(x+R); xx++){
+        if(xx < 0 || yy < 0 || xx >= CM_W || yy >= CM_H) continue;
+        const d = Math.sqrt((xx-x)*(xx-x) + (yy-y)*(yy-y));
+        if(d > R) continue;
+        const dep = 0.5*(1 - d/R);
+        const i = yy*CM_W + xx;
+        const a0 = s.A[i], a1 = Math.min(3, a0 + dep);
+        const add = a1 - a0; if(add <= 0) continue;
+        for(let c = 0; c < 3; c++) s.L[i*3+c] = (s.L[i*3+c]*a0 + lg[c]*add)/a1;
+        s.A[i] = a1; used += add;
+      }
+    }
+    s.tubes[t] = Math.max(0, s.tubes[t] - used);
+  }
+  // 나이프로 문지르기
+  function cmKnifeStart(x, y){
+    const s = colormixState;
+    const R = 6; let sa = 0, sl = [0,0,0], n = 0;
+    for(let yy = Math.floor(y-R); yy <= Math.ceil(y+R); yy++) for(let xx = Math.floor(x-R); xx <= Math.ceil(x+R); xx++){
+      if(xx < 0 || yy < 0 || xx >= CM_W || yy >= CM_H) continue;
+      if((xx-x)*(xx-x) + (yy-y)*(yy-y) > R*R) continue;
+      const i = yy*CM_W + xx; n++;
+      sa += s.A[i]; for(let c = 0; c < 3; c++) sl[c] += s.L[i*3+c]*s.A[i];
+    }
+    s.carry = sa > 0.01 ? { a: Math.min(1.5, sa/n), L: [sl[0]/sa, sl[1]/sa, sl[2]/sa] } : { a:0, L:[0,0,0] };
+  }
+  function cmKnife(x, y){
+    const s = colormixState; if(!s.carry) cmKnifeStart(x, y);
+    const car = s.carry, R = 6;
+    let sumA = 0, sumW = 0, sumL = [0,0,0];
+    for(let yy = Math.floor(y-R); yy <= Math.ceil(y+R); yy++){
+      for(let xx = Math.floor(x-R); xx <= Math.ceil(x+R); xx++){
+        if(xx < 0 || yy < 0 || xx >= CM_W || yy >= CM_H) continue;
+        const d = Math.sqrt((xx-x)*(xx-x) + (yy-y)*(yy-y));
+        if(d > R) continue;
+        const f = 1 - d/(R+1), k = 0.5*f;
+        const i = yy*CM_W + xx, a0 = s.A[i];
+        sumW += f; sumA += a0*f;
+        for(let c = 0; c < 3; c++) sumL[c] += s.L[i*3+c]*a0*f;
+        const wCell = a0*(1-k), wCar = car.a*k, nA = wCell + wCar;
+        if(nA > 1e-4){
+          for(let c = 0; c < 3; c++) s.L[i*3+c] = (s.L[i*3+c]*wCell + car.L[c]*wCar)/nA;
+          s.A[i] = nA;
+        }
+      }
+    }
+    if(sumW > 0){
+      const avgA = sumA/sumW;
+      const wc = car.a*0.75, wn = avgA*0.25, tot = wc + wn;
+      if(tot > 1e-4 && sumA > 1e-4){
+        for(let c = 0; c < 3; c++) car.L[c] = (car.L[c]*wc + (sumL[c]/sumA)*wn)/tot;
+      }
+      car.a = tot;
+    }
+  }
+  function cmPoint(e){
+    const r = document.getElementById('colormix-canvas').getBoundingClientRect();
+    return { x: (e.clientX - r.left)/r.width*CM_W, y: (e.clientY - r.top)/r.height*CM_H };
+  }
+  function cmStroke(from, to){
+    const s = colormixState;
+    const dx = to.x - from.x, dy = to.y - from.y;
+    const steps = Math.max(1, Math.ceil(Math.sqrt(dx*dx + dy*dy)/1.5));
+    for(let k = 1; k <= steps; k++){
+      const x = from.x + dx*k/steps, y = from.y + dy*k/steps;
+      if(s.tool >= 0) cmDeposit(x, y); else cmKnife(x, y);
+    }
+  }
+
+  function prepareColormix(){
+    stopColormixTimer();
+    colormixState = {
+      A: new Float32Array(CM_W*CM_H), L: new Float32Array(CM_W*CM_H*3),
+      tubes: [], tool: -1, carry: null, drawing: false, last: null, lens: { x: CM_W/2, y: CM_H/2 },
+      round: 0, results: [], phase: 'idle', deadline: 0, target: null
+    };
+    cmBuildTubes();
+    cmClearCanvas();
+    document.getElementById('colormix-round').textContent = '1/' + CM_ROUNDS;
+    document.getElementById('colormix-time').textContent = CM_TIME;
+    document.getElementById('colormix-target').style.background = '#444';
+    const bar = document.getElementById('colormix-bar'); bar.style.width = '100%'; bar.classList.remove('low');
+    loadMyBest('colormix');
+    document.getElementById('colormix-result').innerHTML = '';
+    const ov = document.getElementById('colormix-overlay');
+    ov.classList.remove('hidden');
+    ov.querySelector('.overlay-title').textContent = 'COLORMIX';
+    ov.querySelector('.overlay-msg').textContent = '목표 색을 똑같이 섞어 보세요! 5라운드 · 라운드당 20초 · 완성은 한 번뿐';
+    const st = document.getElementById('colormix-start'); st.textContent = '시작하기'; st.dataset.act = 'start';
+    st.classList.remove('hidden');
+  }
+  function cmBeginRound(){
+    const s = colormixState;
+    s.phase = 'playing';
+    s.target = cmMakeTarget();
+    document.getElementById('colormix-target').style.background = cmCss(s.target);
+    document.getElementById('colormix-round').textContent = (s.round + 1) + '/' + CM_ROUNDS;
+    cmClearCanvas();
+    document.getElementById('colormix-overlay').classList.add('hidden');
+    s.deadline = Date.now() + CM_TIME*1000;
+    document.getElementById('colormix-time').textContent = CM_TIME;
+    stopColormixTimer();
+    cmTimer = setInterval(cmTick, 100);
+  }
+  function cmTick(){
+    const s = colormixState; if(!s || s.phase !== 'playing') return;
+    const left = Math.max(0, s.deadline - Date.now());
+    document.getElementById('colormix-time').textContent = Math.ceil(left/1000);
+    const bar = document.getElementById('colormix-bar');
+    bar.style.width = (left/(CM_TIME*1000)*100) + '%';
+    bar.classList.toggle('low', left < 5000);
+    if(left <= 0) cmSubmit();
+  }
+  function cmSubmit(){
+    const s = colormixState; if(!s || s.phase !== 'playing') return;
+    s.phase = 'result'; s.drawing = false;
+    stopColormixTimer();
+    const sample = cmSample();
+    const pct = Math.max(0, Math.round((100 - cmDeltaE(sample, s.target)*1.4)*10)/10);
+    s.results.push({ pct: pct, target: s.target, sample: sample });
+    s.round++;
+    const ov = document.getElementById('colormix-overlay');
+    ov.classList.remove('hidden');
+    ov.querySelector('.overlay-title').textContent = 'ROUND ' + s.round + ' / ' + CM_ROUNDS;
+    ov.querySelector('.overlay-msg').textContent = '목표 색과 내 색 (일치율)';
+    document.getElementById('colormix-result').innerHTML =
+      '<div class="cm-circles"><i style="background:'+cmCss(s.target)+'"></i><i style="background:'+cmCss(sample)+'"></i></div>'
+      + '<div class="cm-pct">'+pct.toFixed(1)+'%</div>';
+    const st = document.getElementById('colormix-start');
+    st.textContent = s.round >= CM_ROUNDS ? '결과 보기' : '다음 라운드';
+    st.dataset.act = s.round >= CM_ROUNDS ? 'final' : 'next';
+  }
+  function cmFinish(){
+    const s = colormixState;
+    s.phase = 'over';
+    const avg = s.results.reduce(function(a, r){ return a + r.pct; }, 0)/s.results.length;
+    const score = Math.round(avg*10);
+    const ov = document.getElementById('colormix-overlay');
+    ov.querySelector('.overlay-title').textContent = 'FINISH';
+    ov.querySelector('.overlay-msg').textContent = '평균 일치율 ' + avg.toFixed(1) + '% → ' + score + '점';
+    document.getElementById('colormix-result').innerHTML = '<div class="cm-list">'
+      + s.results.map(function(r, i){ return (i+1)+'라운드 · '+r.pct.toFixed(1)+'%'; }).join('<br>') + '</div>';
+    const st = document.getElementById('colormix-start'); st.textContent = '다시 하기'; st.dataset.act = 'again';
+    finalizeScore('colormix', score, ov);
+  }
+
+  (function(){
+    const cv = document.getElementById('colormix-canvas');
+    cv.addEventListener('pointerdown', function(e){
+      const s = colormixState; if(!s || s.phase !== 'playing') return;
+      e.preventDefault();
+      try{ cv.setPointerCapture(e.pointerId); }catch(err){}
+      const pt = cmPoint(e);
+      s.drawing = true; s.last = pt; s.carry = null;
+      if(s.tool >= 0) cmDeposit(pt.x, pt.y); else cmKnifeStart(pt.x, pt.y);
+      cmScheduleRender();
+    });
+    cv.addEventListener('pointermove', function(e){
+      const s = colormixState; if(!s || !s.drawing || s.phase !== 'playing') return;
+      const pt = cmPoint(e);
+      cmStroke(s.last, pt); s.last = pt;
+      cmScheduleRender();
+    });
+    function endDraw(){ if(colormixState){ colormixState.drawing = false; colormixState.carry = null; } }
+    cv.addEventListener('pointerup', endDraw);
+    cv.addEventListener('pointercancel', endDraw);
+
+    const lens = document.getElementById('colormix-lens');
+    let lensDrag = false;
+    lens.addEventListener('pointerdown', function(e){
+      if(!colormixState) return;
+      e.preventDefault(); e.stopPropagation(); lensDrag = true;
+      try{ lens.setPointerCapture(e.pointerId); }catch(err){}
+    });
+    lens.addEventListener('pointermove', function(e){
+      if(!lensDrag || !colormixState) return;
+      const pt = cmPoint(e);
+      colormixState.lens.x = Math.max(CM_LENS_R, Math.min(CM_W - CM_LENS_R, pt.x));
+      colormixState.lens.y = Math.max(CM_LENS_R, Math.min(CM_H - CM_LENS_R, pt.y));
+      cmLayoutLens(); cmScheduleRender();
+    });
+    lens.addEventListener('pointerup', function(){ lensDrag = false; });
+    lens.addEventListener('pointercancel', function(){ lensDrag = false; });
+    window.addEventListener('resize', function(){ if(colormixState) cmLayoutLens(); });
+
+    document.getElementById('colormix-tubes').addEventListener('click', function(e){
+      const b = e.target.closest('.cm-tube'); const s = colormixState;
+      if(!b || b.disabled || !s || s.phase !== 'playing') return;
+      const i = Number(b.dataset.t);
+      s.tool = (s.tool === i) ? -1 : i;
+      cmUpdateToolUi();
+    });
+    document.getElementById('colormix-knife').addEventListener('click', function(){
+      if(!colormixState) return; colormixState.tool = -1; cmUpdateToolUi();
+    });
+    document.getElementById('colormix-reset').addEventListener('click', function(){
+      if(!colormixState || colormixState.phase !== 'playing') return; cmClearCanvas();
+    });
+    document.getElementById('colormix-done').addEventListener('click', function(){ cmSubmit(); });
+    document.getElementById('colormix-start').addEventListener('click', function(){
+      const s = colormixState; if(!s) return;
+      const act = this.dataset.act;
+      if(act === 'start' || act === 'next') cmBeginRound();
+      else if(act === 'final') cmFinish();
+      else if(act === 'again'){ prepareColormix(); cmBeginRound(); }
+    });
+  })();
 
   /* ============================================================
      관리자 모드 — Supabase Auth 로그인 후 게임별 ON/OFF 토글
